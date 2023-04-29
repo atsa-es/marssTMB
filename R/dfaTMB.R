@@ -50,7 +50,11 @@ dfaTMB <- function(obs,
         Dfac <- as.factor(Dfac)
       }
     }
-    data <- list(obs = obs, NumState = NumStates, Covar = Covars)
+    data <- list(
+      model = "dfa",
+      obs = obs, 
+      NumState = NumStates, 
+      Covar = Covars)
   } else { 
     # If you are not estimating covariates we just pass a time series of 0's, 
     # a Dmat of 0's, and and NA factors so the paramters will not be estimated
@@ -113,7 +117,7 @@ dfaTMB <- function(obs,
     silent = silent,
     map = maplist
   )
-  opt1 <- nlminb(obj1$par, obj1$fn, obj1$gr, control = list(iter.max = 2000, eval.max = 2000))
+  opt1 <- stats::nlminb(obj1$par, obj1$fn, obj1$gr, control = list(iter.max = 2000, eval.max = 2000))
   # newtonOption(obj1, smartsearch=TRUE)
   obj1$control <- list(trace = 1, REPORT = 1, reltol = 1e-12, maxit = 2000)
   obj1$fn()

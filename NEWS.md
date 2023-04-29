@@ -2,7 +2,7 @@
 
 The first draft with the TMB package structure in place. Used the {[TMBtools](https://github.com/mlysy/TMBtools)} package to set-up the R package to work with TMB.
 
-* One function `dfaTMB()`.
+* Two functions `dfaTMB()` and `uniTMB()` which I will likely combine later.
 
 <!--
 

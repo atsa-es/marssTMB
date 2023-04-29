@@ -5,6 +5,7 @@
 #include "dfa.hpp"
 #include "GammaNLL.hpp"
 #include "NormalNLL.hpp"
+#include "uni.hpp"
 
 template<class Type>
 Type objective_function<Type>::operator() () {
@@ -15,6 +16,8 @@ Type objective_function<Type>::operator() () {
     return GammaNLL(this);
   } else if(model == "NormalNLL") {
     return NormalNLL(this);
+  } else if(model == "uni") {
+    return uni(this);
   } else {
     Rf_error("Unknown model.");
   }
