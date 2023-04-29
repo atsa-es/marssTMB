@@ -54,6 +54,9 @@
     </li>
   </ul>
 </li>
+<li>
+  <a href="news/index.html">Changelog</a>
+</li>
       </ul>
 <ul class="nav navbar-nav navbar-right"></ul>
 </div>
@@ -76,6 +79,20 @@
 <h2 id="install">install<a class="anchor" aria-label="anchor" href="#install"></a>
 </h2>
 <pre><code><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"atsa-es/marssTMB"</span><span class="op">)</span></span></code></pre>
+</div>
+<div class="section level2">
+<h2 id="notes">Notes<a class="anchor" aria-label="anchor" href="#notes"></a>
+</h2>
+<p>I used the {<a href="https://github.com/mlysy/TMBtools" class="external-link">TMBtools</a>} package to set-up the R package to work with TMB. See the documentation there.</p>
+<ul>
+<li>Add new models to <code>src</code> as hpp files. Then run <code><a href="https://rdrr.io/pkg/TMBtools/man/export_models.html" class="external-link">TMBtools::export_models()</a></code> to add them to the various TMB set-up files. See TMBtools documentation on how to make a cpp file into a hpp file.</li>
+<li>Add helper files (includes) to <code>inst/include/marssTMB</code> and then put a <code>#include marssTMB/newfile.hpp</code> in your hpp file.</li>
+</ul>
+<p>Rebuilding:</p>
+<ul>
+<li>Build package and documentation</li>
+<li><code><a href="https://pkgdown.r-lib.org/reference/build_site.html" class="external-link">pkgdown::build_site()</a></code></li>
+</ul>
 </div>
 </div>
   </div>
