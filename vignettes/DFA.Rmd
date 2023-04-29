@@ -11,9 +11,9 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-\newcommand{\QQ}{\bm{Q}}
-\newcommand{\RR}{\bm{R}}
-\newcommand{\xx}{\bm{x}}
+\newcommand{\QQ}{\mathbf{Q}}
+\newcommand{\RR}{\mathbf{R}}
+\newcommand{\xx}{\mathbf{x}}
 
 ```{r setup, include = FALSE}
 # knitr options

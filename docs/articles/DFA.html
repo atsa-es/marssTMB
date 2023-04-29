@@ -58,7 +58,14 @@
   <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
-<ul class="nav navbar-nav navbar-right"></ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+  <a href="https://github.com/atsa-es/marssTMB/" class="external-link">
+    <span class="fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
 </div>
 <!--/.nav-collapse -->
   </div>
@@ -76,7 +83,7 @@
             
             <h4 data-toc-skip class="date">2023-04-28</h4>
       
-      
+      <small class="dont-index">Source: <a href="https://github.com/atsa-es/marssTMB/blob/HEAD/vignettes/DFA.Rmd" class="external-link"><code>vignettes/DFA.Rmd</code></a></small>
       <div class="hidden name"><code>DFA.Rmd</code></div>
 
     </div>
@@ -85,11 +92,11 @@
     
 <p>The <code><a href="../reference/dfaTMB.html">dfaTMB()</a></code> function allows you to fit DFAs with the
 same form as <code>MARSS(x, form="dfa")</code>. This has a diagonal
-<span class="math inline">\(\bm{Q}\)</span> with 1 on the diagonal and a
-stochastic <span class="math inline">\(\bm{x}_1\)</span> with mean 0 and
-variance of 5 (diagonal variance-covariance matrix). There are only 3
-options allowed for <span class="math inline">\(\bm{R}\)</span>:
-diagonal and equal, diagonal and unequal, and unconstrained.</p>
+<span class="math inline">\(\mathbf{Q}\)</span> with 1 on the diagonal
+and a stochastic <span class="math inline">\(\mathbf{x}_1\)</span> with
+mean 0 and variance of 5 (diagonal variance-covariance matrix). There
+are only 3 options allowed for <span class="math inline">\(\mathbf{R}\)</span>: diagonal and equal, diagonal
+and unequal, and unconstrained.</p>
 <p>Example data</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://atsa-es.github.io/MARSS/" class="external-link">MARSS</a></span><span class="op">)</span></span>
@@ -105,7 +112,7 @@ diagonal and equal, diagonal and unequal, and unconstrained.</p>
 <code class="sourceCode R"><span><span class="va">m1.em</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/MARSS/man/MARSS.html" class="external-link">MARSS</a></span><span class="op">(</span><span class="va">dat</span>, model<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>R<span class="op">=</span><span class="st">'unconstrained'</span>, m<span class="op">=</span><span class="fl">1</span>, tinitx<span class="op">=</span><span class="fl">1</span><span class="op">)</span>, form<span class="op">=</span><span class="st">'dfa'</span>, z.score<span class="op">=</span><span class="cn">FALSE</span>, silent <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>Fit with TMB. Note the syntax will be updated to match MARSS().</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">marssTMB</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://atsa-es.github.io/marssTMB">marssTMB</a></span><span class="op">)</span></span>
 <span><span class="va">m1.tmb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dfaTMB.html">dfaTMB</a></span><span class="op">(</span>obs <span class="op">=</span> <span class="va">dat</span>, NumStates <span class="op">=</span> <span class="fl">1</span>, ErrStruc<span class="op">=</span><span class="st">'UNC'</span><span class="op">)</span></span>
 <span><span class="co">#&gt; initial  value 772.401093 </span></span>
 <span><span class="co">#&gt; iter   2 value 772.401093</span></span>

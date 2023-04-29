@@ -2,7 +2,7 @@
 
 The beginning of a companion R package to MARSS that fits MARSS models with TMB.
 
-See the documentation at [marssTMB]()
+See the documentation at [marssTMB](https://atsa-es.github.io/marssTMB/)
 
 ## install
 

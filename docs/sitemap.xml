@@ -1,30 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>/404.html</loc>
+    <loc>https://atsa-es.github.io/marssTMB/404.html</loc>
   </url>
   <url>
-    <loc>/articles/DFA.html</loc>
+    <loc>https://atsa-es.github.io/marssTMB/articles/DFA.html</loc>
   </url>
   <url>
-    <loc>/articles/index.html</loc>
+    <loc>https://atsa-es.github.io/marssTMB/articles/index.html</loc>
   </url>
   <url>
-    <loc>/authors.html</loc>
+    <loc>https://atsa-es.github.io/marssTMB/authors.html</loc>
   </url>
   <url>
-    <loc>/index.html</loc>
+    <loc>https://atsa-es.github.io/marssTMB/index.html</loc>
   </url>
   <url>
-    <loc>/news/index.html</loc>
+    <loc>https://atsa-es.github.io/marssTMB/news/index.html</loc>
   </url>
   <url>
-    <loc>/reference/dfaTMB.html</loc>
+    <loc>https://atsa-es.github.io/marssTMB/reference/dfaTMB.html</loc>
   </url>
   <url>
-    <loc>/reference/index.html</loc>
+    <loc>https://atsa-es.github.io/marssTMB/reference/index.html</loc>
   </url>
   <url>
-    <loc>/reference/marssTMB-package.html</loc>
+    <loc>https://atsa-es.github.io/marssTMB/reference/marssTMB-package.html</loc>
   </url>
 </urlset>

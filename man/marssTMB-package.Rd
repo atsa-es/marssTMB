@@ -8,6 +8,15 @@
 \description{
 Work on TMB files to fit MARSS models with TMB.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://atsa-es.github.io/marssTMB}
+  \item \url{https://github.com/atsa-es/marssTMB}
+  \item Report bugs at \url{https://github.com/atsa-es/marssTMB/issues}
+}
+
+}
 \author{
 \strong{Maintainer}: Eli Holmes \email{eli.holmes@noaa.gov} (\href{https://orcid.org/0000-0001-9128-8393}{ORCID})
 

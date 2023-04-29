@@ -9,6 +9,8 @@ Authors@R:
       person("Timothy", "Cline", , "timothy.cline2@montana.edu", role = c("aut"),
            comment = c(ORCID = "0000-0002-4955-654X"))           )
 Description: Work on TMB files to fit MARSS models with TMB.
+URL: https://atsa-es.github.io/marssTMB, https://github.com/atsa-es/marssTMB
+BugReports: https://github.com/atsa-es/marssTMB/issues
 License: GPL (>= 2)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
