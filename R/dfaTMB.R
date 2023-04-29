@@ -12,6 +12,9 @@
 #' @param Dfac
 #' @param EstSE
 #' @param silent Show TMB output when fitting
+#' @param fun function to use for optimization: `stats::nlminb()` or `stats::optim()`
+#' @param method to pass to optim call; ignored for `fun="nlminb"`
+#' @param form The equation form used in the marssTMB() call. The default is "dfa". 
 
 #' @return A list with Optimization, Estimates, Fits, and AIC
 #' @example inst/examples/dfa_example.R
@@ -24,11 +27,24 @@ dfaTMB <- function(y,
                    Covars = NULL, indivCovar = FALSE, 
                    Dmat = NULL, Dfac = NULL,
                    EstSE = FALSE,
-                   silent = TRUE) {
+                   silent = TRUE,
+                   fun.opt = c("optim", "nlminb"),
+                   method = c("Nelder-Mead", "BFGS", "CG", "L-BFGS-B", "SANN", "Brent"),
+                   control = NULL,
+                   form = c("dfa", "marxss")){
   ty <- t(y)
   m <- model$m
   n <- ncol(ty)
   TT <- nrow(ty)
+  # set up control defaults
+  if(fun == "nlminb"){
+    if(is.null(control$iter.max)) control$iter.max = 2000
+    if(is.null(control$eval.max)) control$eval.max = 2000
+  }
+  if(fun == "optim"){
+    if(is.null(control$reltol)) control$reltol = 1e-12
+    if(is.null(control$maxit)) control$maxit = 2000
+  }
   # creates the Z factor to fix the upper corner to 0
   Zfac <- ZmatFactorGen(n, m) 
   if (EstCovar) { 
@@ -104,7 +120,17 @@ dfaTMB <- function(y,
     silent = silent,
     map = maplist
   )
-  opt1 <- stats::nlminb(obj1$par, obj1$fn, obj1$gr, control = list(iter.max = 2000, eval.max = 2000))
+  
+  # Set up return list
+  MARSS.call <- list(data = y, inits = inits, model = model, control = control, method = method, form = form, silent = silent, fit = fit, fun.kf = NA, fun.opt = fun.opt...)
+  
+  # Optimization
+  if(fun.opt == "nlminb"){
+    opt1 <- stats::nlminb(obj1$par, obj1$fn, obj1$gr, control = control)
+  }
+  if(fun.opt == "optim"){
+    opt1 <- stats::optim(obj1, control = control, method=method)
+  }
   # newtonOption(obj1, smartsearch=TRUE)
   obj1$control <- list(trace = 1, REPORT = 1, reltol = 1e-12, maxit = 2000)
   obj1$fn()
@@ -155,12 +181,17 @@ dfaTMB <- function(y,
   # AIC <- 2 * length(opt1$par) + 2 * opt1$value
   AIC <- 2 * length(opt1$par) + 2 * opt1$objective
   AIC
+  
+  
 
   if (EstSE) {
     res <- list(Optimization = opt1, Estimates = pl1, Fits = FitSeries, AIC = AIC, StdErr = SES, ParCorrs = sdr$cov.fixed, logLik = -1*opt1$objective)
   } else {
     res <- list(Optimization = opt1, Estimates = pl1, Fits = FitSeries, AIC = AIC, logLik = -1*opt1$objective)
   }
+  
+  # Set up the return list to match marssMLE objects
+  res$method <- "TMB"
   class(res) <- c("marssTMB", class(res))
   return(res)
 }

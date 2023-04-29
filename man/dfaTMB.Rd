@@ -14,7 +14,11 @@ dfaTMB(
   Dmat = NULL,
   Dfac = NULL,
   EstSE = FALSE,
-  silent = TRUE
+  silent = TRUE,
+  fun.opt = c("optim", "nlminb"),
+  method = c("Nelder-Mead", "BFGS", "CG", "L-BFGS-B", "SANN", "Brent"),
+  control = NULL,
+  form = c("dfa", "marxss")
 )
 }
 \arguments{
@@ -31,6 +35,12 @@ dfaTMB(
 \item{EstCovar}{TRUE/FALSE}
 
 \item{silent}{Show TMB output when fitting}
+
+\item{method}{to pass to optim call; ignored for \code{fun="nlminb"}}
+
+\item{form}{The equation form used in the marssTMB() call. The default is "dfa".}
+
+\item{fun}{function to use for optimization: \code{stats::nlminb()} or \code{stats::optim()}}
 }
 \value{
 A list with Optimization, Estimates, Fits, and AIC
