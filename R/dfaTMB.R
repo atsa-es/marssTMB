@@ -111,7 +111,7 @@ dfaTMB <- function(y,
   obj1$gr()
   # obj1$method='BFGS'
   obj1$par <- opt1$par
-  system.time(opt1 <- do.call("optim", obj1))
+  #system.time(opt1 <- do.call("optim", obj1))
   pl1 <- obj1$env$parList() # This contains all of your parameter estimates RAW as they come out of the optimizer
   if (EstSE) {
     sdr <- sdreport(obj1)
@@ -152,13 +152,14 @@ dfaTMB <- function(y,
   }
 
   # Compute AIC.
-  AIC <- 2 * length(opt1$par) + 2 * opt1$value
+  # AIC <- 2 * length(opt1$par) + 2 * opt1$value
+  AIC <- 2 * length(opt1$par) + 2 * opt1$objective
   AIC
 
   if (EstSE) {
-    res <- list(Optimization = opt1, Estimates = pl1, Fits = FitSeries, AIC = AIC, StdErr = SES, ParCorrs = sdr$cov.fixed, logLik = -1*opt1$value)
+    res <- list(Optimization = opt1, Estimates = pl1, Fits = FitSeries, AIC = AIC, StdErr = SES, ParCorrs = sdr$cov.fixed, logLik = -1*opt1$objective)
   } else {
-    res <- list(Optimization = opt1, Estimates = pl1, Fits = FitSeries, AIC = AIC, logLik = -1*opt1$value)
+    res <- list(Optimization = opt1, Estimates = pl1, Fits = FitSeries, AIC = AIC, logLik = -1*opt1$objective)
   }
   class(res) <- c("marssTMB", class(res))
   return(res)
@@ -196,7 +197,7 @@ ZmatFactorGen <- function(n, m) {
 dfaAIC <- function(x, AICc = FALSE) {
   opt <- x[["Optimization"]]
   NumPar <- length(opt$par)
-  NLL <- opt$value # opt$value
+  NLL <- opt$objective # opt$value (optim)
   AIC <- 2 * NumPar + 2 * NLL
   if (AICc) {
     AIC <- AIC + (2 * NumPar * (NumPar + 1)) / (nrow(x[["Estimates"]]$Z) * ncol(x[["Estimates"]]$u) - NumPar - 1)
@@ -207,7 +208,6 @@ dfaAIC <- function(x, AICc = FALSE) {
 # Compute log likelihood
 dfaLL <- function(x) {
   opt <- x[["Optimization"]]
-  NumPar <- length(opt$par)
-  NLL <- opt$value # opt$value
+  NLL <- opt$objective # opt$value
   return(-1 * NLL)
 }
