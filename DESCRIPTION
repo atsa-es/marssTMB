@@ -1,0 +1,25 @@
+Package: marssTMB
+Title: Fits MARSS models with TMB
+Version: 0.0.1
+Authors@R: 
+    c(person("Eli", "Holmes", , "eli.holmes@noaa.gov", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0001-9128-8393")),
+      person("Eric", "Ward", , "eric.ward@noaa.gov", role = c("aut"),
+           comment = c(ORCID = "0000-0002-4359-0296")),
+      person("Timothy", "Cline", , "timothy.cline2@montana.edu", role = c("aut"),
+           comment = c(ORCID = "0000-0002-4955-654X"))           )
+Description: Work on TMB files to fit MARSS models with TMB.
+License: GPL (>= 2)
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
+Imports: 
+    TMB (>= 1.9.4)
+Suggests: 
+    ggplot2,
+    tidyr,
+    MARSS,
+    knitr,
+    rmarkdown,
+LinkingTo: 
+    TMB
