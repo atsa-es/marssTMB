@@ -5,29 +5,28 @@
 \title{Fit a DFA model with TMB.}
 \usage{
 dfaTMB(
-  obs,
-  NumStates = 1,
-  ErrStruc = "DE",
+  y,
+  model = list(m = 1, R = "diagonal and equal"),
+  inits = list(R = 0.05),
   EstCovar = FALSE,
   Covars = NULL,
   indivCovar = FALSE,
   Dmat = NULL,
   Dfac = NULL,
-  Rfac = NULL,
-  logsdObs = NULL,
-  logsdObsFac = NULL,
-  cholCorr = NULL,
-  cholFac = NULL,
   EstSE = FALSE,
   silent = TRUE
 )
 }
 \arguments{
-\item{obs}{Vector of observations n x T.}
+\item{y}{Vector of observations n x T.}
 
-\item{NumStates}{m}
+\item{model}{list with
+\itemize{
+\item R  "diagonal and equal", "unconstrained", "diagonal and unequal"
+\item m number of states (x)
+}}
 
-\item{ErrStruc}{DE=diagonal and equal, UNC=unconstrained, DUE=diagonal and unequal}
+\item{inits}{list of initial conditions}
 
 \item{EstCovar}{TRUE/FALSE}
 
@@ -51,9 +50,8 @@ dat <- as.data.frame(lakeWAplanktonTrans) |>
 
 #fit with MARSS
 m1.em <- MARSS(dat, model=list(R='unconstrained', m=1, tinitx=1), form='dfa', z.score=FALSE)
-mym1 <- dfaTMB(obs = dat, NumStates = 1, ErrStruc='UNC')
-cbind(coefficients(m1.em)$R,as.vector(mym1$Estimates$R[lower.tri(mym1$Estimates$R,diag=T)]))
-cbind(coefficients(m1.em)$Z,as.vector(mym1$Estimates$Z)) 
+m1.tmb <- dfaTMB(dat, model=list(R='unconstrained', m=1))
+c(m1.em$logLik, m1.tmb$logLik)
 }
 \author{
 Tim Cline wrote most of this while a graduate student in the Fish 507 Time Series Analysis course. Eli Holmes later modified it to replicate the MARSS(x, form="dfa") model.

@@ -1,18 +1,15 @@
 #' Fit a DFA model with TMB.
 #'
-#' @param obs Vector of observations n x T.
-#' @param NumStates m
-#' @param ErrStruc DE=diagonal and equal, UNC=unconstrained, DUE=diagonal and unequal
+#' @param y Vector of observations n x T.
+#' @param model list with 
+#'    * R  "diagonal and equal", "unconstrained", "diagonal and unequal"
+#'    * m number of states (x)
+#' @param inits list of initial conditions
 #' @param EstCovar TRUE/FALSE
 #' @param Covars
 #' @param indivCovar
 #' @param Dmat
 #' @param Dfac
-#' @param Rfac
-#' @param logsdObs
-#' @param logsdObsFac
-#' @param cholCorr
-#' @param cholFac
 #' @param EstSE
 #' @param silent Show TMB output when fitting
 
@@ -20,19 +17,20 @@
 #' @example inst/examples/dfa_example.R
 #' @author Tim Cline wrote most of this while a graduate student in the Fish 507 Time Series Analysis course. Eli Holmes later modified it to replicate the MARSS(x, form="dfa") model.
 #' @export
-dfaTMB <- function(obs, 
-                   NumStates = 1, 
-                   ErrStruc = "DE", EstCovar = FALSE,
+dfaTMB <- function(y, 
+                   model = list(m = 1, R="diagonal and equal"),
+                   inits = list(R=0.05),
+                   EstCovar = FALSE,
                    Covars = NULL, indivCovar = FALSE, 
                    Dmat = NULL, Dfac = NULL,
-                   Rfac = NULL, logsdObs = NULL, 
-                   logsdObsFac = NULL,
-                   cholCorr = NULL, cholFac = NULL, 
                    EstSE = FALSE,
                    silent = TRUE) {
-  obs <- t(obs)
+  ty <- t(y)
+  m <- model$m
+  n <- ncol(ty)
+  TT <- nrow(ty)
   # creates the Z factor to fix the upper corner to 0
-  Zfac <- ZmatFactorGen(Data = obs, NumStates = NumStates) 
+  Zfac <- ZmatFactorGen(n, m) 
   if (EstCovar) { 
     # If you are estimating covariates this creates 
     # Dmat and Dfac based on the data, number of covars
@@ -40,73 +38,62 @@ dfaTMB <- function(obs,
       # This checks that you did not supply Dmat or Dfac 
       # (Manual covariate parameter entries)
       if (!indivCovar) {
-        Dmat <- matrix(rep(0, ncol(obs) * nrow(Covars)), ncol = nrow(Covars), nrow = ncol(obs))
-        Dfac <- as.factor(seq(1, ncol(obs) * nrow(Covars)))
+        Dmat <- matrix(rep(0, n * nrow(Covars)), ncol = nrow(Covars), nrow = n)
+        Dfac <- as.factor(seq(1, n * nrow(Covars)))
       } else {
-        Dmat <- matrix(0, ncol = nrow(Covars), nrow = ncol(obs))
+        Dmat <- matrix(0, ncol = nrow(Covars), nrow = n)
         diag(Dmat) <- rep(0, nrow(Covars)) # rnorm(nrow(Covars),0,1)
-        Dfac <- matrix(NA, ncol = nrow(Covars), nrow = ncol(obs))
+        Dfac <- matrix(NA, ncol = nrow(Covars), nrow = n)
         diag(Dfac) <- seq(1, nrow(Covars))
         Dfac <- as.factor(Dfac)
       }
     }
     data <- list(
       model = "dfa",
-      obs = obs, 
-      NumState = NumStates, 
+      obs = ty, 
       Covar = Covars)
   } else { 
     # If you are not estimating covariates we just pass a time series of 0's, 
     # a Dmat of 0's, and and NA factors so the paramters will not be estimated
 
-    Dmat <- matrix(0, ncol = 1, nrow = ncol(obs))
-    Dfac <- as.factor(rep(NA, ncol(obs)))
-    Covars <- matrix(0, nrow = 1, ncol = nrow(obs))
+    Dmat <- matrix(0, ncol = 1, nrow = n)
+    Dfac <- as.factor(rep(NA, n))
+    Covars <- matrix(0, nrow = 1, ncol = TT)
     data <- list(
-      model = "dfa", obs = obs,
-      NumState = NumStates,
+      model = "dfa", 
+      obs = ty,
       Covar = Covars
     )
   }
 
-  # This set of if-else statements creates the proper parameter set for the error structure selected
-  if (is.null(logsdObs) & is.null(logsdObsFac) & is.null(cholCorr) & is.null(cholFac)) {
-    if (ErrStruc == "DE") {
-      cholCorr <- rep(0, ncol(obs) * (ncol(obs) - 1) / 2)
-      logsdObs <- log(rep(0.5, ncol(obs)))
-      logsdObsFac <- rep(1, ncol(obs))
-      logsdObsFac <- factor(logsdObsFac)
-      cholFac <- rep(NA, ncol(obs) * (ncol(obs) - 1) / 2)
-      cholFac <- factor(cholFac)
-    } else if (ErrStruc == "DUE") {
-      cholCorr <- rep(0, ncol(obs) * (ncol(obs) - 1) / 2)
-      logsdObs <- log(rep(0.5, ncol(obs)))
-      logsdObsFac <- seq(1, ncol(obs))
-      logsdObsFac <- factor(logsdObsFac)
-      cholFac <- rep(NA, ncol(obs) * (ncol(obs) - 1) / 2)
-      cholFac <- factor(cholFac)
-    } else if (ErrStruc == "UNC") {
-      cholCorr <- rep(0, ncol(obs) * (ncol(obs) - 1) / 2)
-      logsdObs <- log(rep(0.5, ncol(obs)))
-      logsdObsFac <- seq(1, ncol(obs))
-      logsdObsFac <- factor(logsdObsFac)
-      cholFac <- seq(1, (ncol(obs) * (ncol(obs) - 1) / 2))
-      cholFac <- factor(cholFac)
+  # Creates the proper parameter set for the error structure selected
+    cholCorr <- rep(0, n * (n - 1) / 2)
+    logsdObs <- log(rep(sqrt(inits$R), n))
+    if (model$R == "diagonal and equal") {
+      logsdObsFac <- rep(1, n)
+      cholFac <- rep(NA, n * (n - 1) / 2)
+    } else if (model$R == "diagonal and unequal") {
+      logsdObsFac <- seq(1, n)
+      cholFac <- rep(NA, n * (n - 1) / 2)
+    } else if (model$R == "unconstrained") {
+      logsdObsFac <- seq(1, n)
+      cholFac <- seq(1, (n * (n - 1) / 2))
     }
-  }
+    logsdObsFac <- factor(logsdObsFac)
+    cholFac <- factor(cholFac)
 
   # Creates the input parameter list
   parameters <- list(
     logsdObs = logsdObs,
     cholCorr = cholCorr,
-    covState = diag(1, NumStates),
-    covinitState = diag(5, NumStates),
+    covState = diag(1, m),
+    covinitState = diag(5, m),
     D = Dmat,
-    Z = ZmatGen(Data = obs, NumStates = NumStates),
-    u = matrix(0, nrow = nrow(obs), ncol = NumStates)
+    Z = ZmatGen(n, m),
+    u = matrix(0, nrow = TT, ncol = m)
   )
-  covinitStateFac <- factor(matrix(NA, nrow = NumStates, ncol = NumStates))
-  covStateFac <- factor(matrix(NA, nrow = NumStates, ncol = NumStates))
+  covinitStateFac <- factor(matrix(NA, nrow = m, ncol = m))
+  covStateFac <- factor(matrix(NA, nrow = m, ncol = m))
   maplist <- list(Z = Zfac, D = Dfac, cholCorr = cholFac, logsdObs = logsdObsFac, covState = covStateFac, covinitState = covinitStateFac)
 
   # Creates the model object and runs the optimization
@@ -169,20 +156,20 @@ dfaTMB <- function(obs,
   AIC
 
   if (EstSE) {
-    res <- list(Optimization = opt1, Estimates = pl1, Fits = FitSeries, AIC = AIC, StdErr = SES, ParCorrs = sdr$cov.fixed)
+    res <- list(Optimization = opt1, Estimates = pl1, Fits = FitSeries, AIC = AIC, StdErr = SES, ParCorrs = sdr$cov.fixed, logLik = -1*opt1$value)
   } else {
-    res <- list(Optimization = opt1, Estimates = pl1, Fits = FitSeries, AIC = AIC)
+    res <- list(Optimization = opt1, Estimates = pl1, Fits = FitSeries, AIC = AIC, logLik = -1*opt1$value)
   }
   class(res) <- c("marssTMB", class(res))
   return(res)
 }
 
 # This function generates the Z matrix based on the number of times series and the number of states that are estimated. It is called from with the run_dfa function.
-ZmatGen <- function(Data, NumStates) {
-  tZ <- matrix(0.5, nrow = ncol(Data), ncol = NumStates)
-  if (NumStates > 1) {
-    for (i in 1:(NumStates - 1)) {
-      tZ[i, (NumStates - (NumStates - 2) + (i - 1)):NumStates] <- rep(0, NumStates - 1 - (i - 1))
+ZmatGen <- function(n, m) {
+  tZ <- matrix(0.5, nrow = n, ncol = m)
+  if (m > 1) {
+    for (i in 1:(m - 1)) {
+      tZ[i, (m - (m - 2) + (i - 1)):m] <- rep(0, m - 1 - (i - 1))
     }
     return(tZ)
   } else {
@@ -192,11 +179,11 @@ ZmatGen <- function(Data, NumStates) {
 
 # This function creates a Z mat factor which allows TMB to fix certain parameters. 
 # This is required as the upper triangle of the Z matrix must fixed at 0 to allow the model to be identifiable. 
-ZmatFactorGen <- function(Data, NumStates) {
-  tZ <- matrix(seq(1, ncol(Data) * NumStates), nrow = ncol(Data), ncol = NumStates)
-  if (NumStates > 1) {
-    for (i in 1:(NumStates - 1)) {
-      tZ[i, (NumStates - (NumStates - 2) + (i - 1)):NumStates] <- rep(NA, NumStates - 1 - (i - 1))
+ZmatFactorGen <- function(n, m) {
+  tZ <- matrix(seq(1, n * m), nrow = n, ncol = m)
+  if (m > 1) {
+    for (i in 1:(m - 1)) {
+      tZ[i, (m - (m - 2) + (i - 1)):m] <- rep(NA, m - 1 - (i - 1))
     }
     tZ[!is.na(tZ)] <- seq(1, sum(!is.na(tZ)))
     return(as.factor(tZ))
@@ -206,7 +193,7 @@ ZmatFactorGen <- function(Data, NumStates) {
 }
 
 # Compute AIC for my DFA model output
-dfaAIC <- function(x, AICc = F) {
+dfaAIC <- function(x, AICc = FALSE) {
   opt <- x[["Optimization"]]
   NumPar <- length(opt$par)
   NLL <- opt$value # opt$value

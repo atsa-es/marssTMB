@@ -64,19 +64,14 @@
 
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">dfaTMB</span><span class="op">(</span></span>
-<span>  <span class="va">obs</span>,</span>
-<span>  NumStates <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  ErrStruc <span class="op">=</span> <span class="st">"DE"</span>,</span>
+<span>  <span class="va">y</span>,</span>
+<span>  model <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>m <span class="op">=</span> <span class="fl">1</span>, R <span class="op">=</span> <span class="st">"diagonal and equal"</span><span class="op">)</span>,</span>
+<span>  inits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>R <span class="op">=</span> <span class="fl">0.05</span><span class="op">)</span>,</span>
 <span>  EstCovar <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  Covars <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  indivCovar <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  Dmat <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  Dfac <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  Rfac <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  logsdObs <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  logsdObsFac <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  cholCorr <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  cholFac <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  EstSE <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  silent <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -84,16 +79,18 @@
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>obs</dt>
+    <dl><dt>y</dt>
 <dd><p>Vector of observations n x T.</p></dd>
 
 
-<dt>NumStates</dt>
-<dd><p>m</p></dd>
+<dt>model</dt>
+<dd><p>list with</p><ul><li><p>R  "diagonal and equal", "unconstrained", "diagonal and unequal"</p></li>
+<li><p>m number of states (x)</p></li>
+</ul></dd>
 
 
-<dt>ErrStruc</dt>
-<dd><p>DE=diagonal and equal, UNC=unconstrained, DUE=diagonal and unequal</p></dd>
+<dt>inits</dt>
+<dd><p>list of initial conditions</p></dd>
 
 
 <dt>EstCovar</dt>
@@ -165,7 +162,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> Standard errors have not been calculated. </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Use MARSSparamCIs to compute CIs and bias estimates.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"><span><span class="va">mym1</span> <span class="op">&lt;-</span> <span class="fu">dfaTMB</span><span class="op">(</span>obs <span class="op">=</span> <span class="va">dat</span>, NumStates <span class="op">=</span> <span class="fl">1</span>, ErrStruc<span class="op">=</span><span class="st">'UNC'</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">m1.tmb</span> <span class="op">&lt;-</span> <span class="fu">dfaTMB</span><span class="op">(</span><span class="va">dat</span>, model<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>R<span class="op">=</span><span class="st">'unconstrained'</span>, m<span class="op">=</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> initial  value 772.401093 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> iter   2 value 772.401093</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> iter   3 value 772.401093</span>
@@ -173,30 +170,8 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> iter   3 value 772.401093</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> final  value 772.401093 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> converged</span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coefficients</a></span><span class="op">(</span><span class="va">m1.em</span><span class="op">)</span><span class="op">$</span><span class="va">R</span>,<span class="fu"><a href="https://rdrr.io/r/base/vector.html" class="external-link">as.vector</a></span><span class="op">(</span><span class="va">mym1</span><span class="op">$</span><span class="va">Estimates</span><span class="op">$</span><span class="va">R</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/lower.tri.html" class="external-link">lower.tri</a></span><span class="op">(</span><span class="va">mym1</span><span class="op">$</span><span class="va">Estimates</span><span class="op">$</span><span class="va">R</span>,diag<span class="op">=</span><span class="cn">T</span><span class="op">)</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>              [,1]        [,2]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> (1,1)  0.93638019  0.93666716</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> (2,1)  0.31573710  0.31613534</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> (3,1)  0.14751952  0.14774356</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> (4,1)  0.28632693  0.28713032</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> (5,1)  0.20062137  0.20043162</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> (2,2)  0.92838765  0.92890853</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> (3,2) -0.04039285 -0.04006646</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> (4,2)  0.06363202  0.06478714</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> (5,2) -0.02331011 -0.02363784</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> (3,3)  0.96406442  0.96428513</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> (4,3)  0.03142312  0.03213861</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> (5,3)  0.29186021  0.29169763</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> (4,4)  0.35870272  0.36081510</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> (5,4)  0.26046939  0.26008360</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> (5,5)  0.87924072  0.87919006</span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coefficients</a></span><span class="op">(</span><span class="va">m1.em</span><span class="op">)</span><span class="op">$</span><span class="va">Z</span>,<span class="fu"><a href="https://rdrr.io/r/base/vector.html" class="external-link">as.vector</a></span><span class="op">(</span><span class="va">mym1</span><span class="op">$</span><span class="va">Estimates</span><span class="op">$</span><span class="va">Z</span><span class="op">)</span><span class="op">)</span> </span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           [,1]       [,2]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11  0.11581668  0.1147769</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21  0.12390577  0.1226094</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 31  0.08978938  0.0889083</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 41  0.39187823  0.3887298</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 51 -0.16515621 -0.1641403</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">m1.em</span><span class="op">$</span><span class="va">logLik</span>, <span class="va">m1.tmb</span><span class="op">$</span><span class="va">logLik</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] -772.4017 -772.4011</span>
 </code></pre></div>
     </div>
   </div>

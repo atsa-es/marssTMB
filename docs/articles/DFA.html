@@ -113,7 +113,7 @@ and unequal, and unconstrained.</p>
 <p>Fit with TMB. Note the syntax will be updated to match MARSS().</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://atsa-es.github.io/marssTMB">marssTMB</a></span><span class="op">)</span></span>
-<span><span class="va">m1.tmb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dfaTMB.html">dfaTMB</a></span><span class="op">(</span>obs <span class="op">=</span> <span class="va">dat</span>, NumStates <span class="op">=</span> <span class="fl">1</span>, ErrStruc<span class="op">=</span><span class="st">'UNC'</span><span class="op">)</span></span>
+<span><span class="va">m1.tmb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dfaTMB.html">dfaTMB</a></span><span class="op">(</span><span class="va">dat</span>, model<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>m<span class="op">=</span><span class="fl">1</span>, R<span class="op">=</span><span class="st">'unconstrained'</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; initial  value 772.401093 </span></span>
 <span><span class="co">#&gt; iter   2 value 772.401093</span></span>
 <span><span class="co">#&gt; iter   3 value 772.401093</span></span>
@@ -137,6 +137,60 @@ and unequal, and unconstrained.</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>position<span class="op">=</span><span class="va">dodge</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ggtitle</a></span><span class="op">(</span><span class="st">"same estimates"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="DFA_files/figure-html/unnamed-chunk-5-1.png" width="700"></p>
+<p>Compare two states models.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">m1.bfgs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/MARSS/man/MARSS.html" class="external-link">MARSS</a></span><span class="op">(</span><span class="va">dat</span>, model<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>R<span class="op">=</span><span class="st">'unconstrained'</span>, m<span class="op">=</span><span class="fl">2</span>, tinitx<span class="op">=</span><span class="fl">1</span><span class="op">)</span>, form<span class="op">=</span><span class="st">'dfa'</span>, z.score<span class="op">=</span><span class="cn">FALSE</span>, silent <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>               method<span class="op">=</span><span class="st">"BFGS"</span><span class="op">)</span></span>
+<span><span class="va">m1.tmb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dfaTMB.html">dfaTMB</a></span><span class="op">(</span><span class="va">dat</span>, model<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>m<span class="op">=</span><span class="fl">2</span>, R<span class="op">=</span><span class="st">'unconstrained'</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; initial  value 765.845444 </span></span>
+<span><span class="co">#&gt; iter   2 value 765.845444</span></span>
+<span><span class="co">#&gt; iter   3 value 765.845444</span></span>
+<span><span class="co">#&gt; iter   4 value 765.845444</span></span>
+<span><span class="co">#&gt; iter   4 value 765.845444</span></span>
+<span><span class="co">#&gt; iter   5 value 765.845444</span></span>
+<span><span class="co">#&gt; iter   6 value 765.845444</span></span>
+<span><span class="co">#&gt; iter   6 value 765.845444</span></span>
+<span><span class="co">#&gt; iter   6 value 765.845444</span></span>
+<span><span class="co">#&gt; final  value 765.845444 </span></span>
+<span><span class="co">#&gt; converged</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">m1.bfgs</span><span class="op">$</span><span class="va">logLik</span>, <span class="va">m1.tmb</span><span class="op">$</span><span class="va">logLik</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] -765.8454 -765.8454</span></span></code></pre></div>
+<p><img src="DFA_files/figure-html/unnamed-chunk-7-1.png" width="700"></p>
+<p>Compare two states models with R diagonal and equal</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">mod.list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>R<span class="op">=</span><span class="st">'diagonal and equal'</span>, m<span class="op">=</span><span class="fl">2</span>, tinitx<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
+<span><span class="va">m1.bfgs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/MARSS/man/MARSS.html" class="external-link">MARSS</a></span><span class="op">(</span><span class="va">dat</span>, model<span class="op">=</span><span class="va">mod.list</span>, form<span class="op">=</span><span class="st">'dfa'</span>, z.score<span class="op">=</span><span class="cn">FALSE</span>, silent <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>               method<span class="op">=</span><span class="st">"BFGS"</span><span class="op">)</span></span>
+<span><span class="va">m1.tmb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dfaTMB.html">dfaTMB</a></span><span class="op">(</span><span class="va">dat</span>, model<span class="op">=</span><span class="va">mod.list</span><span class="op">)</span></span>
+<span><span class="co">#&gt; initial  value 798.320852 </span></span>
+<span><span class="co">#&gt; iter   2 value 798.320852</span></span>
+<span><span class="co">#&gt; iter   3 value 798.320852</span></span>
+<span><span class="co">#&gt; iter   4 value 798.320852</span></span>
+<span><span class="co">#&gt; iter   4 value 798.320852</span></span>
+<span><span class="co">#&gt; iter   4 value 798.320852</span></span>
+<span><span class="co">#&gt; final  value 798.320852 </span></span>
+<span><span class="co">#&gt; converged</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">m1.bfgs</span><span class="op">$</span><span class="va">logLik</span>, <span class="va">m1.tmb</span><span class="op">$</span><span class="va">logLik</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] -798.3209 -798.3209</span></span></code></pre></div>
+<p>Compare three states models with R diagonal and unequal. The EM
+algorithm struggles to converge with DFA models.</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">mod.list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>R<span class="op">=</span><span class="st">'diagonal and unequal'</span>, m<span class="op">=</span><span class="fl">3</span>, tinitx<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
+<span><span class="va">m1.bfgs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/MARSS/man/MARSS.html" class="external-link">MARSS</a></span><span class="op">(</span><span class="va">dat</span>, model<span class="op">=</span><span class="va">mod.list</span>, form<span class="op">=</span><span class="st">'dfa'</span>, z.score<span class="op">=</span><span class="cn">FALSE</span>, silent <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>               method<span class="op">=</span><span class="st">"BFGS"</span><span class="op">)</span></span>
+<span><span class="va">m1.em</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/MARSS/man/MARSS.html" class="external-link">MARSS</a></span><span class="op">(</span><span class="va">dat</span>, model<span class="op">=</span><span class="va">mod.list</span>, form<span class="op">=</span><span class="st">'dfa'</span>, z.score<span class="op">=</span><span class="cn">FALSE</span>, silent <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">m1.tmb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dfaTMB.html">dfaTMB</a></span><span class="op">(</span><span class="va">dat</span>, model<span class="op">=</span><span class="va">mod.list</span><span class="op">)</span></span>
+<span><span class="co">#&gt; initial  value 777.030675 </span></span>
+<span><span class="co">#&gt; iter   2 value 777.030675</span></span>
+<span><span class="co">#&gt; iter   3 value 777.030675</span></span>
+<span><span class="co">#&gt; iter   4 value 777.030675</span></span>
+<span><span class="co">#&gt; iter   5 value 777.030675</span></span>
+<span><span class="co">#&gt; iter   5 value 777.030675</span></span>
+<span><span class="co">#&gt; iter   5 value 777.030675</span></span>
+<span><span class="co">#&gt; final  value 777.030675 </span></span>
+<span><span class="co">#&gt; converged</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">m1.em</span><span class="op">$</span><span class="va">logLik</span>, <span class="va">m1.bfgs</span><span class="op">$</span><span class="va">logLik</span>, <span class="va">m1.tmb</span><span class="op">$</span><span class="va">logLik</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] -777.0459 -777.0307 -777.0307</span></span></code></pre></div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

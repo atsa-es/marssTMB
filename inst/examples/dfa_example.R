@@ -9,6 +9,5 @@ dat <- as.data.frame(lakeWAplanktonTrans) |>
 
 #fit with MARSS
 m1.em <- MARSS(dat, model=list(R='unconstrained', m=1, tinitx=1), form='dfa', z.score=FALSE)
-mym1 <- dfaTMB(obs = dat, NumStates = 1, ErrStruc='UNC')
-cbind(coefficients(m1.em)$R,as.vector(mym1$Estimates$R[lower.tri(mym1$Estimates$R,diag=T)]))
-cbind(coefficients(m1.em)$Z,as.vector(mym1$Estimates$Z)) 
+m1.tmb <- dfaTMB(dat, model=list(R='unconstrained', m=1))
+c(m1.em$logLik, m1.tmb$logLik)

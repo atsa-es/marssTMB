@@ -47,7 +47,7 @@ m1.em <- MARSS(dat, model=list(R='unconstrained', m=1, tinitx=1), form='dfa', z.
 Fit with TMB. Note the syntax will be updated to match MARSS().
 ```{r}
 library(marssTMB)
-m1.tmb <- dfaTMB(obs = dat, NumStates = 1, ErrStruc='UNC')
+m1.tmb <- dfaTMB(dat, model=list(m=1, R='unconstrained'))
 ```
 
 Compare parameter estimates
@@ -67,4 +67,56 @@ dodge <- position_dodge(width=0.5)
 ggplot(pars, aes(x=name, y=value, col=model)) +
   geom_point(position=dodge) +
   ggtitle("same estimates")
+```
+
+
+Compare two states models.
+```{r}
+m1.bfgs <- MARSS(dat, model=list(R='unconstrained', m=2, tinitx=1), form='dfa', z.score=FALSE, silent = TRUE,
+               method="BFGS")
+m1.tmb <- dfaTMB(dat, model=list(m=2, R='unconstrained'))
+c(m1.bfgs$logLik, m1.tmb$logLik)
+```
+
+```{r echo=FALSE}
+ZmatGen <- function(n, m) {
+  tZ <- matrix(0.5, nrow = n, ncol = m)
+  if (m > 1) {
+    for (i in 1:(m - 1)) {
+      tZ[i, (m - (m - 2) + (i - 1)):m] <- rep(0, m - 1 - (i - 1))
+    }
+    return(tZ)
+  } else {
+    return(tZ)
+  }
+}
+pars <- data.frame(name = c(paste0("R", rownames(coefficients(m1.bfgs)$R)),
+                            paste0("Z", rownames(coefficients(m1.bfgs)$Z))),
+                   EM = c(coefficients(m1.bfgs)$R, coefficients(m1.bfgs)$Z),
+  TMB = c(as.vector(m1.tmb$Estimates$R[lower.tri(m1.tmb$Estimates$R,diag=TRUE)]),
+  as.vector(m1.tmb$Estimates$Z[ZmatGen(nrow(dat), 2)!=0])))
+pars <- pars %>% tidyr::pivot_longer(2:3, names_to = "model")
+dodge <- position_dodge(width=0.5)
+ggplot(pars, aes(x=name, y=value, col=model)) +
+  geom_point(position=dodge) +
+  ggtitle("same estimates")
+```
+
+Compare two states models with R diagonal and equal
+```{r}
+mod.list <- list(R='diagonal and equal', m=2, tinitx=1)
+m1.bfgs <- MARSS(dat, model=mod.list, form='dfa', z.score=FALSE, silent = TRUE,
+               method="BFGS")
+m1.tmb <- dfaTMB(dat, model=mod.list)
+c(m1.bfgs$logLik, m1.tmb$logLik)
+```
+
+Compare three states models with R diagonal and unequal. The EM algorithm struggles to converge with DFA models.
+```{r}
+mod.list <- list(R='diagonal and unequal', m=3, tinitx=1)
+m1.bfgs <- MARSS(dat, model=mod.list, form='dfa', z.score=FALSE, silent = TRUE,
+               method="BFGS")
+m1.em <- MARSS(dat, model=mod.list, form='dfa', z.score=FALSE, silent = TRUE)
+m1.tmb <- dfaTMB(dat, model=mod.list)
+c(m1.em$logLik, m1.bfgs$logLik, m1.tmb$logLik)
 ```
