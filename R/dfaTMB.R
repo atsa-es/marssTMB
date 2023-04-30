@@ -107,6 +107,7 @@ dfaTMB <- function(y,
   parameters <- list(
     logsdObs = logsdObs,
     D = Dmat,
+    cholCorr = cholCorr,
     u = matrix(0, nrow = TT, ncol = m)
   )
   covinitStateFac <- factor(matrix(NA, nrow = m, ncol = m))
@@ -119,8 +120,14 @@ dfaTMB <- function(y,
 
   maplist <- NULL
   if(EstCovar == FALSE) {
+    # don't estimate covariates
     maplist <- list(D = Dfac)
   }
+  if(model$R != "unconstrained") {
+    # don't estimate cholCorr
+    maplist <- c(maplist, list(D = Dfac))
+  }
+  
   #maplist <- list(D = Dfac, 
   #                cholCorr = cholFac, 
   #                logsdObs = logsdObsFac)
