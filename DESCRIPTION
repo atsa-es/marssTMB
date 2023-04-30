@@ -12,11 +12,8 @@ Description: Work on TMB files to fit MARSS models with TMB.
 URL: https://atsa-es.github.io/marssTMB, https://github.com/atsa-es/marssTMB
 BugReports: https://github.com/atsa-es/marssTMB/issues
 License: GPL (>= 2)
-Encoding: UTF-8
-Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.3
 Imports: 
-    TMB (>= 1.9.4),
+    TMB (>= 1.9.3),
     stats
 Suggests: 
     ggplot2,
@@ -24,5 +21,14 @@ Suggests:
     MARSS,
     knitr,
     rmarkdown,
+    testthat
 LinkingTo: 
     TMB
+VignetteBuilder: 
+    knitr
+ByteCompile: true
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.2
+SystemRequirements: GNU make
