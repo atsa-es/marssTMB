@@ -58,3 +58,34 @@ test_that("2 trend DFA model works", {
   expect_equal(c(m3.tmb$Estimates$Z)[1:5], c(0.115, 0.123, 0.089, 0.389, -0.164), tolerance = 0.01)
   
 })
+
+
+test_that("DFA model works with covariates", {
+# add a temperature covariate
+temp <- as.data.frame(lakeWAplanktonTrans) |>
+  subset(Year >= 1980 & Year <= 1989) |>
+  subset(select=Temp)
+covar <- t(temp)
+m_cov_tmb <- dfaTMB(dat, model=list(m=1, R='diagonal and unequal'), 
+                    EstCovar = TRUE, Covars = covar)
+expect_equal(c(m_cov_tmb$Estimates$D[,1]), c(0.059,-0.278,0.507,0.132,0.538), tolerance = 0.01)
+
+# add a 2nd covariate
+TP <- as.data.frame(lakeWAplanktonTrans) |>
+  subset(Year >= 1980 & Year <= 1989) |>
+  subset(select=TP)
+covar <- rbind(covar, t(TP))
+m_cov2_tmb <- dfaTMB(dat, model=list(m=1, R='diagonal and unequal'), 
+                     EstCovar = TRUE, Covars = covar)
+m_cov2_tmb$Estimates$D
+expect_equal(c(m_cov2_tmb$Estimates$D[,1]), c(0.012,-0.323,0.492,0.101,0.533), 
+               tolerance = 0.01)
+# 
+# covar <- t(temp)
+# covar[,20] <- NA
+# m_cov_tmb <- try(dfaTMB(dat, model=list(m=1, R='diagonal and unequal'),
+#                     EstCovar = TRUE, Covars = covar, silent = TRUE), silent=TRUE)
+# expect_equal(c(m_cov_tmb$Estimates$D[,1]), c(0.059,-0.278,0.507,0.132,0.538), tolerance = 0.01)
+
+
+})

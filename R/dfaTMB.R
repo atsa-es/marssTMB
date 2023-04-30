@@ -6,12 +6,12 @@
 #'    * m number of states (x)
 #' @param inits list of initial conditions
 #' @param EstCovar TRUE/FALSE
-#' @param Covars
+#' @param Covars An optional matrix, dimensioned nD x T, where nD is the number of covariates
 #' @param indivCovar
 #' @param Dmat
 #' @param Dfac
-#' @param EstSE
-#' @param silent Show TMB output when fitting
+#' @param EstSE TRUE / FALSE, whether to return the Hessian from the TMB sdreport
+#' @param silent Show TMB output when fitting, defaults to TRUE
 #' @param fun.opt function to use for optimization: `stats::nlminb()` or `stats::optim()`
 #' @param method to pass to optim call; ignored for `fun="nlminb"`
 #' @param form The equation form used in the marssTMB() call. The default is "dfa". 
