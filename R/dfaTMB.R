@@ -70,7 +70,8 @@ dfaTMB <- function(y,
     data <- list(
       model = "dfa",
       obs = ty, 
-      Covar = Covars)
+      Covar = Covars,
+      est_covar = as.numeric(EstCovar))
   } else { 
     # If you are not estimating covariates we just pass a time series of 0's, 
     # a Dmat of 0's, and and NA factors so the paramters will not be estimated
@@ -81,7 +82,8 @@ dfaTMB <- function(y,
     data <- list(
       model = "dfa", 
       obs = ty,
-      Covar = Covars
+      Covar = Covars,
+      est_covar = as.numeric(EstCovar)
     )
   }
 
@@ -104,17 +106,21 @@ dfaTMB <- function(y,
   # Creates the input parameter list
   parameters <- list(
     logsdObs = logsdObs,
-    cholCorr = cholCorr,
-    covState = diag(1, m),
-    covinitState = diag(5, m),
     D = Dmat,
-    Z = ZmatGen(n, m),
     u = matrix(0, nrow = TT, ncol = m)
   )
   covinitStateFac <- factor(matrix(NA, nrow = m, ncol = m))
   covStateFac <- factor(matrix(NA, nrow = m, ncol = m))
-  maplist <- list(Z = Zfac, D = Dfac, cholCorr = cholFac, logsdObs = logsdObsFac, covState = covStateFac, covinitState = covinitStateFac)
 
+  data <- c(data, Z = ZmatGen(n, m), 
+            covState = diag(1, m),
+            cholCorr = cholCorr,
+            covinitState = diag(5, m))
+
+  maplist <- list(D = Dfac, 
+                  cholCorr = cholFac, 
+                  logsdObs = logsdObsFac)
+  
   # Creates the model object and runs the optimization
   obj1 <- TMB::MakeADFun(data,
     parameters,

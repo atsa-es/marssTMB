@@ -13,12 +13,13 @@ template<class Type>
 Type dfa(objective_function<Type>* obj) {
   DATA_MATRIX(obs); /*  timeSteps x stateDim*/
   DATA_MATRIX(Covar);
+  DATA_INTEGER(est_covar);
+  DATA_MATRIX(covState); /* x[t] - x[t-1] */
+  DATA_MATRIX(covinitState); /* x[1] */
+  DATA_MATRIX(Z);
   PARAMETER_VECTOR(logsdObs);
   PARAMETER_VECTOR(cholCorr);
-  PARAMETER_MATRIX(covState); /* x[t] - x[t-1] */
-  PARAMETER_MATRIX(covinitState); /* x[1] */
   PARAMETER_MATRIX(D);
-  PARAMETER_MATRIX(Z);
   PARAMETER_MATRIX(u); /* State */
   
   int timeSteps=obs.col(0).size();
@@ -41,7 +42,8 @@ Type dfa(objective_function<Type>* obj) {
   }
   
   matrix<Type> pred(timeSteps,obsDim);  
-  pred = (Z * u.transpose()) + (D * Covar);
+  pred = (Z * u.transpose());
+  if(est_covar) pred += (D * Covar);
   
   for(int i=0;i<timeSteps;i++){ //move one time step at a time
     int nonNAcount = 0; //start at zero NA values
@@ -79,10 +81,14 @@ Type dfa(objective_function<Type>* obj) {
   dSD = sdObs;
   FullCovMat = dSD.asDiagonal() * FullCorrMat * dSD.asDiagonal();
   ADREPORT(Z);
-  ADREPORT(D);
+  REPORT(Z);
+  if(est_covar) {
+    ADREPORT(D); 
+    REPORT(D);
+  }
   ADREPORT(u);
+  REPORT(Z);
   ADREPORT(FullCovMat);
-  
   REPORT(FullCorrMat);
   
   return ans;
