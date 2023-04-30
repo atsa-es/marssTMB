@@ -2,8 +2,14 @@
 #' 
 #' Fit a MARSS model with TMB + optimization. TMB does fast computation of the
 #' likelihood gradients and this is used
-#' with stats::nlminb()` or `stats::optim()` to optimize the likelihood. The 
+#' with [stats::nlminb()] or [stats::optim()] to optimize the likelihood. The 
 #' former is much faster than the later and is the default.
+#' 
+#' Note. Goal is to have the user call with the MARSS package as 
+#' `MARSS(y, method="tmb")`, which then calls `MARSStmb()`. This is the mimics
+#' the behavior of `method="BFGS"` and `method="kem"` in [MARSS::MARSS()] which
+#' looks for a fitting function called `MARSSxyz`, where `xyz` is the method.
+#' Further arguments for the optimization method can be passed into `control`.
 #' 
 #' @param y Vector of observations n x T.
 #' @param model list with 
@@ -14,7 +20,7 @@
 #' @param form The equation form used in the marssTMB() call. The default is "dfa". 
 #' @param fit Whether to fit the model.
 #' @param silent Show TMB output when fitting
-#' @param control list for the optimization function. `stats::nlminb()` or `stats::optim()`, control$fun.opt allows you to choose optim or nlminb as the optimization function. control$optim.method allows you to choose method for `optim()`.
+#' @param control list for the optimization function. [stats::nlminb()] or [stats::optim()], `control$fun.opt` allows you to choose optim or nlminb as the optimization function. `control$optim.method` allows you to choose method for `optim()`.
 #' 
 #' @return A list with Optimization, Estimates, Fits, and AIC
 #' @example inst/examples/marssTMB_example.R

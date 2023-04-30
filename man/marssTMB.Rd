@@ -10,7 +10,7 @@ MARSStmb(MLEobj)
 \item{MLEobj}{A properly formatted MARSS model as output by MARSS.tmb()}
 }
 \value{
-A list with Optimization, Estimates, Fits, and AIC
+A \link[MARSS:marssMLE-class]{MARSS::marssMLE} object
 }
 \description{
 Minimal error checking is done in this function.
@@ -40,6 +40,9 @@ m1.em <- MARSS(dat, model=list(R='unconstrained', m=1, tinitx=1), form='dfa', z.
 m1.tmb <- dfaTMB(dat, model=list(R='unconstrained', m=1))
 c(m1.em$logLik, m1.tmb$logLik)
 }
+\seealso{
+\code{\link[MARSS:MARSSoptim]{MARSS::MARSSoptim()}}, \code{\link[MARSS:MARSSkem]{MARSS::MARSSkem()}}
+}
 \author{
-This function is based off of dfaTMB.R written by Tim Cline while a graduate student in the Fish 507 Time Series Analysis course. Eli Holmes later modified it to replicate the MARSS(x, form="dfa") model.
+Eli Holmes. This function is inspired by dfaTMB.R written by Tim Cline while a graduate student in the Fish 507 Time Series Analysis course.
 }

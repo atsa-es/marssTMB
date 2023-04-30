@@ -36,7 +36,7 @@ MARSS.tmb(
 
 \item{silent}{Show TMB output when fitting}
 
-\item{control}{list for the optimization function. \code{stats::nlminb()} or \code{stats::optim()}, control$fun.opt allows you to choose optim or nlminb as the optimization function. control$optim.method allows you to choose method for \code{optim()}.}
+\item{control}{list for the optimization function. \code{\link[stats:nlminb]{stats::nlminb()}} or \code{\link[stats:optim]{stats::optim()}}, \code{control$fun.opt} allows you to choose optim or nlminb as the optimization function. \code{control$optim.method} allows you to choose method for \code{optim()}.}
 }
 \value{
 A list with Optimization, Estimates, Fits, and AIC
@@ -44,8 +44,15 @@ A list with Optimization, Estimates, Fits, and AIC
 \description{
 Fit a MARSS model with TMB + optimization. TMB does fast computation of the
 likelihood gradients and this is used
-with stats::nlminb()\code{or}stats::optim()` to optimize the likelihood. The
+with \code{\link[stats:nlminb]{stats::nlminb()}} or \code{\link[stats:optim]{stats::optim()}} to optimize the likelihood. The
 former is much faster than the later and is the default.
+}
+\details{
+Note. Goal is to have the user call with the MARSS package as
+\code{MARSS(y, method="tmb")}, which then calls \code{MARSStmb()}. This is the mimics
+the behavior of \code{method="BFGS"} and \code{method="kem"} in \code{\link[MARSS:MARSS]{MARSS::MARSS()}} which
+looks for a fitting function called \code{MARSSxyz}, where \code{xyz} is the method.
+Further arguments for the optimization method can be passed into \code{control}.
 }
 \examples{
 library(MARSS)
