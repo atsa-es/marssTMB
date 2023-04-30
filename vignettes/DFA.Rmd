@@ -21,6 +21,7 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+set.seed(1234)
 ```
 
 The `dfaTMB()` function allows you to fit DFAs with the same form as `MARSS(x, form="dfa")`. This has a diagonal $\QQ$ with 1 on the diagonal and a stochastic $\xx_1$ with mean 0 and variance of 5 (diagonal variance-covariance matrix). There are only 3 options allowed for $\RR$:
@@ -111,23 +112,33 @@ m1.tmb <- dfaTMB(dat, model=mod.list)
 c(m1.bfgs$logLik, m1.tmb$logLik)
 ```
 
-Compare three states models with R diagonal and unequal and 12 time series. The EM algorithm struggles to converge with DFA models.
+## Look at a bigger data set
+
+Compare three states models with R diagonal and unequal and 12 time series. The EM algorithm and TMB algorithms struggles to converge with DFA models. This is specific to this set of time series.
 ```{r}
 dat2 <- rbind(dat, dat+matrix(rnorm(nrow(dat)*ncol(dat),0,0.2), nrow(dat), ncol(dat)))
 dat2 <- MARSS::zscore(dat2)
 mod.list <- list(R='diagonal and unequal', m=3, tinitx=1)
-t1.bfgs <- system.time(m1.bfgs <- MARSS(dat2, model=mod.list, form='dfa', z.score=FALSE, silent = TRUE, method="BFGS"))[1]
+# Control set to match setting in MARSS.tmp()
+t1.bfgs <- system.time(m1.bfgs <- MARSS(dat2, 
+                                        model=mod.list, form='dfa', 
+                                        z.score=FALSE, silent = TRUE, method="BFGS", 
+                                        control = list(reltol = 1e-12, maxit=2000)))[1]
 t1.em <- system.time(m1.em <- MARSS(dat2, model=mod.list, form='dfa', z.score=FALSE, silent = TRUE))[1]
 t1.tmb <- system.time(m1.tmb <- dfaTMB(dat2, model=mod.list))[1]
+t1.tmb2 <- system.time(m1.tmb2 <- dfaTMB(dat2, model=mod.list, fun.opt="optim"))[1]
 ```
 
-TMB is much faster. But at the default convergence settings, BFGS ran longer and got to a higher maximum likelihood.
+TMB + nlminb() is much faster. But at the default convergence settings, the Kalman-Filter + BFGS ran longer and got to a higher maximum likelihood. This seems to be an issue with TMB for both the optimizers. Also the speed savings seems to be
+due to nlminb() not TMB per se.
 ```{r}
-c(m1.em$logLik, m1.bfgs$logLik, m1.tmb$logLik)
-c(em=t1.em, bfgs=t1.bfgs, tmb=t1.tmb)
+# Log-likelihood
+c(em=m1.em$logLik, kfoptim=m1.bfgs$logLik, TMBnlminb=m1.tmb$logLik, TMBoptim=m1.tmb2$logLik)
+# Time
+c(em=t1.em, kfoptim=t1.bfgs, TMBnlminb=t1.tmb, TMBoptim=t1.tmb2)
 ```
 
-It might be an odd initial condition issue as if BFGS is started with EM, it does not find the lower log-likelihood but ends up at the higher value that EM and TMB found.
+It might be an odd initial condition issue as if BFGS is started with EM, it does not find the lower log-likelihood but ends up at the higher value that EM and TMB found. Note, this varies a bit. This is for `set.seed(1234)`.
 ```{r}
 m1 <- MARSS(dat2, model=mod.list, form='dfa', z.score=FALSE, silent = TRUE, control = list(minit=1, maxit=10))
 

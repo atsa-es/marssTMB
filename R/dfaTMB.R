@@ -12,7 +12,7 @@
 #' @param Dfac
 #' @param EstSE
 #' @param silent Show TMB output when fitting
-#' @param fun function to use for optimization: `stats::nlminb()` or `stats::optim()`
+#' @param fun.opt function to use for optimization: `stats::nlminb()` or `stats::optim()`
 #' @param method to pass to optim call; ignored for `fun="nlminb"`
 #' @param form The equation form used in the marssTMB() call. The default is "dfa". 
 
@@ -28,7 +28,7 @@ dfaTMB <- function(y,
                    Dmat = NULL, Dfac = NULL,
                    EstSE = FALSE,
                    silent = TRUE,
-                   fun.opt = c("optim", "nlminb"),
+                   fun.opt = c("nlminb", "optim", "nlminb+optim"),
                    method = c("Nelder-Mead", "BFGS", "CG", "L-BFGS-B", "SANN", "Brent"),
                    control = NULL,
                    form = c("dfa", "marxss")){
@@ -36,12 +36,14 @@ dfaTMB <- function(y,
   m <- model$m
   n <- ncol(ty)
   TT <- nrow(ty)
+  fun.opt <- match.arg(fun.opt)
+  method <- match.arg(method)
   # set up control defaults
-  if(fun == "nlminb"){
+  if(fun.opt == "nlminb"){
     if(is.null(control$iter.max)) control$iter.max = 2000
     if(is.null(control$eval.max)) control$eval.max = 2000
   }
-  if(fun == "optim"){
+  if(fun.opt == "optim" | fun.opt == "nlminb+optim"){
     if(is.null(control$reltol)) control$reltol = 1e-12
     if(is.null(control$maxit)) control$maxit = 2000
   }
@@ -58,8 +60,9 @@ dfaTMB <- function(y,
         Dfac <- as.factor(seq(1, n * nrow(Covars)))
       } else {
         Dmat <- matrix(0, ncol = nrow(Covars), nrow = n)
-        diag(Dmat) <- rep(0, nrow(Covars)) # rnorm(nrow(Covars),0,1)
+        #diag(Dmat) <- rep(0, nrow(Covars)) # rnorm(nrow(Covars),0,1)
         Dfac <- matrix(NA, ncol = nrow(Covars), nrow = n)
+        # EEH: this assumes you have n covariates
         diag(Dfac) <- seq(1, nrow(Covars))
         Dfac <- as.factor(Dfac)
       }
@@ -120,24 +123,23 @@ dfaTMB <- function(y,
     silent = silent,
     map = maplist
   )
-  
-  # Set up return list
-  MARSS.call <- list(data = y, inits = inits, model = model, control = control, method = method, form = form, silent = silent, fit = fit, fun.kf = NA, fun.opt = fun.opt...)
-  
+
   # Optimization
   if(fun.opt == "nlminb"){
     opt1 <- stats::nlminb(obj1$par, obj1$fn, obj1$gr, control = control)
   }
   if(fun.opt == "optim"){
-    opt1 <- stats::optim(obj1, control = control, method=method)
+    obj1$control <- control
+    opt1 <- do.call("optim", obj1)
+    opt1$objective <- opt1$value
   }
-  # newtonOption(obj1, smartsearch=TRUE)
-  obj1$control <- list(trace = 1, REPORT = 1, reltol = 1e-12, maxit = 2000)
-  obj1$fn()
-  obj1$gr()
-  # obj1$method='BFGS'
-  obj1$par <- opt1$par
-  #system.time(opt1 <- do.call("optim", obj1))
+  if(fun.opt == "nlminb+optim"){
+    opt1 <- stats::nlminb(obj1$par, obj1$fn, obj1$gr, control = list(iter.max = 2000, eval.max = 2000))
+    obj1$par <- opt1$par
+    obj1$control <- control
+    opt1 <- do.call("optim", obj1)
+    opt1$objective <- opt1$value
+  }
   pl1 <- obj1$env$parList() # This contains all of your parameter estimates RAW as they come out of the optimizer
   if (EstSE) {
     sdr <- sdreport(obj1)

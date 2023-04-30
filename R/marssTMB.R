@@ -1,92 +1,83 @@
-#' Main marssTMB function
+#' Parameter estimation using TMB
+#'
+#' Minimal error checking is done in this function.  
+#' Normal calling function is `MARSS.tmb()` which in
+#' turn calls this function. Restrictions
 #' 
-#' Fit a MARSS model with TMB.
+#' * No time-varying parameters
+#' * Currently only DFA models are coded up
+#' * x0 and V0 fixed (stochastic prior)
+#' * Q is fixed (not estimated)
 #' 
-#' @param y Vector of observations n x T.
-#' @param model list with 
-#'    * R  "diagonal and equal", "unconstrained", "diagonal and unequal"
-#'    * m the number of states (factors). default is 1
-#' @param inits list of initial conditions
-#' @param method to pass to optim call; ignored for `fun="nlminb"`
-#' @param form The equation form used in the marssTMB() call. The default is "dfa". 
-#' @param fit Whether to fit the model.
-#' @param silent Show TMB output when fitting
-#' @param control list for the optimization function. `stats::nlminb()` or `stats::optim()`, control$fun.opt allows you to choose optim or nlminb as the optimization function. control$optim.method allows you to choose method for `optim()`.
-#' 
+#' @param MLEobj A properly formatted MARSS model as output by MARSS.tmb()
+
 #' @return A list with Optimization, Estimates, Fits, and AIC
-#' @example inst/examples/marssTMB_example.R
-#' @author Eli Holmes
+#' @example inst/examples/dfa_example.R
+#' @author This function is based off of dfaTMB.R written by Tim Cline while a graduate student in the Fish 507 Time Series Analysis course. Eli Holmes later modified it to replicate the MARSS(x, form="dfa") model.
 #' @export
-marssTMB <- function(y,
-                     model = NULL,
-                     inits = NULL,
-                     miss.value = as.numeric(NA),
-                     method = "TMB",
-                     form = "dfa",
-                     fit = TRUE,
-                     silent = FALSE,
-                     control = NULL,
-                     ...) {
-  pkg <- "marssTMB"
-  method <- match.arg(method)
-  allowed.fun.opt = c("optim", "nlminb")
-  fun.opt <- ifelse(is.null(control$fun.opt), "optim", control$fun.opt)
-  if (!fun.opt %in% allowed.fun.opt) {
-    stop(paste("control$fun.opt must be one of:", fun.opt))
+MARSStmb <- function(MLEobj) {
+  MODELobj <- MLEobj[["model"]]
+  ty <- t(MODELobj[["y"]])
+  model.dims <- attr(MODELobj, "model.dims")
+  n <- model.dims[["data"]][1]
+  TT <- model.dims[["data"]][2]
+  m <- model.dims[["x"]][1]
+  Covars <- coef(fit, type="matrix")$c
+  if(ncol(Covars)==1) Covars <- matrix(Covars, nrow=nrow(Covars), ncol=TT)
+  
+  # Set up the initial matrices
+  eleminits <- list()
+  for(elem in c("Z", "D", "R", "Q", "V0")){
+    eleminits[[elem]] <- coef(fit, type="matrix", what="start")[[elem]]
   }
-  if(fun.opt == "optim"){
-    optim.method <- ifelse(is.null(control$optim.method), "BFGS", control$optim.method)
-    allowed.optim.methods <- c("BFGS")
-    # Some error checks depend on an allowable method
-    if (!optim.method %in% allowed.optim.methods) {
-      stop(paste("control$optim.method must be one of:", allowed.optim.methods))
-    }
+  # Set up the maps
+  elemmaps <- list()
+  for(elem in c("Z", "D")){
+    elemmaps[[elem]] <- create.elem.maps(MLEobj, elem=elem)[["map"]]
   }
-  
-  # Check the model forms
-  
-  
-  MARSS.call <- list(y = y, inits = inits, model = model, control = control, method = "kem", form = form, silent = silent, fit = FALSE, ...)
-  
-  x <- do.call(MARSS::MARSS, MARSS.call)
-  x$method <- "TMB"
-  
-  # Error check for the DFA model
-  if(form == "dfa"){
-  is.unconstrained <- function(elem) substr(MARSS:::describe.marssMODEL(x$model)[[elem]], 1, 5) == "uncon"
-  is.diagonal <- function(elem) substr(MARSS:::describe.marssMODEL(x$model)[[elem]], 1, 8) == "diagonal"
-  is.fixed <- function(elem) substr(MARSS:::describe.marssMODEL(x$model)[[elem]], 1, 5) == "fixed"
-  is.identity <- function(elem){
-    val <- MARSS:::describe.marssMODEL(x$model)[[elem]]
-    substr(val, 1, 8) == "identity" | val == "fixed and all one (1 x 1)"
-  }
-  is.zero <- function(elem) substr(MARSS:::describe.marssMODEL(x$model)[[elem]], 1, 14) == "fixed and zero"
-  
-  # Check that R is allowed
-  elem <- "R"
-  ok <- is.diagonal(elem) | is.fixed(elem) | is.unconstrained(elem)
-  if(!ok){
-    stop(paste0(pkg, ": R must be diagonal, fixed or unconstrained"))
+  for(elem in c("R", "Q")){
+    elemmaps[[elem]] <- list(
+      diag = create.varcov.maps(MLEobj, elem=elem)[["map.diag"]],
+      offdiag = create.varcov.maps(MLEobj, elem=elem)[["map.offdiag"]]
+    )
   }
 
-  # Check that Q and B are identity
-  for(elem in c("B", "Q")){
-  ok <- is.identity(elem)
-  if(!ok) stop(paste0(pkg, ": ", elem, " must be identity"))
-  }
+  # Creates the input data list
+  data <- list(
+    model = "dfa", 
+    obs = ty,
+    Covar = coef(fit, type="matrix")[["c"]]
+  )
   
-  # Check that u, a, and C are zero
-  for(elem in c("U", "A", "C")){
-  ok <- is.zero(elem)
-  if(!ok) stop(paste0(pkg, ": ", elem, " must be zero"))
-  }
-
-  # Check that x0 and V0 are fixed
-  for(elem in c("x0", "V0")){
-    ok <- is.fixed(elem)
-    if(!ok) stop(paste0(pkg, ": ", elem, " must be fixed"))
-  }
-  }
+  # Creates the input parameter list
+  R <- eleminits[["R"]]
+  parameters <- list(
+    logsdObs = log(diag(R)),
+    cholCorr = chol(R)[upper.tri(R)],
+    covState = eleminits[["Q"]],
+    covinitState = eleminits[["V0"]],
+    D = eleminits[["D"]],
+    Z = eleminits[["Z"]],
+    u = matrix(0, nrow = TT, ncol = m)
+  )
   
-  return(x)
+  # Create the map (mask) that indicates what parameters to not estimate
+  # Note x0 and V0 are fixed (stochastic prior)
+  maplist <- list(
+    logsdObs = elemmaps[["R"]][["diag"]], 
+    cholCorr = elemmaps[["R"]][["offdiag"]], 
+    covState = factor(matrix(NA, nrow = m, ncol = m)), 
+    covinitState = factor(matrix(NA, nrow = m, ncol = m)),
+    D = elemmaps[["D"]], 
+    Z = elemmaps[["Z"]]
+    )
+  
+  # Creates the model object and runs the optimization
+  obj1 <- TMB::MakeADFun(
+    data, parameters, random = "u",
+    DLL = "marssTMB_TMBExports",
+    silent = silent, map = maplist
+  )
+  
+  
 }
