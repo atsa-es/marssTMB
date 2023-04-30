@@ -130,7 +130,8 @@ dfaTMB <- function(y,
   }
   if(fun.opt == "optim"){
     obj1$control <- control
-    opt1 <- do.call("optim", obj1)
+    opt1 <- stats::optim(obj1$par, obj1$fn, gr=obj1$gr, control = control)
+    #opt1 <- do.call("optim", obj1)
     opt1$objective <- opt1$value
   }
   if(fun.opt == "nlminb+optim"){

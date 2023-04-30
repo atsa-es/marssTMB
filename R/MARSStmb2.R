@@ -11,9 +11,10 @@
 #' 
 #' @param MLEobj A properly formatted MARSS model as output by MARSS.tmb()
 
-#' @return A list with Optimization, Estimates, Fits, and AIC
+#' @return A [MARSS::marssMLE] object
 #' @example inst/examples/dfa_example.R
-#' @author This function is based off of dfaTMB.R written by Tim Cline while a graduate student in the Fish 507 Time Series Analysis course. Eli Holmes later modified it to replicate the MARSS(x, form="dfa") model.
+#' @author Eli Holmes. This function is inspired by dfaTMB.R written by Tim Cline while a graduate student in the Fish 507 Time Series Analysis course. 
+#' @seealso [MARSS::MARSSoptim()], [MARSS::MARSSkem()]
 #' @export
 MARSStmb <- function(MLEobj) {
   MODELobj <- MLEobj[["model"]]
