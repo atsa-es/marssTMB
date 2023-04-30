@@ -112,14 +112,18 @@ dfaTMB <- function(y,
   covinitStateFac <- factor(matrix(NA, nrow = m, ncol = m))
   covStateFac <- factor(matrix(NA, nrow = m, ncol = m))
 
-  data <- c(data, Z = ZmatGen(n, m), 
+  data <- c(data, list(Z = ZmatGen(n, m), 
             covState = diag(1, m),
             cholCorr = cholCorr,
-            covinitState = diag(5, m))
+            covinitState = diag(5, m)))
 
-  maplist <- list(D = Dfac, 
-                  cholCorr = cholFac, 
-                  logsdObs = logsdObsFac)
+  maplist <- NULL
+  if(EstCovar == FALSE) {
+    maplist <- list(D = Dfac)
+  }
+  #maplist <- list(D = Dfac, 
+  #                cholCorr = cholFac, 
+  #                logsdObs = logsdObsFac)
   
   # Creates the model object and runs the optimization
   obj1 <- TMB::MakeADFun(data,
