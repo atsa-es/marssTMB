@@ -21,7 +21,8 @@ Suggests:
     MARSS,
     knitr,
     rmarkdown,
-    testthat
+    testthat,
+    broom
 LinkingTo: 
     TMB
 VignetteBuilder: 
