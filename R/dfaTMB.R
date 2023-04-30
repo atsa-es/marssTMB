@@ -70,70 +70,61 @@ dfaTMB <- function(y,
     data <- list(
       model = "dfa",
       obs = ty, 
-      Covar = Covars,
-      est_covar = as.numeric(EstCovar))
+      Covar = Covars)
   } else { 
     # If you are not estimating covariates we just pass a time series of 0's, 
     # a Dmat of 0's, and and NA factors so the paramters will not be estimated
-
+    
     Dmat <- matrix(0, ncol = 1, nrow = n)
     Dfac <- as.factor(rep(NA, n))
     Covars <- matrix(0, nrow = 1, ncol = TT)
     data <- list(
       model = "dfa", 
       obs = ty,
-      Covar = Covars,
-      est_covar = as.numeric(EstCovar)
+      Covar = Covars
     )
   }
-
+  
+  data <- c(data, list(est_covar = as.numeric(EstCovar)))
   # Creates the proper parameter set for the error structure selected
-    cholCorr <- rep(0, n * (n - 1) / 2)
-    logsdObs <- log(rep(sqrt(inits$R), n))
-    if (model$R == "diagonal and equal") {
-      logsdObsFac <- rep(1, n)
-      cholFac <- rep(NA, n * (n - 1) / 2)
-    } else if (model$R == "diagonal and unequal") {
-      logsdObsFac <- seq(1, n)
-      cholFac <- rep(NA, n * (n - 1) / 2)
-    } else if (model$R == "unconstrained") {
-      logsdObsFac <- seq(1, n)
-      cholFac <- seq(1, (n * (n - 1) / 2))
-    }
-    logsdObsFac <- factor(logsdObsFac)
-    cholFac <- factor(cholFac)
-
+  cholCorr <- rep(0, n * (n - 1) / 2)
+  logsdObs <- log(rep(sqrt(inits$R), n))
+  if (model$R == "diagonal and equal") {
+    logsdObsFac <- rep(1, n)
+    cholFac <- rep(NA, n * (n - 1) / 2)
+  } else if (model$R == "diagonal and unequal") {
+    logsdObsFac <- seq(1, n)
+    cholFac <- rep(NA, n * (n - 1) / 2)
+  } else if (model$R == "unconstrained") {
+    logsdObsFac <- seq(1, n)
+    cholFac <- seq(1, (n * (n - 1) / 2))
+  }
+  logsdObsFac <- factor(logsdObsFac)
+  cholFac <- factor(cholFac)
+  
   # Creates the input parameter list
   parameters <- list(
     logsdObs = logsdObs,
+    cholCorr = cholCorr,
+    covState = diag(1, m),
+    covinitState = diag(5, m),
     D = Dmat,
+    Z = ZmatGen(n, m),
     u = matrix(0, nrow = TT, ncol = m)
   )
   covinitStateFac <- factor(matrix(NA, nrow = m, ncol = m))
   covStateFac <- factor(matrix(NA, nrow = m, ncol = m))
-
-  data <- c(data, list(Z = ZmatGen(n, m), 
-            covState = diag(1, m),
-            cholCorr = cholCorr,
-            covinitState = diag(5, m)))
-
-  maplist <- NULL
-  if(EstCovar == FALSE) {
-    maplist <- list(D = Dfac)
-  }
-  #maplist <- list(D = Dfac, 
-  #                cholCorr = cholFac, 
-  #                logsdObs = logsdObsFac)
+  maplist <- list(Z = Zfac, D = Dfac, cholCorr = cholFac, logsdObs = logsdObsFac, covState = covStateFac, covinitState = covinitStateFac)
   
   # Creates the model object and runs the optimization
   obj1 <- TMB::MakeADFun(data,
-    parameters,
-    random = "u",
-    DLL = "marssTMB_TMBExports",
-    silent = silent,
-    map = maplist
+                         parameters,
+                         random = "u",
+                         DLL = "marssTMB_TMBExports",
+                         silent = silent,
+                         map = maplist
   )
-
+  
   # Optimization
   if(fun.opt == "nlminb"){
     opt1 <- stats::nlminb(obj1$par, obj1$fn, obj1$gr, control = control)
@@ -154,11 +145,11 @@ dfaTMB <- function(y,
   if (EstSE) {
     sdr <- sdreport(obj1)
   }
-
+  
   # ScaleFac<-as.vector(apply(pl1$u,2,FUN=sd))
   # pl1$u<-t(t(pl1$u)/ScaleFac)
   # pl1$Z<-t(t(pl1$Z)*ScaleFac)
-
+  
   # # Do the Varimax rotation from models with more that one trend so I dont have to do it later.
   # if(NumStates>1){
   #   H.inv = varimax(pl1$Z)$rotmat
@@ -169,16 +160,16 @@ dfaTMB <- function(y,
   #   pl1$u<-t(trends.rot)
   # }
   pl1$u <- t(pl1$u)
-
+  
   if (EstSE) {
     pl1$R <- matrix(sdr$value[which(names(sdr$value) == "FullCovMat")], nrow = length(logsdObs), ncol = length(logsdObs))
   } else {
     pl1$R <- diag(exp(pl1$logsdObs)) %*% obj1$report()$FullCorrMat %*% diag(exp(pl1$logsdObs))
   }
-
+  
   # Fits for each time series
   FitSeries <- pl1$Z %*% pl1$u + pl1$D %*% Covars
-
+  
   # Standard Errors for parameters
   if (EstSE) {
     SES <- list(
@@ -188,14 +179,14 @@ dfaTMB <- function(y,
       R = matrix(sdr$sd[which(names(sdr$value) == "FullCovMat")], nrow = length(logsdObs), ncol = length(logsdObs))
     )
   }
-
+  
   # Compute AIC.
   # AIC <- 2 * length(opt1$par) + 2 * opt1$value
   AIC <- 2 * length(opt1$par) + 2 * opt1$objective
   AIC
   
   
-
+  
   if (EstSE) {
     res <- list(Optimization = opt1, Estimates = pl1, Fits = FitSeries, AIC = AIC, StdErr = SES, ParCorrs = sdr$cov.fixed, logLik = -1*opt1$objective)
   } else {
