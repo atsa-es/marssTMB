@@ -13,11 +13,12 @@ MARSStmb(MLEobj)
 A \link[MARSS:marssMLE-class]{MARSS::marssMLE} object
 }
 \description{
+Status 4/30/23 fits model. Now work on \code{\link[=to_marssMLE]{to_marssMLE()}} to format a \link[MARSS:marssMLE object]{MARSS::marssMLE object}.
+}
+\details{
 Minimal error checking is done in this function.
 Normal calling function is \code{MARSS.tmb()} which in
 turn calls this function. Restrictions
-}
-\details{
 \itemize{
 \item No time-varying parameters
 \item Currently only DFA models are coded up

@@ -1,4 +1,6 @@
 #' Parameter estimation using TMB
+#' 
+#' Status 4/30/23 fits model. Now work on [to_marssMLE()] to format a [MARSS::marssMLE object].
 #'
 #' Minimal error checking is done in this function.  
 #' Normal calling function is `MARSS.tmb()` which in
