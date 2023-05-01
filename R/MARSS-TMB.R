@@ -125,7 +125,7 @@ MARSS_tmb <- function(y,
   }
   }
   
-  obj <- MARSStmb(x)
+  obj <- ifelse(fit, MARSStmb(x), x)
   
   return(obj)
 }

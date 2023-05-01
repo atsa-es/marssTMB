@@ -17,12 +17,28 @@ dat <- as.data.frame(lakeWAplanktonTrans) |>
   MARSS::zscore()
 
 ## -----------------------------------------------------------------------------
-m1.em <- MARSS(dat, model=list(R='unconstrained', m=1, tinitx=1), form='dfa', z.score=FALSE, silent = TRUE)
+system.time(m1.em <- MARSS(dat, model=list(R='unconstrained', m=1, tinitx=1), form='dfa', z.score=FALSE, silent = TRUE))
 
 ## -----------------------------------------------------------------------------
 library(marssTMB)
-m1.tmb1 <- dfaTMB(dat, model=list(m=1, R='unconstrained'))
+system.time(m1.tmb1 <- dfaTMB(dat, model=list(m=1, R='unconstrained')))
+
+## -----------------------------------------------------------------------------
+system.time(m1.tmb2 <- MARSS_tmb(dat, model=list(m=1, R='unconstrained')))
+
+## -----------------------------------------------------------------------------
+Rprof("tmb.Rprof")
 m1.tmb2 <- MARSS_tmb(dat, model=list(m=1, R='unconstrained'))
+Rprof(NULL)
+
+## -----------------------------------------------------------------------------
+summaryRprof("tmb.Rprof")$by.self
+
+## -----------------------------------------------------------------------------
+Rprof("tmb.Rprof")
+m1.tmb1 <- dfaTMB(dat, model=list(m=1, R='unconstrained'))
+Rprof(NULL)
+summaryRprof("tmb.Rprof")$by.self
 
 ## -----------------------------------------------------------------------------
 library(tidyr)

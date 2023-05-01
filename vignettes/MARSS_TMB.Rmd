@@ -42,15 +42,36 @@ dat <- as.data.frame(lakeWAplanktonTrans) |>
 
 Fit with MARSS
 ```{r}
-m1.em <- MARSS(dat, model=list(R='unconstrained', m=1, tinitx=1), form='dfa', z.score=FALSE, silent = TRUE)
+system.time(m1.em <- MARSS(dat, model=list(R='unconstrained', m=1, tinitx=1), form='dfa', z.score=FALSE, silent = TRUE))
 ```
 
 Fit with TMB. Note the syntax will be updated to match MARSS().
 ```{r}
 library(marssTMB)
-m1.tmb1 <- dfaTMB(dat, model=list(m=1, R='unconstrained'))
-m1.tmb2 <- MARSS_tmb(dat, model=list(m=1, R='unconstrained'))
+system.time(m1.tmb1 <- dfaTMB(dat, model=list(m=1, R='unconstrained')))
 ```
+
+```{r}
+system.time(m1.tmb2 <- MARSS_tmb(dat, model=list(m=1, R='unconstrained')))
+```
+
+```{r}
+Rprof("tmb.Rprof")
+m1.tmb2 <- MARSS_tmb(dat, model=list(m=1, R='unconstrained'))
+Rprof(NULL)
+```
+Total time `r summaryRprof("tmb.Rprof")$sampling.time` and breakdown
+```{r}
+summaryRprof("tmb.Rprof")$by.self
+```
+
+```{r}
+Rprof("tmb.Rprof")
+m1.tmb1 <- dfaTMB(dat, model=list(m=1, R='unconstrained'))
+Rprof(NULL)
+summaryRprof("tmb.Rprof")$by.self
+```
+
 
 Compare parameter estimates
 ```{r}

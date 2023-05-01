@@ -5,6 +5,10 @@
 * added some more info to `MARSStmb()` description
 * started draft of vignette for `MARSS_tmb()`
 
+**To do**
+
+* `MARSStmb()` Need to not pass in parameters that are not being estimated. Seems to slow things down considerably.
+
 # marssTMB 0.0.3
 
 * Working on `to_marssMLE()` which will convert the output to MARSS form.
