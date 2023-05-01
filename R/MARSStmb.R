@@ -79,8 +79,7 @@ MARSStmb <- function(MLEobj) {
   parameters <- list(
     logsdObs = log(diag(R)), # log of diagonal of R
     cholCorr = chol(R)[upper.tri(R)], # off-diagonal of chol of R
-    covState = eleminits[["Q"]],
-    covinitState = eleminits[["V0"]],
+    Q = eleminits[["Q"]],
     D = eleminits[["D"]],
     Z = eleminits[["Z"]],
     x0 = eleminits[["x0"]],
@@ -93,8 +92,7 @@ MARSStmb <- function(MLEobj) {
   maplist <- list(
     logsdObs = elemmaps[["R"]][["diag"]], 
     cholCorr = elemmaps[["R"]][["offdiag"]], 
-    covState = factor(matrix(NA, nrow = m, ncol = m)), 
-    covinitState = factor(matrix(NA, nrow = m, ncol = m)),
+    Q = factor(matrix(NA, nrow = m, ncol = m)), 
     D = elemmaps[["D"]], 
     Z = elemmaps[["Z"]],
     x0 = elemmaps[["x0"]]

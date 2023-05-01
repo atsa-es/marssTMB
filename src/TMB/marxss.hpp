@@ -13,10 +13,10 @@ template<class Type>
 Type marxss(objective_function<Type>* obj) {
   DATA_MATRIX(obs); /*  timeSteps x stateDim*/
   DATA_MATRIX(Covar);
+  DATA_MATRIX(V0); /* x[1] */
   PARAMETER_VECTOR(logsdObs);
   PARAMETER_VECTOR(cholCorr);
-  PARAMETER_MATRIX(covState); /* x[t] - x[t-1] */
-  PARAMETER_MATRIX(covinitState); /* x[1] */
+  PARAMETER_MATRIX(Q); /* x[t] - x[t-1] */
   PARAMETER_MATRIX(D);
   PARAMETER_MATRIX(Z);
   PARAMETER_MATRIX(x0);
@@ -31,8 +31,8 @@ Type marxss(objective_function<Type>* obj) {
   UNSTRUCTURED_CORR_t<Type> corMatGen(cholCorr);// This is the full Cormat
   matrix<Type> FullCorrMat=corMatGen.cov();
   
-  MVNORM_t<Type> initialState(covinitState);
-  MVNORM_t<Type> neg_log_density_process(covState);
+  MVNORM_t<Type> initialState(V0);
+  MVNORM_t<Type> neg_log_density_process(Q);
   /* Define likelihood */
   Type ans=0;
   //ans -= dnorm(vector<Type>(u.row(0)),Type(0),Type(1),1).sum();
