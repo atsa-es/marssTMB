@@ -1,17 +1,18 @@
 #' Parameter estimation using TMB
 #' 
-#' Status 4/30/23 fits model. Now work on [to_marssMLE()] to format a [MARSS::marssMLE object].
+#' Status 4/30/23 fits model. Now working on [to_marssMLE()] to format a [MARSS::marssMLE object].
 #'
 #' Minimal error checking is done in this function.  
-#' Normal calling function is `MARSS.tmb()` which in
-#' turn calls this function. Restrictions
+#' Normal calling function is [MARSS_tmb()] which in
+#' turn calls this function. Note when MARSS is updated, the
+#' normal calling function will be [MARSS::MARSS()]. Restrictions
 #' 
 #' * No time-varying parameters
 #' * Currently only DFA models are coded up
 #' * x0 and V0 fixed (stochastic prior)
 #' * Q is fixed (not estimated)
 #' 
-#' @param MLEobj A properly formatted MARSS model as output by MARSS.tmb()
+#' @param MLEobj A properly formatted MARSS model as output by [MARSS_tmb()]
 
 #' @return A [MARSS::marssMLE] object
 #' @example inst/examples/dfa_example.R

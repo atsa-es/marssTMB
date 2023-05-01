@@ -26,7 +26,7 @@
 #' @example inst/examples/MARSS_TMB_example.R
 #' @author Eli Holmes
 #' @export
-MARSS.tmb <- function(y,
+MARSS_tmb <- function(y,
                      model = NULL,
                      inits = NULL,
                      miss.value = as.numeric(NA),

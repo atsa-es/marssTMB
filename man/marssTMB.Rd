@@ -7,18 +7,19 @@
 MARSStmb(MLEobj)
 }
 \arguments{
-\item{MLEobj}{A properly formatted MARSS model as output by MARSS.tmb()}
+\item{MLEobj}{A properly formatted MARSS model as output by \code{\link[=MARSS_tmb]{MARSS_tmb()}}}
 }
 \value{
 A \link[MARSS:marssMLE-class]{MARSS::marssMLE} object
 }
 \description{
-Status 4/30/23 fits model. Now work on \code{\link[=to_marssMLE]{to_marssMLE()}} to format a \link[MARSS:marssMLE object]{MARSS::marssMLE object}.
+Status 4/30/23 fits model. Now working on \code{\link[=to_marssMLE]{to_marssMLE()}} to format a \link[MARSS:marssMLE object]{MARSS::marssMLE object}.
 }
 \details{
 Minimal error checking is done in this function.
-Normal calling function is \code{MARSS.tmb()} which in
-turn calls this function. Restrictions
+Normal calling function is \code{\link[=MARSS_tmb]{MARSS_tmb()}} which in
+turn calls this function. Note when MARSS is updated, the
+normal calling function will be \code{\link[MARSS:MARSS]{MARSS::MARSS()}}. Restrictions
 \itemize{
 \item No time-varying parameters
 \item Currently only DFA models are coded up

@@ -1,7 +1,7 @@
 # marssTMB 0.0.4
 
 * Eric added tests and covariates to DFA vignette.
-* moved MARSS into Depends
+* moved MARSS into Depends and adde to imports in `marssTMB-package.R`
 
 # marssTMB 0.0.3
 
@@ -13,7 +13,7 @@ Fixing the parameter output from TMB to have the parameter names. Z and D are ea
 
 # marssTMB 0.0.2
 
-* Added `MARSS.tmb()`. This sets up the model for `MARSStmb()` and for now ensures that the model will work with `marxss.hpp` which only allows DFA at the moment.
+* Added `MARSS_tmb()`. This sets up the model for `MARSStmb()` and for now ensures that the model will work with `marxss.hpp` which only allows DFA at the moment.
 * Added `MARSStmb()`. This is symmetric to `MARSSoptim()`. Working to match the output to `MARSS()` so that all the MARSS functions work.
 * Added `src/TMB/marxss.hpp` which is the MARSS model version with MARSS parameter names.
 

@@ -8,4 +8,4 @@ dat <- as.data.frame(lakeWAplanktonTrans) |>
   MARSS::zscore()
 
 #fit with MARSS
-fit <- MARSS.tmb(dat, model=list(m=3))
+fit <- MARSS_tmb(dat, model=list(m=3))
