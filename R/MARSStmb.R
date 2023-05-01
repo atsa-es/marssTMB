@@ -35,14 +35,18 @@ MARSStmb <- function(MLEobj) {
   n <- model.dims[["data"]][1]
   TT <- model.dims[["data"]][2]
   m <- model.dims[["x"]][1]
-  Covars <- MODELobj[["fixed"]][["c"]]
+  Covars <- MODELobj[["fixed"]][["d"]]
   control <- MLEobj[["control"]]
   fun.opt <- control[["fun.opt"]]
   tmb.silent <- control[["tmb.silent"]]
   optim.method <- control[["optim.method"]]
   control <- control[!(names(control) %in% c("fun.opt", "optim.method", "tmb.silent"))]
   # Expand out to full covariate matrix
-  if(ncol(Covars)==1) Covars <- matrix(Covars, nrow=nrow(Covars), ncol=TT)
+  has_covars <- TRUE
+  if(ncol(Covars) == 1){
+    if(Covars==0) has_covars <- FALSE
+    Covars <- matrix(Covars, nrow=nrow(Covars), ncol=TT)
+  }
   
   # Set up the initial matrices
   eleminits <- list()
@@ -68,7 +72,7 @@ MARSStmb <- function(MLEobj) {
     model = "marxss", 
     obs = ty,
     Covar = Covars,
-    V0 = eleminits[["V0"]]
+    has_covars = as.numeric(has_covars)
   )
   
   # Note x0 and V0 are fixed (stochastic prior) for DFA
@@ -80,6 +84,7 @@ MARSStmb <- function(MLEobj) {
     logsdObs = log(diag(R)), # log of diagonal of R
     cholCorr = chol(R)[upper.tri(R)], # off-diagonal of chol of R
     Q = eleminits[["Q"]],
+    V0 = eleminits[["V0"]],
     D = eleminits[["D"]],
     Z = eleminits[["Z"]],
     x0 = eleminits[["x0"]],
@@ -93,6 +98,7 @@ MARSStmb <- function(MLEobj) {
     logsdObs = elemmaps[["R"]][["diag"]], 
     cholCorr = elemmaps[["R"]][["offdiag"]], 
     Q = factor(matrix(NA, nrow = m, ncol = m)), 
+    V0 = factor(matrix(NA, nrow = m, ncol = m)), 
     D = elemmaps[["D"]], 
     Z = elemmaps[["Z"]],
     x0 = elemmaps[["x0"]]

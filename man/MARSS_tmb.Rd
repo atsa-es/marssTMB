@@ -13,7 +13,7 @@ MARSS_tmb(
   form = "dfa",
   fit = TRUE,
   silent = FALSE,
-  control = NULL,
+  control = list(fun.opt = "nlminb"),
   ...
 )
 }

@@ -24,7 +24,7 @@ library(marssTMB)
 system.time(m1.tmb1 <- dfaTMB(dat, model=list(m=1, R='unconstrained')))
 
 ## -----------------------------------------------------------------------------
-system.time(m1.tmb2 <- MARSS_tmb(dat, model=list(m=1, R='unconstrained')))
+system.time(m1.tmb2 <- MARSS_tmb(dat, model=list(m=1, R='unconstrained'), control=list(fun.opt="nlminb")))
 
 ## -----------------------------------------------------------------------------
 Rprof("tmb.Rprof")

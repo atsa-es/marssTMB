@@ -34,7 +34,7 @@ MARSS_tmb <- function(y,
                      form = "dfa",
                      fit = TRUE,
                      silent = FALSE,
-                     control = NULL,
+                     control = list(fun.opt="nlminb"),
                      ...) {
   pkg <- "marssTMB"
   method <- match.arg(method)

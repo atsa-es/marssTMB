@@ -13,10 +13,11 @@ template<class Type>
 Type marxss(objective_function<Type>* obj) {
   DATA_MATRIX(obs); /*  timeSteps x stateDim*/
   DATA_MATRIX(Covar);
-  DATA_MATRIX(V0); /* x[1] */
+  DATA_INTEGER(has_covars);
   PARAMETER_VECTOR(logsdObs);
   PARAMETER_VECTOR(cholCorr);
   PARAMETER_MATRIX(Q); /* x[t] - x[t-1] */
+  PARAMETER_MATRIX(V0); /* x[1] */
   PARAMETER_MATRIX(D);
   PARAMETER_MATRIX(Z);
   PARAMETER_MATRIX(x0);
@@ -42,7 +43,8 @@ Type marxss(objective_function<Type>* obj) {
   }
   
   matrix<Type> pred(timeSteps,obsDim);  
-  pred = (Z * u.transpose()) + (D * Covar);
+  pred = Z * u.transpose();
+  if(has_covars) pred += D * Covar;
   
   for(int i=0;i<timeSteps;i++){ //move one time step at a time
     int nonNAcount = 0; //start at zero NA values
