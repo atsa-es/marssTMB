@@ -23,7 +23,7 @@
 #' @param control list for the optimization function. [stats::nlminb()] or [stats::optim()], `control$fun.opt` allows you to choose optim or nlminb as the optimization function. `control$optim.method` allows you to choose method for `optim()`.
 #' 
 #' @return A list with Optimization, Estimates, Fits, and AIC
-#' @example inst/examples/marssTMB_example.R
+#' @example inst/examples/MARSS_TMB_example.R
 #' @author Eli Holmes
 #' @export
 MARSS.tmb <- function(y,
@@ -38,29 +38,55 @@ MARSS.tmb <- function(y,
                      ...) {
   pkg <- "marssTMB"
   method <- match.arg(method)
+  # This section is temporary
+  # Needed now because currently MARSS does not allow fun.opt in control
+  if(is.null(control$fun.opt)){
+    fun.opt <- "optim"
+    optim.method <- ifelse(is.null(control$optim.method), "BFGS", control$optim.method)
+  }else{
+    fun.opt <- control$fun.opt
+  }
+  control <- control[!(names(control) %in% c("fun.opt", "optim.method"))]
+  
+  # Set up a MARSS() call list and call to get a properly set up MARSS model
+  MARSS.call <- list(y = y, inits = inits, model = model, control = control, method = "BFGS", form = form, silent = silent, fit = FALSE, ...)
+  # x is now a marssMLE object but no par element since not fit
+  x <- do.call(MARSS::MARSS, MARSS.call)
+  
+  # Set up the control list a TMB fit
+  # Temporary until method="tmb" is added to MARSS
+  x[["method"]] <- "TMB"
   allowed.fun.opt = c("optim", "nlminb")
-  fun.opt <- ifelse(is.null(control$fun.opt), "optim", control$fun.opt)
-  if (!fun.opt %in% allowed.fun.opt) {
-    stop(paste("control$fun.opt must be one of:", fun.opt))
+  if (!(fun.opt %in% allowed.fun.opt)) {
+    stop(paste("control$fun.opt must be one of:", paste(allowed.fun.opt, collapse=", ")))
   }
   if(fun.opt == "optim"){
-    optim.method <- ifelse(is.null(control$optim.method), "BFGS", control$optim.method)
     allowed.optim.methods <- c("BFGS")
     # Some error checks depend on an allowable method
-    if (!optim.method %in% allowed.optim.methods) {
-      stop(paste("control$optim.method must be one of:", allowed.optim.methods))
+    if (!(optim.method %in% allowed.optim.methods)) {
+      stop(paste("control$optim.method must be one of:", paste(allowed.optim.methods, collapse=", ")))
     }
   }
+  control[["fun.opt"]] <- fun.opt
+  if(fun.opt == "optim") control[["optim.method"]] <- optim.method
+  control[["tmb.silent"]] <- TRUE
+  # set up control defaults
+  if(fun.opt == "nlminb"){
+    allowed.in.control <- c("eval.max", "iter.max", "trace", "abs.tol", "rel.tol", "x.tol", "xf.tol", "step.min", "step.max", "sing.tol", "scale.init", "diff.g")
+    if(is.null(control$iter.max)) control$iter.max = control$maxit
+    if(is.null(control$eval.max)) control$eval.max = control$maxit
+  }
+  if(fun.opt == "optim"){
+    allowed.in.control <- c("trace", "fnscale", "parscale", "ndeps", "maxit", "abstol", "reltol", "alpha", "beta", "gamma", "REPORT", "warn.1d.NelderMead", "type", "lmm", "factr", "pgtol", "temp", "tmax")
+    if(is.null(control$reltol)) control$reltol = 1e-12
+    if(is.null(control$maxit)) control$maxit = control$maxit
+  }
+  control <- control[names(control) %in% c("fun.opt", "optim.method", "tmb.silent", allowed.in.control)]
+  x[["control"]] <- control
   
-  # Check the model forms
-  
-  
-  MARSS.call <- list(y = y, inits = inits, model = model, control = control, method = "kem", form = form, silent = silent, fit = FALSE, ...)
-  
-  x <- do.call(MARSS::MARSS, MARSS.call)
-  x$method <- "TMB"
   
   # Error check for the DFA model
+  # This section is temporary. Currently only DFA model is allowed.
   if(form == "dfa"){
   is.unconstrained <- function(elem) substr(MARSS:::describe.marssMODEL(x$model)[[elem]], 1, 5) == "uncon"
   is.diagonal <- function(elem) substr(MARSS:::describe.marssMODEL(x$model)[[elem]], 1, 8) == "diagonal"
@@ -97,5 +123,7 @@ MARSS.tmb <- function(y,
   }
   }
   
-  return(x)
+  obj <- MARSStmb(x)
+  
+  return(obj)
 }

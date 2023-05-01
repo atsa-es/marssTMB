@@ -3,8 +3,7 @@
 #define TMB_LIB_INIT R_init_marssTMB_TMBExports
 #include <TMB.hpp>
 #include "dfa.hpp"
-#include "GammaNLL.hpp"
-#include "NormalNLL.hpp"
+#include "marxss.hpp"
 #include "uni.hpp"
 
 template<class Type>
@@ -12,10 +11,8 @@ Type objective_function<Type>::operator() () {
   DATA_STRING(model);
   if(model == "dfa") {
     return dfa(this);
-  } else if(model == "GammaNLL") {
-    return GammaNLL(this);
-  } else if(model == "NormalNLL") {
-    return NormalNLL(this);
+  } else if(model == "marxss") {
+    return marxss(this);
   } else if(model == "uni") {
     return uni(this);
   } else {
