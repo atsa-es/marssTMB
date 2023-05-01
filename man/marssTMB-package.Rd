@@ -23,7 +23,11 @@ Useful links:
 Authors:
 \itemize{
   \item Eric Ward \email{eric.ward@noaa.gov} (\href{https://orcid.org/0000-0002-4359-0296}{ORCID})
-  \item Timothy Cline \email{timothy.cline2@montana.edu} (\href{https://orcid.org/0000-0002-4955-654X}{ORCID})
+}
+
+Other contributors:
+\itemize{
+  \item Timothy Cline \email{timothy.cline2@montana.edu} (\href{https://orcid.org/0000-0002-4955-654X}{ORCID}) [contributor]
 }
 
 }

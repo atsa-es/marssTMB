@@ -1,6 +1,6 @@
 # marssTMB
 
-The beginning of a companion R package to MARSS that fits MARSS models with TMB.
+The beginning of a companion R package to MARSS that fits MARSS models with TMB. The package is in very active development. See [changelog]("news/index.html") for current status.
 
 See the documentation at [marssTMB](https://atsa-es.github.io/marssTMB/)
 
