@@ -13,6 +13,7 @@ template<class Type>
 Type dfa(objective_function<Type>* obj) {
   DATA_MATRIX(obs); /*  timeSteps x stateDim*/
   DATA_MATRIX(Covar);
+  DATA_INTEGER(est_covar);
   PARAMETER_VECTOR(logsdObs);
   PARAMETER_VECTOR(cholCorr);
   PARAMETER_MATRIX(covState); /* x[t] - x[t-1] */
@@ -41,7 +42,8 @@ Type dfa(objective_function<Type>* obj) {
   }
   
   matrix<Type> pred(timeSteps,obsDim);  
-  pred = (Z * u.transpose()) + (D * Covar);
+  pred = Z * u.transpose();
+  if(est_covar) pred += D * Covar;
   
   for(int i=0;i<timeSteps;i++){ //move one time step at a time
     int nonNAcount = 0; //start at zero NA values
@@ -78,14 +80,19 @@ Type dfa(objective_function<Type>* obj) {
   matrix<Type> dSD(obsDim,1);
   dSD = sdObs;
   FullCovMat = dSD.asDiagonal() * FullCorrMat * dSD.asDiagonal();
-  ADREPORT(Z);
-  ADREPORT(D);
-  ADREPORT(u);
-  ADREPORT(FullCovMat);
   
+  ADREPORT(Z);
+  REPORT(Z);
+  if(est_covar) {
+    ADREPORT(D);
+    REPORT(D);
+  }
+  ADREPORT(u);
+  REPORT(u);
+  ADREPORT(FullCovMat);
   REPORT(FullCorrMat);
   
-  return ans;
+  return ans; // ans is the NLL
 }
 
 #undef TMB_OBJECTIVE_PTR

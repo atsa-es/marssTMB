@@ -112,6 +112,37 @@ m1.tmb <- dfaTMB(dat, model=mod.list)
 c(m1.bfgs$logLik, m1.tmb$logLik)
 ```
 
+## Include a comparison with covariates
+
+```{r}
+data(lakeWAplankton, package = "MARSS")
+phytoplankton <- c("Cryptomonas", "Diatoms", "Greens", "Unicells", "Other.algae")
+dat <- as.data.frame(lakeWAplanktonTrans) |>
+  subset(Year >= 1980 & Year <= 1989) |>
+  subset(select=phytoplankton) |>
+  t() |>
+  MARSS::zscore()
+
+# add a temperature covariate
+temp <- as.data.frame(lakeWAplanktonTrans) |>
+    subset(Year >= 1980 & Year <= 1989) |>
+    subset(select=Temp)
+covar <- t(temp)
+m_cov_tmb <- dfaTMB(dat, model=list(m=1, R='diagonal and unequal'), 
+                    EstCovar = TRUE, Covars = covar)
+m_cov_tmb$Estimates$D
+
+# add a 2nd covariate
+TP <- as.data.frame(lakeWAplanktonTrans) |>
+    subset(Year >= 1980 & Year <= 1989) |>
+    subset(select=TP)
+covar <- rbind(covar, t(TP))
+m_cov2_tmb <- dfaTMB(dat, model=list(m=1, R='diagonal and unequal'), 
+                    EstCovar = TRUE, Covars = covar)
+m_cov2_tmb$Estimates$D
+```
+
+
 ## Look at a bigger data set
 
 Compare three states models with R diagonal and unequal and 12 time series. The EM algorithm and TMB algorithms struggles to converge with DFA models. This is specific to this set of time series.

@@ -34,7 +34,11 @@ dfaTMB(
 
 \item{EstCovar}{TRUE/FALSE}
 
-\item{silent}{Show TMB output when fitting}
+\item{Covars}{An optional matrix, dimensioned nD x T, where nD is the number of covariates}
+
+\item{EstSE}{TRUE / FALSE, whether to return the Hessian from the TMB sdreport}
+
+\item{silent}{Show TMB output when fitting, defaults to TRUE}
 
 \item{fun.opt}{function to use for optimization: \code{stats::nlminb()} or \code{stats::optim()}}
 
