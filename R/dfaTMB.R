@@ -1,4 +1,6 @@
-#' Fit a DFA model with TMB.
+#' Tim Cline's original code to Fit a DFA model with TMB.
+#' 
+#' This can be called to fit a DFA with his syntax, but generally no work should be done here.
 #'
 #' @param y Vector of observations n x T.
 #' @param model list with 

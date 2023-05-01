@@ -57,17 +57,21 @@
     </div>
 
     <table class="ref-index"><colgroup><col class="alias"><col class="title"></colgroup><tbody><tr><th colspan="2">
-          <h2 id="all-functions">All functions <a href="#all-functions" class="anchor" aria-hidden="true"></a></h2>
-          <p class="section-desc"></p>
+          <h2 id="main-function">Main function <a href="#main-function" class="anchor" aria-hidden="true"></a></h2>
+          <p class="section-desc"></p><p>This is the main user function. On top of this all MARSS functions should work.</p>
         </th>
       </tr></tbody><tbody><tr><td>
-          <p><code><a href="MARSS.tmb.html">MARSS.tmb()</a></code> </p>
+          <p><code><a href="MARSS_tmb.html">MARSS_tmb()</a></code> </p>
         </td>
         <td><p>Main marssTMB function</p></td>
-      </tr><tr><td>
+      </tr></tbody><tbody><tr><th colspan="2">
+          <h2 id="internal-functions">Internal functions <a href="#internal-functions" class="anchor" aria-hidden="true"></a></h2>
+          <p class="section-desc"></p><p>These are the functions that the developers are working on. All are exported for now and can be used.</p>
+        </th>
+      </tr></tbody><tbody><tr><td>
           <p><code><a href="MARSStmb.html">MARSStmb()</a></code> </p>
         </td>
-        <td><p>Parameter estimation using TMB</p></td>
+        <td><p>Internal function: Parameter estimation using TMB</p></td>
       </tr><tr><td>
           <p><code><a href="create.elem.maps.html">create.elem.maps()</a></code> </p>
         </td>
@@ -77,13 +81,17 @@
         </td>
         <td><p>Create maps for diagonal and unconstrained varcov matrices</p></td>
       </tr><tr><td>
+          <p><code><a href="to_marssMLE.html">to_marssMLE()</a></code> </p>
+        </td>
+        <td><p>Internal function: helper function to make marssMLE obj</p></td>
+      </tr></tbody><tbody><tr><th colspan="2">
+          <h2 id="other-functions">Other functions <a href="#other-functions" class="anchor" aria-hidden="true"></a></h2>
+          <p class="section-desc"></p><p>These are functions that were used as templates for the more general [MARSStmb()] function.</p>
+        </th>
+      </tr></tbody><tbody><tr><td>
           <p><code><a href="dfaTMB.html">dfaTMB()</a></code> </p>
         </td>
-        <td><p>Fit a DFA model with TMB.</p></td>
-      </tr><tr><td>
-          <p><code><a href="to.marssMLE.html">to.marssMLE()</a></code> </p>
-        </td>
-        <td><p>Temporary helper function to make marssMLE obj</p></td>
+        <td><p>Tim Cline's original code to Fit a DFA model with TMB.</p></td>
       </tr><tr><td>
           <p><code><a href="uniTMB.html">uniTMB()</a></code> </p>
         </td>

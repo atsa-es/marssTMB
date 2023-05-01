@@ -1,10 +1,11 @@
-#' Temporary helper function to make marssMLE obj
+#' Internal function: helper function to make marssMLE obj
 #' 
-#' Takes output from MARSStmb()
+#' Takes output from [MARSStmb()] and makes into [MARSS::marssMLE] object.
 #' 
-#' @param x list as output from [MARSStmb()]: has obj1 and opt1
+#' @param x list as output from [MARSStmb()]: has obj.function and opt.output
+#' @return A [MARSS::marssMLE] object
 #' @export
-to.marssMLE <- function(x){
+to_marssMLE <- function(x){
   obj1 <- x$obj.function
   opt.output <- x$opt.output
   MLEobj <- x$MLEobj

@@ -2,7 +2,7 @@
 % Please edit documentation in R/MARSStmb.R
 \name{MARSStmb}
 \alias{MARSStmb}
-\title{Parameter estimation using TMB}
+\title{Internal function: Parameter estimation using TMB}
 \usage{
 MARSStmb(MLEobj)
 }
@@ -10,10 +10,10 @@ MARSStmb(MLEobj)
 \item{MLEobj}{A properly formatted MARSS model as output by \code{\link[=MARSS_tmb]{MARSS_tmb()}}}
 }
 \value{
-A \link[MARSS:marssMLE-class]{MARSS::marssMLE} object
+a list with \code{obj.function}, \code{opt.output} and \code{MLEobj}
 }
 \description{
-Status 4/30/23 fits model. Now working on \code{\link[=to_marssMLE]{to_marssMLE()}} to format a \link[MARSS:marssMLE object]{MARSS::marssMLE object}.
+Status 5/1/23 fits model. Now working on \code{\link[=to_marssMLE]{to_marssMLE()}} to format a \link[MARSS:marssMLE object]{MARSS::marssMLE object}.
 }
 \details{
 Minimal error checking is done in this function.
@@ -25,6 +25,14 @@ normal calling function will be \code{\link[MARSS:MARSS]{MARSS::MARSS()}}. Restr
 \item Currently only DFA models are coded up
 \item x0 and V0 fixed (stochastic prior)
 \item Q is fixed (not estimated)
+}
+
+This function returns a list which is passed to \code{\link[=to_marssMLE]{to_marssMLE()}} for further
+processing.
+\itemize{
+\item \code{obj.function} is the raw output from the \code{\link[TMB:MakeADFun]{TMB::MakeADFun()}} call.
+\item \code{opt.output} is the raw output from the optimization call (optim or nlminb)
+\item \code{MLEobj} is the unfitted (no par element) \link[MARSS:marssMLE-class]{MARSS::marssMLE} object. Has all the parameters and correct structure.
 }
 }
 \examples{
@@ -43,7 +51,7 @@ m1.tmb <- dfaTMB(dat, model=list(R='unconstrained', m=1))
 c(m1.em$logLik, m1.tmb$logLik)
 }
 \seealso{
-\code{\link[MARSS:MARSSoptim]{MARSS::MARSSoptim()}}, \code{\link[MARSS:MARSSkem]{MARSS::MARSSkem()}}
+\code{\link[MARSS:MARSSoptim]{MARSS::MARSSoptim()}}, \code{\link[MARSS:MARSSkem]{MARSS::MARSSkem()}}, \code{\link[=to_marssMLE]{to_marssMLE()}}
 }
 \author{
 Eli Holmes. This function is inspired by dfaTMB.R written by Tim Cline while a graduate student in the Fish 507 Time Series Analysis course.

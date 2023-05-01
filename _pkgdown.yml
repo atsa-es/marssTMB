@@ -4,3 +4,29 @@ home:
   links:
   - text: ATSA Homepage
     href: http://atsa-es.github.io
+    
+reference:
+- title: Main function
+  desc: >
+    This is the main user function. On top of this all MARSS functions should work.
+  contents:
+  - MARSS_tmb
+  
+- title: Internal functions
+  desc: >
+    These are the functions that the developers are working on. All are exported for now and can be used.
+  contents:
+  - MARSStmb
+  - create.elem.maps
+  - create.varcov.maps
+  - to_marssMLE
+  
+- title: Other functions
+  desc: >
+    These are functions that were used as templates for the more general [MARSStmb()] function.
+  contents:
+  - dfaTMB
+  - uniTMB
+
+
+

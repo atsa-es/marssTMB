@@ -2,6 +2,7 @@
 
 * Eric added tests and covariates to DFA vignette.
 * moved MARSS into Depends and adde to imports in `marssTMB-package.R`
+* added some more info to `MARSStmb()` description
 
 # marssTMB 0.0.3
 

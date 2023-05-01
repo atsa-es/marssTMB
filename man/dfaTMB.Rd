@@ -2,7 +2,7 @@
 % Please edit documentation in R/dfaTMB.R
 \name{dfaTMB}
 \alias{dfaTMB}
-\title{Fit a DFA model with TMB.}
+\title{Tim Cline's original code to Fit a DFA model with TMB.}
 \usage{
 dfaTMB(
   y,
@@ -50,7 +50,7 @@ dfaTMB(
 A list with Optimization, Estimates, Fits, and AIC
 }
 \description{
-Fit a DFA model with TMB.
+This can be called to fit a DFA with his syntax, but generally no work should be done here.
 }
 \examples{
 library(MARSS)
