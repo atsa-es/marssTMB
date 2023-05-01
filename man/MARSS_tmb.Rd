@@ -39,7 +39,7 @@ MARSS_tmb(
 \item{control}{list for the optimization function. \code{\link[stats:nlminb]{stats::nlminb()}} or \code{\link[stats:optim]{stats::optim()}}, \code{control$fun.opt} allows you to choose optim or nlminb as the optimization function. \code{control$optim.method} allows you to choose method for \code{optim()}.}
 }
 \value{
-A list with Optimization, Estimates, Fits, and AIC
+The output list from \code{\link[=MARSStmb]{MARSStmb()}}
 }
 \description{
 Fit a MARSS model with TMB + optimization. TMB does fast computation of the
