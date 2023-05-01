@@ -22,7 +22,7 @@
 #' @param silent Show TMB output when fitting
 #' @param control list for the optimization function. [stats::nlminb()] or [stats::optim()], `control$fun.opt` allows you to choose optim or nlminb as the optimization function. `control$optim.method` allows you to choose method for `optim()`.
 #' 
-#' @return A list with Optimization, Estimates, Fits, and AIC
+#' @return The output list from [MARSStmb()]
 #' @example inst/examples/MARSS_TMB_example.R
 #' @author Eli Holmes
 #' @export
