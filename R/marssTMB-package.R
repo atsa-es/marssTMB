@@ -1,4 +1,5 @@
 #' @rawNamespace useDynLib(marssTMB, .registration=TRUE); useDynLib(marssTMB_TMBExports)
+#' @import MARSS
 #' @keywords internal
 "_PACKAGE"
 

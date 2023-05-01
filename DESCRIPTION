@@ -1,6 +1,6 @@
 Package: marssTMB
 Title: Fits MARSS models with TMB
-Version: 0.0.3
+Version: 0.0.4
 Authors@R: 
     c(person("Eli", "Holmes", , "eli.holmes@noaa.gov", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-9128-8393")),
@@ -14,11 +14,11 @@ BugReports: https://github.com/atsa-es/marssTMB/issues
 License: GPL (>= 2)
 Imports: 
     TMB (>= 1.9.3),
-    stats
+    stats,
+    MARSS
 Suggests: 
     ggplot2,
     tidyr,
-    MARSS,
     knitr,
     rmarkdown,
     testthat,

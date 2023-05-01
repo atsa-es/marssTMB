@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">marssTMB</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.4</span>
       </span>
     </div>
 
@@ -101,8 +101,16 @@
 <dd><p>TRUE/FALSE</p></dd>
 
 
+<dt>Covars</dt>
+<dd><p>An optional matrix, dimensioned nD x T, where nD is the number of covariates</p></dd>
+
+
+<dt>EstSE</dt>
+<dd><p>TRUE / FALSE, whether to return the Hessian from the TMB sdreport</p></dd>
+
+
 <dt>silent</dt>
-<dd><p>Show TMB output when fitting</p></dd>
+<dd><p>Show TMB output when fitting, defaults to TRUE</p></dd>
 
 
 <dt>fun.opt</dt>

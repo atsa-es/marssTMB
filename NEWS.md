@@ -1,3 +1,8 @@
+# marssTMB 0.0.4
+
+* Eric added tests and covariates to DFA vignette.
+* moved MARSS into Depends
+
 # marssTMB 0.0.3
 
 * Working on `to_marssMLE()` which will convert the output to MARSS form.
