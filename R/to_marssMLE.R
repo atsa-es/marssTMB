@@ -5,21 +5,23 @@
 #' @param x list as output from [MARSStmb()]: has obj1 and opt1
 #' @export
 to.marssMLE <- function(x){
-  obj1 <- x$obj1
-  opt1 <- x$opt1
+  obj1 <- x$obj.function
+  opt.output <- x$opt.output
   MLEobj <- x$MLEobj
+  control <- MLEobj$control
+  fun.opt <-paste0(c(control$fun.opt, control$optim.method), collapse=" method=")
   
 MLEobj.return <- MLEobj
-MLEobj.return$iter.record <- optim.output$message
-#   MLEobj.return$control=MLEobj$control
-#   MLEobj.return$model=MLEobj$model
-MLEobj.return$start <- tmp.inits # set to what was used here
-MLEobj.return$convergence <- optim.output$convergence
-if (optim.output$convergence %in% c(1, 0)) {
-  if ((!control$silent || control$silent == 2) && optim.output$convergence == 0) cat(paste("Success! Converged in ", optim.output$counts[1], " iterations.\n", "Function ", kf.function, " used for likelihood calculation.\n", sep = ""))
-  if ((!control$silent || control$silent == 2) && optim.output$convergence == 1) cat(paste("Warning! Max iterations of ", control$maxit, " reached before convergence.\n", "Function ", kf.function, " used for likelihood calculation.\n", sep = ""))
+MLEobj.return$iter.record <- opt.output$message
+MLEobj.return$start <- MLEobj$start 
+MLEobj.return$convergence <- opt.output$convergence
+if (opt.output$convergence %in% c(1, 0)) {
+  funinfo <- paste0("Function ", fun.opt, "used for optimization and TMB for likelihood calculation.\n")
+  if ((!control$silent || control$silent == 2) && opt.output$convergence == 0) cat(paste0("Success! Converged in ", opt.output$iterations, " iterations.\n", funinfo))
+  if ((!control$silent || control$silent == 2) && opt.output$convergence == 1) cat(paste0("Warning! Max iterations of ", control$maxit, " reached before convergence.\n", funinfo))
   
-  tmp.MLEobj <- MARSSvectorizeparam(tmp.MLEobj, optim.output$par)
+  browser()
+  tmp.MLEobj <- MARSSvectorizeparam(tmp.MLEobj, opt.output$par)
   # par has the fixed and estimated values using t chol of Q and R
   
   # back transform Q, R and V0 if needed from chol form to usual form

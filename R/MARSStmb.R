@@ -100,14 +100,26 @@ MARSStmb <- function(MLEobj) {
   # Optimization
   if(MLEobj[["control"]][["fun.opt"]] == "nlminb"){
     opt1 <- stats::nlminb(obj1$par, obj1$fn, obj1$gr, control = control)
+    # add output also found in optim output
+    opt1$value <- opt1$objective
+    opt1$counts <- opt1$evaluations
+    # add this on for printing
+    MLEobj[["control"]][["maxit"]] <-  MLEobj[["control"]][["iter.max"]]
   }
   if(MLEobj[["control"]][["fun.opt"]] == "optim"){
     opt1 <- stats::optim(obj1$par, obj1$fn, gr=obj1$gr, control = control)
     #obj1$control <- MLEobj[["control"]]
     #opt1 <- do.call("optim", obj1)
     opt1$objective <- opt1$value
+    opt1$iterations <- opt1$counts[2]
   }
   
-  return(list(obj1 = obj1, opt1 = opt1, MLEobj = MLEobj))
+  # Add names to the par output
+  model.elem <- names(MODELobj[["fixed"]])
+  for(elem in model.elem){
+    names(opt1$par)[names(opt1$par)==elem] <- paste0(elem, ".", levels(obj1$env$map[[elem]]))
+  }
+  
+  return(list(obj.function = obj1, opt.output = opt1, MLEobj = MLEobj))
 
 }

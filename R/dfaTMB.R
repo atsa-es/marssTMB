@@ -162,7 +162,7 @@ dfaTMB <- function(y,
   pl1$u <- t(pl1$u)
 
   if (EstSE) {
-    # typo? this looks like SE
+    # If returning SE, then R is the raw values (chol of R)
     pl1$R <- matrix(sdr$value[which(names(sdr$value) == "FullCovMat")], nrow = length(logsdObs), ncol = length(logsdObs))
   } else {
     pl1$R <- diag(exp(pl1$logsdObs)) %*% obj1$report()$FullCorrMat %*% diag(exp(pl1$logsdObs))

@@ -49,7 +49,7 @@ MARSS.tmb <- function(y,
   control <- control[!(names(control) %in% c("fun.opt", "optim.method"))]
   
   # Set up a MARSS() call list and call to get a properly set up MARSS model
-  MARSS.call <- list(y = y, inits = inits, model = model, control = control, method = "BFGS", form = form, silent = silent, fit = FALSE, ...)
+  MARSS.call <- list(y = y, inits = inits, model = model, control = control, method = "BFGS", form = form, silent = TRUE, fit = FALSE, ...)
   # x is now a marssMLE object but no par element since not fit
   x <- do.call(MARSS::MARSS, MARSS.call)
   
@@ -72,30 +72,32 @@ MARSS.tmb <- function(y,
   control[["tmb.silent"]] <- TRUE
   # set up control defaults
   if(fun.opt == "nlminb"){
-    allowed.in.control <- c("eval.max", "iter.max", "trace", "abs.tol", "rel.tol", "x.tol", "xf.tol", "step.min", "step.max", "sing.tol", "scale.init", "diff.g")
+    allowed.in.opt.fun <- c("eval.max", "iter.max", "trace", "abs.tol", "rel.tol", "x.tol", "xf.tol", "step.min", "step.max", "sing.tol", "scale.init", "diff.g")
     if(is.null(control$iter.max)) control$iter.max = control$maxit
     if(is.null(control$eval.max)) control$eval.max = control$maxit
   }
   if(fun.opt == "optim"){
-    allowed.in.control <- c("trace", "fnscale", "parscale", "ndeps", "maxit", "abstol", "reltol", "alpha", "beta", "gamma", "REPORT", "warn.1d.NelderMead", "type", "lmm", "factr", "pgtol", "temp", "tmax")
+    allowed.in.opt.fun <- c("trace", "fnscale", "parscale", "ndeps", "maxit", "abstol", "reltol", "alpha", "beta", "gamma", "REPORT", "warn.1d.NelderMead", "type", "lmm", "factr", "pgtol", "temp", "tmax")
     if(is.null(control$reltol)) control$reltol = 1e-12
     if(is.null(control$maxit)) control$maxit = control$maxit
   }
-  control <- control[names(control) %in% c("fun.opt", "optim.method", "tmb.silent", allowed.in.control)]
+  allowed.in.control <- c("fun.opt", "optim.method", "tmb.silent", "silent")
+  control <- control[names(control) %in% c("fun.opt", "optim.method", "tmb.silent", allowed.in.opt.fun)]
   x[["control"]] <- control
   
   
   # Error check for the DFA model
   # This section is temporary. Currently only DFA model is allowed.
+  model.descrip <- MARSS:::describe.marssMODEL(x$model)
   if(form == "dfa"){
-  is.unconstrained <- function(elem) substr(MARSS:::describe.marssMODEL(x$model)[[elem]], 1, 5) == "uncon"
-  is.diagonal <- function(elem) substr(MARSS:::describe.marssMODEL(x$model)[[elem]], 1, 8) == "diagonal"
-  is.fixed <- function(elem) substr(MARSS:::describe.marssMODEL(x$model)[[elem]], 1, 5) == "fixed"
+  is.unconstrained <- function(elem) substr(model.descrip[[elem]], 1, 5) == "uncon"
+  is.diagonal <- function(elem) substr(model.descrip[[elem]], 1, 8) == "diagonal"
+  is.fixed <- function(elem) substr(model.descrip[[elem]], 1, 5) == "fixed"
   is.identity <- function(elem){
-    val <- MARSS:::describe.marssMODEL(x$model)[[elem]]
+    val <- model.descrip[[elem]]
     substr(val, 1, 8) == "identity" | val == "fixed and all one (1 x 1)"
   }
-  is.zero <- function(elem) substr(MARSS:::describe.marssMODEL(x$model)[[elem]], 1, 14) == "fixed and zero"
+  is.zero <- function(elem) substr(model.descrip[[elem]], 1, 14) == "fixed and zero"
   
   # Check that R is allowed
   elem <- "R"
