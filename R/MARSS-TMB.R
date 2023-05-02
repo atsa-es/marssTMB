@@ -14,9 +14,10 @@
 #' @param y Vector of observations n x T.
 #' @param model list with 
 #'    * R  "diagonal and equal", "unconstrained", "diagonal and unequal"
-#'    * m the number of states (factors). default is 1
+#'    * tinitx = 1 (must be)
+#'    * (if form="dfa") m the number of states (factors). default is 1
 #' @param inits list of initial conditions
-#' @param method to pass to optim call; ignored for `fun="nlminb"`
+#' @param method must be "TMB" (case sensitive)
 #' @param form The equation form used in the marssTMB() call. The default is "dfa". 
 #' @param fit Whether to fit the model.
 #' @param silent Show TMB output when fitting
@@ -52,19 +53,19 @@ MARSS_tmb <- function(y,
   MARSS.call <- list(y = y, inits = inits, model = model, control = control, method = "BFGS", form = form, silent = TRUE, fit = FALSE, ...)
   # x is now a marssMLE object but no par element since not fit
   x <- do.call(MARSS::MARSS, MARSS.call)
-  
+  control <- x[["control"]] # set to MARSSoptim defaults
+
   # Set up the control list a TMB fit
   # Temporary until method="tmb" is added to MARSS
-  x[["method"]] <- "TMB"
   allowed.fun.opt = c("optim", "nlminb")
   if (!(fun.opt %in% allowed.fun.opt)) {
-    stop(paste("control$fun.opt must be one of:", paste(allowed.fun.opt, collapse=", ")))
+    stop(paste0(pkg, ": control$fun.opt must be one of: ", paste(allowed.fun.opt, collapse=", ")))
   }
   if(fun.opt == "optim"){
     allowed.optim.methods <- c("BFGS")
     # Some error checks depend on an allowable method
     if (!(optim.method %in% allowed.optim.methods)) {
-      stop(paste("control$optim.method must be one of:", paste(allowed.optim.methods, collapse=", ")))
+      stop(paste0(pkg, ": control$optim.method must be one of: ", paste(allowed.optim.methods, collapse=", ")))
     }
   }
   control[["fun.opt"]] <- fun.opt
@@ -73,22 +74,34 @@ MARSS_tmb <- function(y,
   # set up control defaults
   if(fun.opt == "nlminb"){
     allowed.in.opt.fun <- c("eval.max", "iter.max", "trace", "abs.tol", "rel.tol", "x.tol", "xf.tol", "step.min", "step.max", "sing.tol", "scale.init", "diff.g")
-    if(is.null(control$iter.max)) control$iter.max = control$maxit
-    if(is.null(control$eval.max)) control$eval.max = control$maxit
+    if(is.null(control[["iter.max"]])){
+      control[["iter.max"]] = control[["maxit"]]
+    }else{ 
+      control[["maxit"]] <- control[["iter.max"]]
+    }
+    if(is.null(control[["eval.max"]])) control[["eval.max"]] = control[["maxit"]]
+    for(val in allowed.in.opt.fun) if(is.null(control[[val]])) control[[val]] <- NULL
   }
   if(fun.opt == "optim"){
     allowed.in.opt.fun <- c("trace", "fnscale", "parscale", "ndeps", "maxit", "abstol", "reltol", "alpha", "beta", "gamma", "REPORT", "warn.1d.NelderMead", "type", "lmm", "factr", "pgtol", "temp", "tmax")
     if(is.null(control$reltol)) control$reltol = 1e-12
-    if(is.null(control$maxit)) control$maxit = control$maxit
+    for(val in allowed.in.opt.fun) if(is.null(control[[val]])) control[[val]] <- NULL
   }
-  allowed.in.control <- c("fun.opt", "optim.method", "tmb.silent", "silent")
-  control <- control[names(control) %in% c("fun.opt", "optim.method", "tmb.silent", allowed.in.opt.fun)]
+  # Temporary until TMB added to the optim methods in {MARSS}
+  control[["minit"]] <- 0
+  # These are not allowed in the optimization function but keep in control
+  allowed.in.control <- c("fun.opt", "optim.method", "tmb.silent", "silent", "maxit", "minit")
+  control <- control[names(control) %in% c(allowed.in.control, allowed.in.opt.fun)]
   x[["control"]] <- control
   
+  # Set up the method. Only used for printing
+  x[["method"]] <- paste0(method, " with optimization function ", fun.opt, if(fun.opt=="optim") paste0(" with method ", optim.method))
   
   # Error check for the DFA model
-  # This section is temporary. Currently only DFA model is allowed.
-  model.descrip <- MARSS:::describe.marssMODEL(x$model)
+  # This section is temporary. Currently only DFA model with tinitx=1 is allowed.
+  if(x[["model"]][["tinitx"]] != 1) 
+    stop(paste0(pkg, ": tinitx must be 1. Set tinitx=1 in model list."))
+  model.descrip <- MARSS:::describe.marssMODEL(x[["model"]])
   if(form == "dfa"){
   is.unconstrained <- function(elem) substr(model.descrip[[elem]], 1, 5) == "uncon"
   is.diagonal <- function(elem) substr(model.descrip[[elem]], 1, 8) == "diagonal"
@@ -125,7 +138,6 @@ MARSS_tmb <- function(y,
   }
   }
   
-  obj <- ifelse(fit, MARSStmb(x), x)
-  
-  return(obj)
+  if(fit) return(MARSStmb(x))
+  return(x)
 }

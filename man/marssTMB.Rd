@@ -10,10 +10,10 @@ MARSStmb(MLEobj)
 \item{MLEobj}{A properly formatted MARSS model as output by \code{\link[=MARSS_tmb]{MARSS_tmb()}}}
 }
 \value{
-a list with \code{obj.function}, \code{opt.output} and \code{MLEobj}
+A \link[MARSS:marssMLE-class]{MARSS::marssMLE} object
 }
 \description{
-Status 5/1/23 fits model. Now working on \code{\link[=to_marssMLE]{to_marssMLE()}} to format a \link[MARSS:marssMLE object]{MARSS::marssMLE object}.
+Status 5/1/23 fits model. Now working on \code{\link[=to_marssMLE]{to_marssMLE()}} to format a \link[MARSS:marssMLE-class]{MARSS::marssMLE} object.
 }
 \details{
 Minimal error checking is done in this function.

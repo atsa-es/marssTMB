@@ -19,8 +19,7 @@ reference:
   - MARSStmb
   - create.elem.maps
   - create.varcov.maps
-  - to_marssMLE
-  
+
 - title: Other functions
   desc: >
     These are functions that were used as templates for the more general [MARSStmb()] function.

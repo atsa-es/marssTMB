@@ -36,6 +36,12 @@ dfaTMB(
 
 \item{Covars}{An optional matrix, dimensioned nD x T, where nD is the number of covariates}
 
+\item{indivCovar}{flag for structure of covariates}
+
+\item{Dmat}{D initial matrix}
+
+\item{Dfac}{What elements of D are fixed}
+
 \item{EstSE}{TRUE / FALSE, whether to return the Hessian from the TMB sdreport}
 
 \item{silent}{Show TMB output when fitting, defaults to TRUE}

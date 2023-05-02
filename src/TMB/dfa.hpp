@@ -89,8 +89,8 @@ Type dfa(objective_function<Type>* obj) {
   }
   ADREPORT(u);
   REPORT(u);
-  ADREPORT(FullCovMat);
-  REPORT(FullCorrMat);
+  ADREPORT(FullCovMat); /* report with derivative */
+  REPORT(FullCorrMat); /* report wo derivative */
   
   return ans; // ans is the NLL
 }

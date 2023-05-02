@@ -1,6 +1,6 @@
 Package: marssTMB
 Title: Fits MARSS models with TMB
-Version: 0.0.4
+Version: 0.0.6
 Authors@R: 
     c(person("Eli", "Holmes", , "eli.holmes@noaa.gov", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-9128-8393")),

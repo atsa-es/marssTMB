@@ -18,35 +18,22 @@ dat <- as.data.frame(lakeWAplanktonTrans) |>
 
 ## -----------------------------------------------------------------------------
 system.time(m1.em <- MARSS(dat, model=list(R='unconstrained', m=1, tinitx=1), form='dfa', z.score=FALSE, silent = TRUE))
+system.time(m1.bfgs <- MARSS(dat, model=list(R='unconstrained', m=1, tinitx=1), form='dfa', z.score=FALSE, silent = TRUE, method="BFGS"))
 
 ## -----------------------------------------------------------------------------
 library(marssTMB)
 system.time(m1.tmb1 <- dfaTMB(dat, model=list(m=1, R='unconstrained')))
 
 ## -----------------------------------------------------------------------------
-system.time(m1.tmb2 <- MARSS_tmb(dat, model=list(m=1, R='unconstrained'), control=list(fun.opt="nlminb")))
-
-## -----------------------------------------------------------------------------
-Rprof("tmb.Rprof")
-m1.tmb2 <- MARSS_tmb(dat, model=list(m=1, R='unconstrained'))
-Rprof(NULL)
-
-## -----------------------------------------------------------------------------
-summaryRprof("tmb.Rprof")$by.self
-
-## -----------------------------------------------------------------------------
-Rprof("tmb.Rprof")
-m1.tmb1 <- dfaTMB(dat, model=list(m=1, R='unconstrained'))
-Rprof(NULL)
-summaryRprof("tmb.Rprof")$by.self
+system.time(m1.tmb2 <- MARSS_tmb(dat, model=list(m=1, R='unconstrained', tinitx=1), control=list(fun.opt="nlminb")))
 
 ## -----------------------------------------------------------------------------
 library(tidyr)
-pars <- data.frame(name = c(paste0("R", rownames(coefficients(m1.em)$R)),
-                            paste0("Z", rownames(coefficients(m1.em)$Z))),
-                   EM = c(coefficients(m1.em)$R, coefficients(m1.em)$Z),
-  TMB1 = c(as.vector(m1.tmb1$Estimates$R[lower.tri(m1.tmb1$Estimates$R,diag=TRUE)]),
-  as.vector(m1.tmb1$Estimates$Z)))
+pars <- data.frame(
+  name = c(paste0("R", rownames(coefficients(m1.em)$R)), paste0("Z", rownames(coefficients(m1.em)$Z))),
+  EM = c(coefficients(m1.em)$R, coefficients(m1.em)$Z),
+  TMB1 = c(as.vector(m1.tmb1$Estimates$R[lower.tri(m1.tmb1$Estimates$R,diag=TRUE)]), as.vector(m1.tmb1$Estimates$Z)),
+  TMB2 = c(coefficients(m1.tmb2)$R, coefficients(m1.tmb2)$Z))
 pars <- pars %>% tidyr::pivot_longer(2:3, names_to = "model")
 
 ## -----------------------------------------------------------------------------

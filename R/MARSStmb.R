@@ -1,34 +1,35 @@
 #' Internal function: Parameter estimation using TMB
-#' 
-#' Status 5/1/23 fits model. Now working on [to_marssMLE()] to format a [MARSS::marssMLE object].
 #'
-#' Minimal error checking is done in this function.  
+#' Status 5/1/23 fits model. Now working on [to_marssMLE()] to format a [MARSS::marssMLE] object.
+#'
+#' Minimal error checking is done in this function.
 #' Normal calling function is [MARSS_tmb()] which in
 #' turn calls this function. Note when MARSS is updated, the
 #' normal calling function will be [MARSS::MARSS()]. Restrictions
-#' 
+#'
 #' * No time-varying parameters
 #' * Currently only DFA models are coded up
 #' * x0 and V0 fixed (stochastic prior)
 #' * Q is fixed (not estimated)
-#' 
+#'
 #' @details
 #' This function returns a list which is passed to [to_marssMLE()] for further
 #' processing.
-#' 
+#'
 #' * `obj.function` is the raw output from the [TMB::MakeADFun()] call.
 #' * `opt.output` is the raw output from the optimization call (optim or nlminb)
 #' * `MLEobj` is the unfitted (no par element) [MARSS::marssMLE] object. Has all the parameters and correct structure.
-#' 
-#' 
+#'
+#'
 #' @param MLEobj A properly formatted MARSS model as output by [MARSS_tmb()]
 
-#' @return a list with `obj.function`, `opt.output` and `MLEobj`
+#' @return A [MARSS::marssMLE] object
 #' @example inst/examples/dfa_example.R
-#' @author Eli Holmes. This function is inspired by dfaTMB.R written by Tim Cline while a graduate student in the Fish 507 Time Series Analysis course. 
+#' @author Eli Holmes. This function is inspired by dfaTMB.R written by Tim Cline while a graduate student in the Fish 507 Time Series Analysis course.
 #' @seealso [MARSS::MARSSoptim()], [MARSS::MARSSkem()], [to_marssMLE()]
 #' @export
 MARSStmb <- function(MLEobj) {
+  pkg <- "MARSStmb"
   MODELobj <- MLEobj[["model"]]
   ty <- t(MODELobj[["data"]])
   model.dims <- attr(MODELobj, "model.dims")
@@ -40,49 +41,52 @@ MARSStmb <- function(MLEobj) {
   fun.opt <- control[["fun.opt"]]
   tmb.silent <- control[["tmb.silent"]]
   optim.method <- control[["optim.method"]]
-  control <- control[!(names(control) %in% c("fun.opt", "optim.method", "tmb.silent"))]
+  opt.control <- control[!(names(control) %in% c("fun.opt", "optim.method", "tmb.silent", "silent", "maxit", "minit"))]
+
   # Expand out to full covariate matrix
   has_covars <- TRUE
-  if(ncol(Covars) == 1){
-    if(Covars==0) has_covars <- FALSE
-    Covars <- matrix(Covars, nrow=nrow(Covars), ncol=TT)
+  if (ncol(Covars) == 1) {
+    if (Covars == 0) has_covars <- FALSE
+    Covars <- matrix(Covars, nrow = nrow(Covars), ncol = TT)
   }
-  
+
   # Set up the initial matrices
   eleminits <- list()
-  for(elem in c("Z", "D", "R", "Q", "V0", "x0")){
-    eleminits[[elem]] <- coef(MLEobj, type="matrix", what="start")[[elem]]
+  for (elem in c("Z", "D", "R", "Q", "V0", "x0")) {
+    eleminits[[elem]] <- coef(MLEobj, type = "matrix", what = "start")[[elem]]
   }
   # Set up the maps
   elemmaps <- list()
-  for(elem in c("Z", "D", "x0")){
-    elemmaps[[elem]] <- create.elem.maps(MLEobj, elem=elem)[["map"]]
+  for (elem in c("Z", "D", "x0")) {
+    elemmaps[[elem]] <- create.elem.maps(MLEobj, elem = elem)[["map"]]
   }
   # maps for var-cov matrices have diagonal separate from off-diagonal
-  for(elem in c("R", "Q", "V0")){
+  for (elem in c("R", "Q", "V0")) {
     elemmaps[[elem]] <- list(
-      diag = create.varcov.maps(MLEobj, elem=elem)[["map.diag"]],
-      offdiag = create.varcov.maps(MLEobj, elem=elem)[["map.offdiag"]]
+      diag = create.varcov.maps(MLEobj, elem = elem)[["map.diag"]],
+      offdiag = create.varcov.maps(MLEobj, elem = elem)[["map.offdiag"]]
     )
   }
 
   # Creates the input data list
   # For now, we will assume V0 is a fixed (diagonal) matrix
   data <- list(
-    model = "marxss", 
+    model = "marxss",
     obs = ty,
     Covar = Covars,
     has_covars = as.numeric(has_covars)
   )
-  
+
   # Note x0 and V0 are fixed (stochastic prior) for DFA
   # But x0 might be estimated in the future so is here as well
 
-    # Creates the list of initial (start) values of parameter list
+  # Creates the list of initial (start) values of parameter list
   R <- eleminits[["R"]]
+  sdR <- sqrt(diag(R))
+  corrR <- diag(1 / sdR) %*% R %*% diag(1 / sdR) # correlation matrix
   parameters <- list(
-    logsdObs = log(diag(R)), # log of diagonal of R
-    cholCorr = chol(R)[upper.tri(R)], # off-diagonal of chol of R
+    logsdR = log(sdR), # log of sqrt of diagonal of R
+    cholCorrR = chol(corrR)[upper.tri(R)], # off-diagonal of chol of corr R
     Q = eleminits[["Q"]],
     V0 = eleminits[["V0"]],
     D = eleminits[["D"]],
@@ -90,50 +94,98 @@ MARSStmb <- function(MLEobj) {
     x0 = eleminits[["x0"]],
     u = matrix(0, nrow = TT, ncol = m) # states
   )
-  
+
   # Create the map (mask) that indicates what parameters to not estimate
   # the states are treated as a parameter but are all estimated
   # so do not appear here
   maplist <- list(
-    logsdObs = elemmaps[["R"]][["diag"]], 
-    cholCorr = elemmaps[["R"]][["offdiag"]], 
-    Q = factor(matrix(NA, nrow = m, ncol = m)), 
-    V0 = factor(matrix(NA, nrow = m, ncol = m)), 
-    D = elemmaps[["D"]], 
+    logsdR = elemmaps[["R"]][["diag"]],
+    cholCorrR = elemmaps[["R"]][["offdiag"]],
+    Q = factor(matrix(NA, nrow = m, ncol = m)),
+    V0 = factor(matrix(NA, nrow = m, ncol = m)),
+    D = elemmaps[["D"]],
     Z = elemmaps[["Z"]],
     x0 = elemmaps[["x0"]]
-    )
-  
+  )
+
   # Creates the model object and runs the optimization
   obj1 <- TMB::MakeADFun(
-    data, parameters, random = "u",
+    data, parameters,
+    random = "u",
     DLL = "marssTMB_TMBExports",
     silent = MLEobj[["control"]][["tmb.silent"]], map = maplist
   )
-  
+
   # Optimization
-  if(MLEobj[["control"]][["fun.opt"]] == "nlminb"){
-    opt1 <- stats::nlminb(obj1$par, obj1$fn, obj1$gr, control = control)
+  if (MLEobj[["control"]][["fun.opt"]] == "nlminb") {
+    opt1 <- stats::nlminb(obj1$par, obj1$fn, obj1$gr, control = opt.control)
     # add output also found in optim output
     opt1$value <- opt1$objective
     opt1$counts <- opt1$evaluations
-    # add this on for printing
-    MLEobj[["control"]][["maxit"]] <-  MLEobj[["control"]][["iter.max"]]
   }
-  if(MLEobj[["control"]][["fun.opt"]] == "optim"){
-    opt1 <- stats::optim(obj1$par, obj1$fn, gr=obj1$gr, control = control)
-    #obj1$control <- MLEobj[["control"]]
-    #opt1 <- do.call("optim", obj1)
+  if (MLEobj[["control"]][["fun.opt"]] == "optim") {
+    opt1 <- stats::optim(obj1$par, obj1$fn, gr = obj1$gr, control = opt.control)
     opt1$objective <- opt1$value
     opt1$iterations <- opt1$counts[2]
   }
+
+  # Add names to the par output; par vec needs to be in this order
+  # In MARSS(), Dd and Cc are within the A and U matrices in marss form
+  # The par element of a MLEobj is in this marss form
+  # {MARSS} has a helper function to convert from marxss (with Dd and Cc) to marss 
+  parlist <- list()
+  # These include D, d, C, c
+  model.elem <- attr(MODELobj, "par.names")
+  for (elem in model.elem[!(model.elem %in% c("R", "Q", "V0"))]) {
+    if (!MARSS:::is.fixed(MODELobj$free[[elem]])) {
+      parlist[[elem]] <- matrix(opt1$par[names(opt1$par) == elem], ncol = 1)
+      parnames <- paste0(elem, ".", levels(obj1$env$map[[elem]]))
+      names(opt1$par)[names(opt1$par) == elem] <- parnames
+      rownames(parlist[[elem]]) <- levels(obj1$env$map[[elem]])
+    } else {
+      parlist[[elem]] <- matrix(0, nrow = 0, ncol = 1)
+    }
+  }
+  for (elem in c("R", "Q", "V0")) {
+    if (!MARSS:::is.fixed(MODELobj$free[[elem]])) { # get a new par if needed
+      val <- paste0("FullCovMat", elem)
+      the.par <- obj1$report()[[val]]
+      d <- MARSS:::sub3D(MLEobj$model$free[[elem]], t = 1)
+      # A bit of a hack but I want to allow any varcov contraints (d mat)
+      # Also ensures that the par names are in the right order;
+      # They might not be since TMB code split out the diag separate from offdiag
+      parlist[[elem]] <- solve(crossprod(d)) %*% t(d) %*% MARSS:::vec(the.par)
+    } else {
+      parlist[[elem]] <- matrix(0, nrow = 0, ncol = 1)
+    }
+  }
+  # par is in marxss form with D, d, C, c
+  MLEobj[["par"]] <- parlist[model.elem]
+  # We need this in marss form; only.par means the marss element is already ok
+  MLEobj <- MARSS:::marxss_to_marss(MLEobj, only.par = TRUE)
   
-  # Add names to the par output
-  model.elem <- names(MODELobj[["fixed"]])
-  for(elem in model.elem){
-    names(opt1$par)[names(opt1$par)==elem] <- paste0(elem, ".", levels(obj1$env$map[[elem]]))
+  MLEobj$iter.record <-
+    list(obj.function = obj1, opt.output = opt1)
+  MLEobj$start <- MLEobj$start
+  MLEobj$convergence <- opt1$convergence
+
+  if (control$fun.opt == "optim" && opt1$convergence > 1) {
+    if (!control$silent) cat(paste0(pkg, "() stopped with errors. No parameter estimates returned.\n"))
+    MLEobj$par <- MLEobj$kf <- MLEobj$logLik <- NULL
+    MLEobj$errors <- opt1$message
+    return(MLEobj)
   }
   
-  return(list(obj.function = obj1, opt.output = opt1, MLEobj = MLEobj))
+  MLEobj$states <- t(obj1$env$parList()$u)
+  rownames(MLEobj$states) <- attr(MLEobj$model, "X.names")
+  MLEobj$numIter <- opt1$iterations
+  MLEobj$logLik <- -1*opt1$objective
+  ## Add AIC and AICc to the object
+  MLEobj <- MARSS::MARSSaic(MLEobj)
 
+  funinfo <- paste0("Function ", fun.opt, "used for optimization and TMB for likelihood calculation.\n")
+  if ((!control$silent || control$silent == 2) && opt1$convergence == 0) cat(paste0("Success! Converged in ", opt1$iterations, " iterations.\n", funinfo))
+  if ((!control$silent || control$silent == 2) && opt1$convergence == 1) cat(paste0("Warning! Max iterations of ", control$maxit, " reached before convergence.\n", funinfo))
+
+  return(MLEobj)
 }

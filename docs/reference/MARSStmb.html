@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">marssTMB</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.6</span>
       </span>
     </div>
 
@@ -62,7 +62,7 @@
     </div>
 
     <div class="ref-description">
-    <p>Status 5/1/23 fits model. Now working on <code><a href="to_marssMLE.html">to_marssMLE()</a></code> to format a MARSS::marssMLE object.</p>
+    <p>Status 5/1/23 fits model. Now working on <code>to_marssMLE()</code> to format a MARSS::marssMLE object.</p>
     </div>
 
     <div id="ref-usage">
@@ -79,9 +79,7 @@
     <h2>Value</h2>
     
 
-<p>a list with <code>obj.function</code>, <code>opt.output</code> and <code>MLEobj</code></p>
-
-
+<p>A MARSS::marssMLE object</p>
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -92,14 +90,14 @@ normal calling function will be <code><a href="https://rdrr.io/pkg/MARSS/man/MAR
 <li><p>Currently only DFA models are coded up</p></li>
 <li><p>x0 and V0 fixed (stochastic prior)</p></li>
 <li><p>Q is fixed (not estimated)</p></li>
-</ul><p>This function returns a list which is passed to <code><a href="to_marssMLE.html">to_marssMLE()</a></code> for further
+</ul><p>This function returns a list which is passed to <code>to_marssMLE()</code> for further
 processing.</p><ul><li><p><code>obj.function</code> is the raw output from the <code><a href="https://rdrr.io/pkg/TMB/man/MakeADFun.html" class="external-link">TMB::MakeADFun()</a></code> call.</p></li>
 <li><p><code>opt.output</code> is the raw output from the optimization call (optim or nlminb)</p></li>
 <li><p><code>MLEobj</code> is the unfitted (no par element) MARSS::marssMLE object. Has all the parameters and correct structure.</p></li>
 </ul></div>
     <div id="see-also">
     <h2>See also</h2>
-    <div class="dont-index"><p><code><a href="https://rdrr.io/pkg/MARSS/man/MARSSoptim.html" class="external-link">MARSS::MARSSoptim()</a></code>, <code><a href="https://rdrr.io/pkg/MARSS/man/MARSSkem.html" class="external-link">MARSS::MARSSkem()</a></code>, <code><a href="to_marssMLE.html">to_marssMLE()</a></code></p></div>
+    <div class="dont-index"><p><code><a href="https://rdrr.io/pkg/MARSS/man/MARSSoptim.html" class="external-link">MARSS::MARSSoptim()</a></code>, <code><a href="https://rdrr.io/pkg/MARSS/man/MARSSkem.html" class="external-link">MARSS::MARSSkem()</a></code>, <code>to_marssMLE()</code></p></div>
     </div>
     <div id="author">
     <h2>Author</h2>

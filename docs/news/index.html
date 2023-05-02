@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">marssTMB</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.6</span>
       </span>
     </div>
 
@@ -61,9 +61,19 @@
     </div>
 
     <div class="section level2">
+<h2 class="page-header" data-toc-text="0.0.6" id="marsstmb-006">marssTMB 0.0.6<a class="anchor" aria-label="anchor" href="#marsstmb-006"></a></h2>
+<ul><li>removed <code>to_marssTMB()</code> (not needed)</li>
+<li>completed <code><a href="../reference/MARSStmb.html">MARSStmb()</a></code> so that the marssMLE object is in proper form. All the {MARSS} helper functions should work.</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.0.5" id="marsstmb-005">marssTMB 0.0.5<a class="anchor" aria-label="anchor" href="#marsstmb-005"></a></h2>
+<ul><li>Got <code><a href="../reference/MARSStmb.html">MARSStmb()</a></code> mostly working with marssMLE structure for output</li>
+<li>made default optimizer nlminb (faster)</li>
+</ul></div>
+    <div class="section level2">
 <h2 class="page-header" data-toc-text="0.0.4" id="marsstmb-004">marssTMB 0.0.4<a class="anchor" aria-label="anchor" href="#marsstmb-004"></a></h2>
 <ul><li>Eric added tests and covariates to DFA vignette.</li>
-<li>moved MARSS into Depends and adde to imports in <code>marssTMB-package.R</code>
+<li>moved MARSS into Depends and added to imports in <code>marssTMB-package.R</code>
 </li>
 <li>added some more info to <code><a href="../reference/MARSStmb.html">MARSStmb()</a></code> description</li>
 <li>started draft of vignette for <code><a href="../reference/MARSS_tmb.html">MARSS_tmb()</a></code>
@@ -71,17 +81,21 @@
 </ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.0.3" id="marsstmb-003">marssTMB 0.0.3<a class="anchor" aria-label="anchor" href="#marsstmb-003"></a></h2>
-<ul><li>Working on <code><a href="../reference/to_marssMLE.html">to_marssMLE()</a></code> which will convert the output to MARSS form.</li>
+<ul><li>Working on <code>to_marssMLE()</code> which will convert the output to MARSS form.</li>
 </ul><p><strong>To do</strong></p>
-<p>Fixing the parameter output from TMB to have the parameter names. Z and D are easy. For R, need to change how <code>marxss.hpp</code> deals with R. I think I don’t need to separate into diag and non-diagonal elements. See how I dealt with this in <code><a href="https://rdrr.io/pkg/MARSS/man/MARSSoptim.html" class="external-link">MARSS::MARSSoptim()</a></code>. Also can add a <code>is.diag</code> flag to data if I need to id if R (and later Q) is diagonal to use faster code (diagonal matrices).</p>
-</div>
+<ul><li>Fixing the parameter output from TMB to have the parameter names. <em>Done 0.0.6</em>
+</li>
+<li>Might also can add a <code>is.diag</code> flag to data if I need to id if R (and later Q) is diagonal to use faster code (diagonal matrices). <em>probably not needed?</em>
+</li>
+</ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.0.2" id="marsstmb-002">marssTMB 0.0.2<a class="anchor" aria-label="anchor" href="#marsstmb-002"></a></h2>
 <ul><li>Added <code><a href="../reference/MARSS_tmb.html">MARSS_tmb()</a></code>. This sets up the model for <code><a href="../reference/MARSStmb.html">MARSStmb()</a></code> and for now ensures that the model will work with <code>marxss.hpp</code> which only allows DFA at the moment.</li>
 <li>Added <code><a href="../reference/MARSStmb.html">MARSStmb()</a></code>. This is symmetric to <code><a href="https://rdrr.io/pkg/MARSS/man/MARSSoptim.html" class="external-link">MARSS::MARSSoptim()</a></code>. Working to match the output to <code><a href="https://rdrr.io/pkg/MARSS/man/MARSS.html" class="external-link">MARSS::MARSS()</a></code> so that all the MARSS functions work.</li>
 <li>Added <code>src/TMB/marxss.hpp</code> which is the MARSS model version with MARSS parameter names.</li>
 </ul><p><strong>To do</strong></p>
-<ul><li>Currently <code><a href="../reference/MARSStmb.html">MARSStmb()</a></code> just fits a model. Next up is to convert this to MARSS output format.</li>
+<ul><li>Currently <code><a href="../reference/MARSStmb.html">MARSStmb()</a></code> just fits a model. Next up is to convert this to MARSS output format. <em>Done 0.0.5</em>
+</li>
 </ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.0.1" id="marsstmb-001">marssTMB 0.0.1<a class="anchor" aria-label="anchor" href="#marsstmb-001"></a></h2>

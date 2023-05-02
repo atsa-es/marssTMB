@@ -23,12 +23,13 @@ MARSS_tmb(
 \item{model}{list with
 \itemize{
 \item R  "diagonal and equal", "unconstrained", "diagonal and unequal"
-\item m the number of states (factors). default is 1
+\item tinitx = 1 (must be)
+\item (if form="dfa") m the number of states (factors). default is 1
 }}
 
 \item{inits}{list of initial conditions}
 
-\item{method}{to pass to optim call; ignored for \code{fun="nlminb"}}
+\item{method}{must be "TMB" (case sensitive)}
 
 \item{form}{The equation form used in the marssTMB() call. The default is "dfa".}
 

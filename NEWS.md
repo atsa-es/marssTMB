@@ -1,13 +1,19 @@
+# marssTMB 0.0.6
+
+* removed `to_marssTMB()` (not needed)
+* completed `MARSStmb()` so that the marssMLE object is in proper form. All the {MARSS} helper functions should work.
+
+# marssTMB 0.0.5
+
+* Got `MARSStmb()` mostly working with marssMLE structure for output
+* made default optimizer nlminb (faster)
+
 # marssTMB 0.0.4
 
 * Eric added tests and covariates to DFA vignette.
-* moved MARSS into Depends and adde to imports in `marssTMB-package.R`
+* moved MARSS into Depends and added to imports in `marssTMB-package.R`
 * added some more info to `MARSStmb()` description
 * started draft of vignette for `MARSS_tmb()`
-
-**To do**
-
-* `MARSStmb()` Need to not pass in parameters that are not being estimated. Seems to slow things down considerably.
 
 # marssTMB 0.0.3
 
@@ -15,7 +21,8 @@
 
 **To do**
 
-Fixing the parameter output from TMB to have the parameter names. Z and D are easy. For R, need to change how `marxss.hpp` deals with R. I think I don't need to separate into diag and non-diagonal elements. See how I dealt with this in `MARSS::MARSSoptim()`. Also can add a `is.diag` flag to data if I need to id if R (and later Q) is diagonal to use faster code (diagonal matrices).
+* Fixing the parameter output from TMB to have the parameter names. *Done 0.0.6*
+* Might also can add a `is.diag` flag to data if I need to id if R (and later Q) is diagonal to use faster code (diagonal matrices). *probably not needed?*
 
 # marssTMB 0.0.2
 
@@ -25,7 +32,7 @@ Fixing the parameter output from TMB to have the parameter names. Z and D are ea
 
 **To do**
 
-* Currently `MARSStmb()` just fits a model. Next up is to convert this to MARSS output format.
+* Currently `MARSStmb()` just fits a model. Next up is to convert this to MARSS output format.  *Done 0.0.5*
 
 # marssTMB 0.0.1
 

@@ -14,8 +14,8 @@ Type marxss(objective_function<Type>* obj) {
   DATA_MATRIX(obs); /*  timeSteps x stateDim*/
   DATA_MATRIX(Covar);
   DATA_INTEGER(has_covars);
-  PARAMETER_VECTOR(logsdObs);
-  PARAMETER_VECTOR(cholCorr);
+  PARAMETER_VECTOR(logsdR); /* log of the diag of chol R*/
+  PARAMETER_VECTOR(cholCorrR);
   PARAMETER_MATRIX(Q); /* x[t] - x[t-1] */
   PARAMETER_MATRIX(V0); /* x[1] */
   PARAMETER_MATRIX(D);
@@ -26,11 +26,11 @@ Type marxss(objective_function<Type>* obj) {
   int timeSteps=obs.col(0).size();
   int obsDim=obs.row(0).size();
   
-  vector<Type> sdObs=exp(logsdObs);
+  vector<Type> sdR=exp(logsdR); /* sd of R (diag) */
   
   using namespace density;
-  UNSTRUCTURED_CORR_t<Type> corMatGen(cholCorr);// This is the full Cormat
-  matrix<Type> FullCorrMat=corMatGen.cov();
+  UNSTRUCTURED_CORR_t<Type> corMatGen(cholCorrR);// This is the full Cormat
+  matrix<Type> FullCorrMatR=corMatGen.cov(); /* has 1 on diag */
   
   MVNORM_t<Type> initialState(V0);
   MVNORM_t<Type> neg_log_density_process(Q);
@@ -64,29 +64,29 @@ Type marxss(objective_function<Type>* obj) {
       for(int j=0;j<nonNAcount;j++){
         subData(j) = obs.row(i)(GoodVals(j));
         subPred(j) = pred.transpose().row(i)(GoodVals(j));
-        subSds(j) = sdObs(GoodVals(j));
+        subSds(j) = sdR(GoodVals(j));
         for(int k=0;k<nonNAcount;k++){
-          subCorr(j,k) = FullCorrMat(GoodVals(j),GoodVals(k));
+          subCorr(j,k) = FullCorrMatR(GoodVals(j),GoodVals(k));
         }//end of loop through for truncated cormat
       }//end of removal of NA's from sets
       vector<Type> subDiffer = subData-subPred;
       ans += VECSCALE(MVNORM(subCorr),subSds)(subDiffer);
     }else{
       vector<Type> differ = obs.row(i)-pred.transpose().row(i);
-      ans += VECSCALE(corMatGen,sdObs)(differ);
+      ans += VECSCALE(corMatGen,sdR)(differ);
     }//end of data likelihood for this time step
   }//end of loop over time steps
   
-  matrix<Type> FullCovMat(obsDim,obsDim);
+  matrix<Type> FullCovMatR(obsDim,obsDim);
   matrix<Type> dSD(obsDim,1);
-  dSD = sdObs;
-  FullCovMat = dSD.asDiagonal() * FullCorrMat * dSD.asDiagonal();
+  dSD = sdR;
+  FullCovMatR = dSD.asDiagonal() * FullCorrMatR * dSD.asDiagonal();
   ADREPORT(Z);
   ADREPORT(D);
   ADREPORT(u);
-  ADREPORT(FullCovMat);
-  
-  REPORT(FullCorrMat);
+  ADREPORT(FullCovMatR); /* with derivative */
+  REPORT(FullCorrMatR); /* wo derivative */
+  REPORT(FullCovMatR); /* wo derivative */
   
   return ans;
 }
