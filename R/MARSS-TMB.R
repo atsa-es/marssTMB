@@ -40,13 +40,10 @@ MARSS_tmb <- function(y,
   pkg <- "marssTMB"
   method <- match.arg(method)
   # This section is temporary
-  # Needed now because currently MARSS does not allow fun.opt in control
-  if(is.null(control$fun.opt)){
-    fun.opt <- "optim"
+  fun.opt <- ifelse(is.null(control$fun.opt), "nlminb", control$fun.opt )
+  if(fun.opt == "optim")
     optim.method <- ifelse(is.null(control$optim.method), "BFGS", control$optim.method)
-  }else{
-    fun.opt <- control$fun.opt
-  }
+  # Needed here because currently MARSS does not allow fun.opt in control
   control <- control[!(names(control) %in% c("fun.opt", "optim.method"))]
   
   # Set up a MARSS() call list and call to get a properly set up MARSS model
