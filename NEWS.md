@@ -2,6 +2,7 @@
 
 * removed `to_marssTMB()` (not needed)
 * completed `MARSStmb()` so that the marssMLE object is in proper form. All the {MARSS} helper functions should work.
+* add more time comparisons to MARSS_tmb vignette and upped the maxit for MARSS()
 
 # marssTMB 0.0.5
 

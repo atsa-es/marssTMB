@@ -45,8 +45,9 @@ MARSStmb <- function(MLEobj) {
 
   # Expand out to full covariate matrix
   has_covars <- TRUE
+  Covars <- matrix(Covars[,1,], nrow = nrow(Covars))
   if (ncol(Covars) == 1) {
-    if (Covars == 0) has_covars <- FALSE
+    if (all(Covars == 0)) has_covars <- FALSE
     Covars <- matrix(Covars, nrow = nrow(Covars), ncol = TT)
   }
 
