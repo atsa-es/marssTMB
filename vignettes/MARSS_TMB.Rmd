@@ -206,12 +206,23 @@ for(R in c("diagonal and equal", "diagonal and unequal", "unconstrained")){
 
 ```{r}
 library(dplyr)
-df2 <- df |> mutate(mod = paste0(ncovar, "-", fun, "-", opt.function))
-ggplot(df2, aes(fill=mod, y=time, x=m)) + 
-    geom_bar(position="dodge", stat="identity") +
+df2 <- df |> mutate(mod = paste0(fun, "-", opt.function)) |>
+  mutate(ncovar = as.factor(ncovar)) |>
+  group_by(ncovar)
+ggplot(df2, aes(alpha=ncovar, fill=mod, y=time, x=m)) + 
+    geom_bar(stat="identity", position="dodge", color="black") +
   facet_wrap(~R, scales = "free_y") +
   scale_y_continuous() +
   ggtitle("TMB is faster than MARSS EM")
 ```
 
+```{r}
+df2 <- df |> mutate(mod = paste0(fun, "-", opt.function))
+df2$ncovar <- as.factor(df2$ncovar)
+ggplot(df2, aes(col=ncovar, y=logLik, x=m, shape=mod)) + 
+    geom_point(position=position_dodge(width=0.3)) +
+  facet_wrap(~R, scales = "free_y") +
+  scale_y_continuous() +
+  ggtitle("logLik comparison")
+```
 

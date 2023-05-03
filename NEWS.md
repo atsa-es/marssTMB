@@ -1,3 +1,9 @@
+# marssTMB 0.0.7
+
+* updated `marxss.hpp` to be in MARSS format with X and Y as mxT and nxT
+* added Q estimation to `marxss.hpp` (note `MARSS_tmp()` will block this until this is tested)
+* added C estimation to `marxss.hpp` (note `MARSS_tmp()` will block this until this is tested)
+
 # marssTMB 0.0.6
 
 * removed `to_marssTMB()` (not needed)
