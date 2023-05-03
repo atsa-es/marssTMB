@@ -13,13 +13,12 @@ MARSStmb(MLEobj)
 A \link[MARSS:marssMLE-class]{MARSS::marssMLE} object
 }
 \description{
-Status 5/1/23 fits model. Now working on \code{\link[=to_marssMLE]{to_marssMLE()}} to format a \link[MARSS:marssMLE-class]{MARSS::marssMLE} object.
-}
-\details{
 Minimal error checking is done in this function.
 Normal calling function is \code{\link[=MARSS_tmb]{MARSS_tmb()}} which in
 turn calls this function. Note when MARSS is updated, the
 normal calling function will be \code{\link[MARSS:MARSS]{MARSS::MARSS()}}. Restrictions
+}
+\details{
 \itemize{
 \item No time-varying parameters
 \item Currently only DFA models are coded up
@@ -27,12 +26,11 @@ normal calling function will be \code{\link[MARSS:MARSS]{MARSS::MARSS()}}. Restr
 \item Q is fixed (not estimated)
 }
 
-This function returns a list which is passed to \code{\link[=to_marssMLE]{to_marssMLE()}} for further
-processing.
+This function returns \link[MARSS:marssMLE-class]{MARSS::marssMLE} object. For the \code{iter.record} element
+of the object, the following are returned as a list:
 \itemize{
 \item \code{obj.function} is the raw output from the \code{\link[TMB:MakeADFun]{TMB::MakeADFun()}} call.
 \item \code{opt.output} is the raw output from the optimization call (optim or nlminb)
-\item \code{MLEobj} is the unfitted (no par element) \link[MARSS:marssMLE-class]{MARSS::marssMLE} object. Has all the parameters and correct structure.
 }
 }
 \examples{
@@ -45,13 +43,14 @@ dat <- as.data.frame(lakeWAplanktonTrans) |>
   t() |>
   MARSS::zscore()
 
-#fit with MARSS
-m1.em <- MARSS(dat, model=list(R='unconstrained', m=1, tinitx=1), form='dfa', z.score=FALSE)
-m1.tmb <- dfaTMB(dat, model=list(R='unconstrained', m=1))
-c(m1.em$logLik, m1.tmb$logLik)
+# set-up the model
+mod <- MARSS_tmb(dat, model=list(m=3, tinitx=1), form="dfa", fit=FALSE)
+# fit
+fit <- MARSStmb(mod)
+
 }
 \seealso{
-\code{\link[MARSS:MARSSoptim]{MARSS::MARSSoptim()}}, \code{\link[MARSS:MARSSkem]{MARSS::MARSSkem()}}, \code{\link[=to_marssMLE]{to_marssMLE()}}
+\code{\link[MARSS:MARSSoptim]{MARSS::MARSSoptim()}}, \code{\link[MARSS:MARSSkem]{MARSS::MARSSkem()}}
 }
 \author{
 Eli Holmes. This function is inspired by dfaTMB.R written by Tim Cline while a graduate student in the Fish 507 Time Series Analysis course.

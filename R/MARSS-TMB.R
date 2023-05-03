@@ -17,11 +17,13 @@
 #'    * tinitx = 1 (must be)
 #'    * (if form="dfa") m the number of states (factors). default is 1
 #' @param inits list of initial conditions
+#' @param miss.value A parameter for backcompatibility. Not used.
 #' @param method must be "TMB" (case sensitive)
 #' @param form The equation form used in the marssTMB() call. The default is "dfa". 
 #' @param fit Whether to fit the model.
 #' @param silent Show TMB output when fitting
 #' @param control list for the optimization function. [stats::nlminb()] or [stats::optim()], `control$fun.opt` allows you to choose optim or nlminb as the optimization function. `control$optim.method` allows you to choose method for `optim()`.
+#' @param ... Extra parameters. Not used.
 #' 
 #' @return The output list from [MARSStmb()]
 #' @example inst/examples/MARSS_TMB_example.R

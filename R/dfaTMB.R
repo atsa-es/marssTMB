@@ -1,6 +1,11 @@
 #' Tim Cline's original code to Fit a DFA model with TMB.
 #' 
 #' This can be called to fit a DFA with his syntax, but generally no work should be done here.
+#' 
+#' @details
+#' The control defaults for [stats::nlminb()] are `iter.max = 2000` and `eval.max = 2000`. 
+#' For [stats::optim()], the defaults are `reltol = 1e-12` and `maxit = 2000`.
+#' 
 #'
 #' @param y Vector of observations n x T.
 #' @param model list with 
@@ -16,8 +21,8 @@
 #' @param silent Show TMB output when fitting, defaults to TRUE
 #' @param fun.opt function to use for optimization: `stats::nlminb()` or `stats::optim()`
 #' @param method to pass to optim call; ignored for `fun="nlminb"`
-#' @param form The equation form used in the marssTMB() call. The default is "dfa". 
-
+#' @param form The equation form used in the marssTMB() call. The default is "dfa".
+#' @param control a list with the control settings for the optimatization function. See details for the defaults.
 #' @return A list with Optimization, Estimates, Fits, and AIC
 #' @example inst/examples/dfa_example.R
 #' @author Tim Cline wrote most of this while a graduate student in the Fish 507 Time Series Analysis course. Eli Holmes later modified it to replicate the MARSS(x, form="dfa") model.
@@ -146,10 +151,9 @@ dfaTMB <- function(y,
   }
   pl1 <- obj1$env$parList() # This contains all of your parameter estimates RAW as they come out of the optimizer
   if (EstSE) {
-    sdr <- sdreport(obj1)
+    sdr <- TMB::sdreport(obj1)
   }
   
-  # ScaleFac<-as.vector(apply(pl1$u,2,FUN=sd))
   # pl1$u<-t(t(pl1$u)/ScaleFac)
   # pl1$Z<-t(t(pl1$Z)*ScaleFac)
   
@@ -176,6 +180,8 @@ dfaTMB <- function(y,
   
   # Standard Errors for parameters
   if (EstSE) {
+    # ScaleFac<-as.vector(apply(pl1$u,2,FUN=sd))
+    ScaleFac <- 1
     SES <- list(
       D = sdr$sd[which(names(sdr$value) == "D")],
       Z = sdr$sd[which(names(sdr$value) == "Z")] * ScaleFac,
