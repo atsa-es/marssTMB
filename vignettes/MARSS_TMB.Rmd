@@ -32,6 +32,7 @@ diagonal and equal, diagonal and unequal, and unconstrained.
 
 ```{r}
 library(MARSS)
+library(dplyr)
 data(lakeWAplankton, package = "MARSS")
 phytoplankton <- c("Cryptomonas", "Diatoms", "Greens", "Unicells", "Other.algae")
 dat <- as.data.frame(lakeWAplanktonTrans) |>
@@ -205,7 +206,6 @@ for(R in c("diagonal and equal", "diagonal and unequal", "unconstrained")){
 ```
 
 ```{r}
-library(dplyr)
 df2 <- df |> mutate(mod = paste0(fun, "-", opt.function)) |>
   mutate(ncovar = as.factor(ncovar)) |>
   group_by(ncovar)

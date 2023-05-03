@@ -13,12 +13,14 @@ Description: Work on TMB files to fit MARSS models with TMB.
 URL: https://atsa-es.github.io/marssTMB, https://github.com/atsa-es/marssTMB
 BugReports: https://github.com/atsa-es/marssTMB/issues
 License: GPL (>= 2)
+Depends: R (>= 3.5.0)
 Imports: 
     TMB (>= 1.9.3),
     stats,
-    MARSS
+    MARSS (>= 3.11.4)
 Suggests: 
     ggplot2,
+    dplyr,
     tidyr,
     knitr,
     rmarkdown,

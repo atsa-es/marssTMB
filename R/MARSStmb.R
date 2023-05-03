@@ -1,7 +1,5 @@
 #' Internal function: Parameter estimation using TMB
 #'
-#' Status 5/1/23 fits model. Now working on [to_marssMLE()] to format a [MARSS::marssMLE] object.
-#'
 #' Minimal error checking is done in this function.
 #' Normal calling function is [MARSS_tmb()] which in
 #' turn calls this function. Note when MARSS is updated, the
@@ -13,20 +11,19 @@
 #' * Q is fixed (not estimated)
 #'
 #' @details
-#' This function returns a list which is passed to [to_marssMLE()] for further
-#' processing.
+#' This function returns [MARSS::marssMLE] object. For the `iter.record` element
+#' of the object, the following are returned as a list:
 #'
 #' * `obj.function` is the raw output from the [TMB::MakeADFun()] call.
 #' * `opt.output` is the raw output from the optimization call (optim or nlminb)
-#' * `MLEobj` is the unfitted (no par element) [MARSS::marssMLE] object. Has all the parameters and correct structure.
 #'
 #'
 #' @param MLEobj A properly formatted MARSS model as output by [MARSS_tmb()]
 
 #' @return A [MARSS::marssMLE] object
-#' @example inst/examples/dfa_example.R
+#' @example inst/examples/MARSStmb_example.R
 #' @author Eli Holmes. This function is inspired by dfaTMB.R written by Tim Cline while a graduate student in the Fish 507 Time Series Analysis course.
-#' @seealso [MARSS::MARSSoptim()], [MARSS::MARSSkem()], [to_marssMLE()]
+#' @seealso [MARSS::MARSSoptim()], [MARSS::MARSSkem()]
 #' @export
 MARSStmb <- function(MLEobj) {
   pkg <- "MARSStmb"

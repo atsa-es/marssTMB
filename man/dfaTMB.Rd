@@ -50,6 +50,8 @@ dfaTMB(
 
 \item{method}{to pass to optim call; ignored for \code{fun="nlminb"}}
 
+\item{control}{a list with the control settings for the optimatization function. See details for the defaults.}
+
 \item{form}{The equation form used in the marssTMB() call. The default is "dfa".}
 }
 \value{
@@ -57,6 +59,10 @@ A list with Optimization, Estimates, Fits, and AIC
 }
 \description{
 This can be called to fit a DFA with his syntax, but generally no work should be done here.
+}
+\details{
+The control defaults for \code{\link[stats:nlminb]{stats::nlminb()}} are \code{iter.max = 2000} and \code{eval.max = 2000}.
+For \code{\link[stats:optim]{stats::optim()}}, the defaults are \code{reltol = 1e-12} and \code{maxit = 2000}.
 }
 \examples{
 library(MARSS)

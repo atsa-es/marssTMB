@@ -29,6 +29,8 @@ MARSS_tmb(
 
 \item{inits}{list of initial conditions}
 
+\item{miss.value}{A parameter for backcompatibility. Not used.}
+
 \item{method}{must be "TMB" (case sensitive)}
 
 \item{form}{The equation form used in the marssTMB() call. The default is "dfa".}
@@ -38,6 +40,8 @@ MARSS_tmb(
 \item{silent}{Show TMB output when fitting}
 
 \item{control}{list for the optimization function. \code{\link[stats:nlminb]{stats::nlminb()}} or \code{\link[stats:optim]{stats::optim()}}, \code{control$fun.opt} allows you to choose optim or nlminb as the optimization function. \code{control$optim.method} allows you to choose method for \code{optim()}.}
+
+\item{...}{Extra parameters. Not used.}
 }
 \value{
 The output list from \code{\link[=MARSStmb]{MARSStmb()}}
@@ -66,7 +70,7 @@ dat <- as.data.frame(lakeWAplanktonTrans) |>
   MARSS::zscore()
 
 #fit with MARSS
-fit <- MARSS_tmb(dat, model=list(m=3))
+fit <- MARSS_tmb(dat, model=list(m=3, tinitx=1), form="dfa")
 }
 \author{
 Eli Holmes
