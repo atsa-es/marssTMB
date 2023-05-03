@@ -8,6 +8,7 @@ Authors@R:
            comment = c(ORCID = "0000-0002-4359-0296")),
       person("Timothy", "Cline", , "timothy.cline2@montana.edu", role = c("aut"),
            comment = c(ORCID = "0000-0002-4955-654X"))           )
+Maintainer: Elizabeth E. Holmes <eli.holmes@noaa.gov>
 Description: Work on TMB files to fit MARSS models with TMB.
 URL: https://atsa-es.github.io/marssTMB, https://github.com/atsa-es/marssTMB
 BugReports: https://github.com/atsa-es/marssTMB/issues
