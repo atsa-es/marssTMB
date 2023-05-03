@@ -31,12 +31,13 @@
 MARSStmb <- function(MLEobj) {
   pkg <- "MARSStmb"
   MODELobj <- MLEobj[["model"]]
-  ty <- t(MODELobj[["data"]])
+  y <- MODELobj[["data"]]
   model.dims <- attr(MODELobj, "model.dims")
   n <- model.dims[["data"]][1]
   TT <- model.dims[["data"]][2]
   m <- model.dims[["x"]][1]
-  Covars <- MODELobj[["fixed"]][["d"]]
+  d_Covars <- MODELobj[["fixed"]][["d"]]
+  c_Covars <- MODELobj[["fixed"]][["c"]]
   control <- MLEobj[["control"]]
   fun.opt <- control[["fun.opt"]]
   tmb.silent <- control[["tmb.silent"]]
@@ -44,21 +45,19 @@ MARSStmb <- function(MLEobj) {
   opt.control <- control[!(names(control) %in% c("fun.opt", "optim.method", "tmb.silent", "silent", "maxit", "minit"))]
 
   # Expand out to full covariate matrix
-  has_covars <- TRUE
-  Covars <- matrix(Covars[,1,], nrow = nrow(Covars))
-  if (ncol(Covars) == 1) {
-    if (all(Covars == 0)) has_covars <- FALSE
-    Covars <- matrix(Covars, nrow = nrow(Covars), ncol = TT)
-  }
-
+  d_Covars <- matrix(d_Covars[,1,], nrow = nrow(d_Covars))
+  c_Covars <- matrix(c_Covars[,1,], nrow = nrow(c_Covars))
+  # if user did not pass in c_Covars then c must have T columns
+  no_c_covars <- ncol(c_Covars) == 1
+  
   # Set up the initial matrices
   eleminits <- list()
-  for (elem in c("Z", "D", "R", "Q", "V0", "x0")) {
+  for (elem in c("Z", "D", "R", "C", "Q", "V0", "x0")) {
     eleminits[[elem]] <- coef(MLEobj, type = "matrix", what = "start")[[elem]]
   }
   # Set up the maps
   elemmaps <- list()
-  for (elem in c("Z", "D", "x0")) {
+  for (elem in c("Z", "D", "C", "x0")) {
     elemmaps[[elem]] <- create.elem.maps(MLEobj, elem = elem)[["map"]]
   }
   # maps for var-cov matrices have diagonal separate from off-diagonal
@@ -73,9 +72,10 @@ MARSStmb <- function(MLEobj) {
   # For now, we will assume V0 is a fixed (diagonal) matrix
   data <- list(
     model = "marxss",
-    obs = ty,
-    Covar = Covars,
-    has_covars = as.numeric(has_covars)
+    Y = y,
+    d_Covar = d_Covars,
+    c_Covar = c_Covars,
+    no_c_covars = as.numeric(no_c_covars)
   )
 
   # Note x0 and V0 are fixed (stochastic prior) for DFA
@@ -85,34 +85,41 @@ MARSStmb <- function(MLEobj) {
   R <- eleminits[["R"]]
   sdR <- sqrt(diag(R))
   corrR <- diag(1 / sdR) %*% R %*% diag(1 / sdR) # correlation matrix
+  Q <- eleminits[["Q"]]
+  sdQ <- sqrt(diag(Q))
+  corrQ <- diag(1 / sdQ) %*% Q %*% diag(1 / sdQ) # correlation matrix
   parameters <- list(
-    logsdR = log(sdR), # log of sqrt of diagonal of R
-    cholCorrR = chol(corrR)[upper.tri(R)], # off-diagonal of chol of corr R
-    Q = eleminits[["Q"]],
-    V0 = eleminits[["V0"]],
-    D = eleminits[["D"]],
-    Z = eleminits[["Z"]],
+    X = matrix(0, ncol = TT, nrow = m), # states
     x0 = eleminits[["x0"]],
-    u = matrix(0, nrow = TT, ncol = m) # states
+    V0 = eleminits[["V0"]],
+    logsdQ = log(sdQ), # log of sqrt of diagonal of Q
+    cholCorrQ = chol(corrQ)[upper.tri(Q)], # off-diagonal of chol of corr Q
+    C = eleminits[["C"]],
+    Z = eleminits[["Z"]],
+    D = eleminits[["D"]],
+    logsdR = log(sdR), # log of sqrt of diagonal of R
+    cholCorrR = chol(corrR)[upper.tri(R)] # off-diagonal of chol of corr R
   )
 
   # Create the map (mask) that indicates what parameters to not estimate
   # the states are treated as a parameter but are all estimated
   # so do not appear here
   maplist <- list(
-    logsdR = elemmaps[["R"]][["diag"]],
-    cholCorrR = elemmaps[["R"]][["offdiag"]],
-    Q = factor(matrix(NA, nrow = m, ncol = m)),
+    x0 = elemmaps[["x0"]],
     V0 = factor(matrix(NA, nrow = m, ncol = m)),
-    D = elemmaps[["D"]],
+    logsdQ = elemmaps[["Q"]][["diag"]],
+    cholCorrQ = elemmaps[["Q"]][["offdiag"]],
+    C = elemmaps[["C"]],
     Z = elemmaps[["Z"]],
-    x0 = elemmaps[["x0"]]
+    D = elemmaps[["D"]],
+    logsdR = elemmaps[["R"]][["diag"]],
+    cholCorrR = elemmaps[["R"]][["offdiag"]]
   )
 
   # Creates the model object and runs the optimization
   obj1 <- TMB::MakeADFun(
     data, parameters,
-    random = "u",
+    random = "X",
     DLL = "marssTMB_TMBExports",
     silent = MLEobj[["control"]][["tmb.silent"]], map = maplist
   )
@@ -177,7 +184,7 @@ MARSStmb <- function(MLEobj) {
     return(MLEobj)
   }
   
-  MLEobj$states <- t(obj1$env$parList()$u)
+  MLEobj$states <- obj1$env$parList()$X
   rownames(MLEobj$states) <- attr(MLEobj$model, "X.names")
   MLEobj$numIter <- opt1$iterations
   MLEobj$logLik <- -1*opt1$objective
