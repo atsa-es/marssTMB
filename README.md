@@ -1,8 +1,10 @@
+[![marssTMB status badge](https://atsa-es.r-universe.dev/badges/marssTMB)](https://atsa-es.r-universe.dev)
+
 # marssTMB
 
 ## To use
 
-Fit MARSS models as usual, but use `MARSS_tmb()` instead of `MARSS()`. Not R and Q can only be diagonal, unconstrained or fixed. `equalvarcov` is not available nor are other custom Q matrices available with the EM algorithm in `MARSS()`. But TMB is very fast. 
+Fit MARSS models as usual, but use `MARSS_tmb()` instead of `MARSS()`. Note R and Q can only be diagonal, unconstrained or fixed. `equalvarcov` is not available nor are other custom Q matrices available with the EM algorithm in `MARSS()`. But TMB is very fast. 
 
 See the documentation at [marssTMB](https://atsa-es.github.io/marssTMB/)
 
