@@ -36,10 +36,10 @@ MARSStmb <- function(MLEobj) {
   d_Covars <- MODELobj[["fixed"]][["d"]]
   c_Covars <- MODELobj[["fixed"]][["c"]]
   control <- MLEobj[["control"]]
-  fun.opt <- control[["fun.opt"]]
   tmb.silent <- control[["tmb.silent"]]
-  optim.method <- control[["optim.method"]]
-  opt.control <- control[!(names(control) %in% c("fun.opt", "optim.method", "tmb.silent", "silent", "maxit", "minit"))]
+  fun.opt <- ifelse(MLEobj[["method"]] %in% c("TMB", "nlminb.TMB"), "nlminb", "optim")
+  if(fun.opt == "optim") optim.method <- strsplit(MLEobj[["method"]], "[.]")[[1]][1]
+  opt.control <- control[!(names(control) %in% c("tmb.silent", "silent", "maxit", "minit"))]
 
   # Expand out to full covariate matrix
   d_Covars <- matrix(d_Covars[,1,], nrow = nrow(d_Covars))
@@ -143,15 +143,16 @@ MARSStmb <- function(MLEobj) {
     silent = MLEobj[["control"]][["tmb.silent"]], map = maplist
   )
 
+  browser()
   # Optimization
-  if (MLEobj[["control"]][["fun.opt"]] == "nlminb") {
+  if (fun.opt == "nlminb") {
     opt1 <- stats::nlminb(obj1$par, obj1$fn, obj1$gr, control = opt.control)
     # add output also found in optim output
     opt1$value <- opt1$objective
     opt1$counts <- opt1$evaluations
   }
-  if (MLEobj[["control"]][["fun.opt"]] == "optim") {
-    opt1 <- stats::optim(obj1$par, obj1$fn, gr = obj1$gr, control = opt.control)
+  if (fun.opt == "optim") {
+    opt1 <- stats::optim(obj1$par, obj1$fn, gr = obj1$gr, control = opt.control, method = optim.method)
     opt1$objective <- opt1$value
     opt1$iterations <- opt1$counts[2]
   }
@@ -196,7 +197,7 @@ MARSStmb <- function(MLEobj) {
   MLEobj$start <- MLEobj$start
   MLEobj$convergence <- opt1$convergence
 
-  if (control$fun.opt == "optim" && opt1$convergence > 1) {
+  if (fun.opt == "optim" && opt1$convergence > 1) {
     if (!control$silent) cat(paste0(pkg, "() stopped with errors. No parameter estimates returned.\n"))
     MLEobj$par <- MLEobj$kf <- MLEobj$logLik <- NULL
     MLEobj$errors <- opt1$message
