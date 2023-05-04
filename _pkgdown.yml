@@ -26,6 +26,15 @@ reference:
   contents:
   - dfaTMB
   - uniTMB
+  
+articles:
+- title: Articles
+  navbar: ~
+  contents:
+  - Quick_Start
+  - MARSS_TMB
+  - dfaTMB
+  - Optimization
 
 
 
