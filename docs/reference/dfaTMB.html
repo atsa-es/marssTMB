@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">marssTMB</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.7</span>
       </span>
     </div>
 
@@ -136,6 +136,10 @@
 <dd><p>to pass to optim call; ignored for <code>fun="nlminb"</code></p></dd>
 
 
+<dt>control</dt>
+<dd><p>a list with the control settings for the optimatization function. See details for the defaults.</p></dd>
+
+
 <dt>form</dt>
 <dd><p>The equation form used in the marssTMB() call. The default is "dfa".</p></dd>
 
@@ -145,6 +149,11 @@
     
 
 <p>A list with Optimization, Estimates, Fits, and AIC</p>
+    </div>
+    <div id="details">
+    <h2>Details</h2>
+    <p>The control defaults for <code><a href="https://rdrr.io/r/stats/nlminb.html" class="external-link">stats::nlminb()</a></code> are <code>iter.max = 2000</code> and <code>eval.max = 2000</code>.
+For <code><a href="https://rdrr.io/r/stats/optim.html" class="external-link">stats::optim()</a></code>, the defaults are <code>reltol = 1e-12</code> and <code>maxit = 2000</code>.</p>
     </div>
     <div id="author">
     <h2>Author</h2>

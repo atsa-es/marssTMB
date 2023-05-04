@@ -83,12 +83,17 @@
 <div class="section level1">
 <div class="page-header"><h1 id="marsstmb">marssTMB<a class="anchor" aria-label="anchor" href="#marsstmb"></a>
 </h1></div>
-<p>The beginning of a companion R package to MARSS that fits MARSS models with TMB. The package is in very active development. See <a href="news/index.html">changelog</a> for current status.</p>
+<div class="section level2">
+<h2 id="to-use">To use<a class="anchor" aria-label="anchor" href="#to-use"></a>
+</h2>
+<p>Fit MARSS models as usual, but use <code><a href="reference/MARSS_tmb.html">MARSS_tmb()</a></code> instead of <code>MARSS()</code>. Not R and Q can only be diagonal, unconstrained or fixed. <code>equalvarcov</code> is not available nor are other custom Q matrices available with the EM algorithm in <code>MARSS()</code>. But TMB is very fast.</p>
 <p>See the documentation at <a href="https://atsa-es.github.io/marssTMB/">marssTMB</a></p>
+</div>
 <div class="section level2">
 <h2 id="install">install<a class="anchor" aria-label="anchor" href="#install"></a>
 </h2>
-<pre><code><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"atsa-es/marssTMB"</span><span class="op">)</span></span></code></pre>
+<pre><code><span><span class="co"># Install marssTMB in R:</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">'marssTMB'</span>, repos <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'https://atsa-es.r-universe.dev'</span>, <span class="st">'https://cloud.r-project.org'</span><span class="op">)</span><span class="op">)</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="notes">Notes<a class="anchor" aria-label="anchor" href="#notes"></a>

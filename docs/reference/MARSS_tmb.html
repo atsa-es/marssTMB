@@ -20,7 +20,7 @@ former is much faster than the later and is the default."><!-- mathjax --><scrip
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">marssTMB</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.7</span>
       </span>
     </div>
 
@@ -78,7 +78,7 @@ former is much faster than the later and is the default.</p>
 <span>  inits <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  miss.value <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="cn">NA</span><span class="op">)</span>,</span>
 <span>  method <span class="op">=</span> <span class="st">"TMB"</span>,</span>
-<span>  form <span class="op">=</span> <span class="st">"dfa"</span>,</span>
+<span>  form <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"marxss"</span>, <span class="st">"dfa"</span><span class="op">)</span>,</span>
 <span>  fit <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  silent <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>fun.opt <span class="op">=</span> <span class="st">"nlminb"</span><span class="op">)</span>,</span>
@@ -103,6 +103,10 @@ former is much faster than the later and is the default.</p>
 <dd><p>list of initial conditions</p></dd>
 
 
+<dt>miss.value</dt>
+<dd><p>A parameter for backcompatibility. Not used.</p></dd>
+
+
 <dt>method</dt>
 <dd><p>must be "TMB" (case sensitive)</p></dd>
 
@@ -121,6 +125,10 @@ former is much faster than the later and is the default.</p>
 
 <dt>control</dt>
 <dd><p>list for the optimization function. <code><a href="https://rdrr.io/r/stats/nlminb.html" class="external-link">stats::nlminb()</a></code> or <code><a href="https://rdrr.io/r/stats/optim.html" class="external-link">stats::optim()</a></code>, <code>control$fun.opt</code> allows you to choose optim or nlminb as the optimization function. <code>control$optim.method</code> allows you to choose method for <code><a href="https://rdrr.io/r/stats/optim.html" class="external-link">optim()</a></code>.</p></dd>
+
+
+<dt>...</dt>
+<dd><p>Extra parameters. Not used.</p></dd>
 
 </dl></div>
     <div id="value">
@@ -156,8 +164,7 @@ Further arguments for the optimization method can be passed into <code>control</
 <span class="r-in"><span>  <span class="fu">MARSS</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/MARSS/man/zscore.html" class="external-link">zscore</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">#fit with MARSS</span></span></span>
-<span class="r-in"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu">MARSS_tmb</span><span class="op">(</span><span class="va">dat</span>, model<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>m<span class="op">=</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in MARSS_tmb(dat, model = list(m = 3)):</span> marssTMB: tinitx must be 1. Set tinitx=1 in model list.</span>
+<span class="r-in"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu">MARSS_tmb</span><span class="op">(</span><span class="va">dat</span>, model<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>m<span class="op">=</span><span class="fl">3</span>, tinitx<span class="op">=</span><span class="fl">1</span><span class="op">)</span>, form<span class="op">=</span><span class="st">"dfa"</span><span class="op">)</span></span></span>
 </code></pre></div>
     </div>
   </div>
