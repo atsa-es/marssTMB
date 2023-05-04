@@ -1,5 +1,6 @@
 Package: marssTMB
-Title: Fits MARSS models with TMB
+Title: Fast fitting of MARSS models with TMB
+Description: Companion to the MARSS package. Fast fitting of MARSS models with TMB. See the MARSS documentation. All the model syntax and features are the same as for the MARSS package.
 Version: 0.0.8
 Authors@R: 
     c(person("Eli", "Holmes", , "eli.holmes@noaa.gov", role = c("aut", "cre"),
@@ -9,7 +10,6 @@ Authors@R:
       person("Timothy", "Cline", , "timothy.cline2@montana.edu", role = c("aut"),
            comment = c(ORCID = "0000-0002-4955-654X"))           )
 Maintainer: Elizabeth E. Holmes <eli.holmes@noaa.gov>
-Description: Work on TMB files to fit MARSS models with TMB.
 URL: https://atsa-es.github.io/marssTMB, https://github.com/atsa-es/marssTMB
 BugReports: https://github.com/atsa-es/marssTMB/issues
 License: GPL (>= 2)
