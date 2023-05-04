@@ -21,6 +21,7 @@ Imports:
 Suggests: 
     ggplot2,
     dplyr,
+    forecast,
     tidyr,
     knitr,
     rmarkdown,
