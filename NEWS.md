@@ -1,6 +1,7 @@
 # marssTMB 0.0.8
 
 * Added a Quick Start vignette.
+* Added check that no zeros on diagonal of Q or R (temporary)
 
 # marssTMB 0.0.7
 

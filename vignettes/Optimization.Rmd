@@ -1,0 +1,62 @@
+---
+title: "Optimization discussion"
+output: 
+  rmarkdown::html_vignette:
+    toc: yes
+vignette: >
+  %\VignetteIndexEntry{Optimization discussion}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+\newcommand{\QQ}{\mathbf{Q}}
+\newcommand{\RR}{\mathbf{R}}
+\newcommand{\xx}{\mathbf{x}}
+
+```{r setup, include = FALSE}
+# knitr options
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+set.seed(1234)
+```
+
+Notes on the optimization and likelihood calculation functions.
+
+## Optimization
+
+All these functions take a function that returns the likelihood (and potentially gradients) and finds the parameters that maximize that likelihood. Technically they minimize the negative log-likelihood.
+
+### nlminb
+
+[stats::nlminb()] provides unconstrained and bounds-constrained quasi-Newton optimization. This code is based on a FORTRAN PORT library by David Gay in the Bell Labs designed to be portable over different types of computer (from comments by Erwin Kalvelagen). See more here (Section 2). Reference: J.E. Dennis, Jr., David M. Gay, Roy E. Welsch (1981) An Adaptive Nonlinear Least-Squares Algorithm. ACM Transactions on Mathematical Software 7:348-368 [DOI](https://dl.acm.org/doi/pdf/10.1145/355958.355965).
+
+### optim
+
+[stats::optim()] provides a variety of different optimatizaqtion algorithms. Two of these are L-BFGS-B and BFGS, which are quasi-Newton family methods. These are in the same class of algorithm as the nlminb "adaptive nonlinear least-squares algorithm".
+
+### MARSSkem
+
+[MARSS::MARSSkem()] provides a specific EM algorithm for linear constrained MARSS models.
+
+## Likelihood Calculation
+
+MARSS and marssTMB provide three functions for likelihood calculations.
+
+### Koopman and Durbin Kalman filter and smoother
+
+[MARSS::MARSSkfas()] uses the Koopman and Durbin (2001-2003) modificatioon of the Kalman filter and smoother algorithms to compute the maximum-likelihood estimates of the states. This algorithm is a more robust and faster implementation than the classic (original) Kalman filter and smoother equations. [MARSS::MARSSkfas()] uses the  [KFAS](https://cran.r-project.org/package=KFAS) package, which provides a fast implementation of the Koopman and Durbin (2001-2003) algorithms and the likelihood.
+
+### Classic Kalman filter and smoother
+
+[MARSS::MARSSkfss()] uses the classic Kalman filter and smoother and innovations likelihood calculation with missing values modifications as described in Shumway and Stoffer (2006). The classic recursions involve matrix inversions that make this algorithm slower and less stable.
+
+### TMB
+
+[TMB](https://cran.r-project.org/package=TMB) uses applied Laplace approximation to provide the gradients (exact derivatives) of a likelihood surface that is a function of the states (X) and parameters. It also returns the value of the likelihood surface at a set of states and parameter values. The implementation is very fast and efficient. These two elements (the gradients and likelihood) can then be given to an optimization algorithm for fast calculation of the maximum likelihood states (X) and parameters. [MARSStmb()] uses the output from TMB and finds the maximum likelihood states and parameters via either [stats::nlminb()] or [stats:optim()].
+
+
+
+
+

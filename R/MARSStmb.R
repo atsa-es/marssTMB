@@ -56,6 +56,11 @@ MARSStmb <- function(MLEobj) {
   V0_is_zero <- all(eleminits[["V0"]]==0)
   if(!V0_is_zero && any(diag(eleminits[[elem]])==0))
     stop(paste0(pkg, ": V0 can only have 0s on the diagonal if it is all zero"))
+  # No zeros on diagonal of Q or Rdefinition
+  for(elem in c("R", "Q")){
+  if(any(diag(eleminits[[elem]])==0))
+    stop(paste0(pkg, ": No zeros allowed on the diagonal of ", elem, "."))
+  }
   
   # Set up the maps
   elemmaps <- list()
