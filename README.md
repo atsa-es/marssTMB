@@ -1,13 +1,16 @@
 # marssTMB
 
-The beginning of a companion R package to MARSS that fits MARSS models with TMB. The package is in very active development. See [changelog](news/index.html) for current status.
+## To use
+
+Fit MARSS models as usual, but use `MARSS_tmb()` instead of `MARSS()`. Not R and Q can only be diagonal, unconstrained or fixed. `equalvarcov` is not available nor are other custom Q matrices available with the EM algorithm in `MARSS()`. But TMB is very fast. 
 
 See the documentation at [marssTMB](https://atsa-es.github.io/marssTMB/)
 
 ## install
 
 ```
-remotes::install_github("atsa-es/marssTMB")
+# Install marssTMB in R:
+install.packages('marssTMB', repos = c('https://atsa-es.r-universe.dev', 'https://cloud.r-project.org'))
 ```
 
 ## Notes

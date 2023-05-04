@@ -44,17 +44,22 @@ MARSStmb <- function(MLEobj) {
   # Expand out to full covariate matrix
   d_Covars <- matrix(d_Covars[,1,], nrow = nrow(d_Covars))
   c_Covars <- matrix(c_Covars[,1,], nrow = nrow(c_Covars))
-  # if user did not pass in c_Covars then c must have T columns
-  no_c_covars <- ncol(c_Covars) == 1
   
   # Set up the initial matrices
   eleminits <- list()
-  for (elem in c("Z", "D", "R", "C", "Q", "V0", "x0")) {
+  model.elem <- attr(MODELobj, "par.names")
+  for (elem in model.elem[!(model.elem %in% c("c", "d"))]) {
     eleminits[[elem]] <- coef(MLEobj, type = "matrix", what = "start")[[elem]]
   }
+  # Check that no 0s on diagonal of V0 unless V0 is all zero
+  # Note V0 is fixed by definition
+  V0_is_zero <- all(eleminits[["V0"]]==0)
+  if(!V0_is_zero && any(diag(eleminits[[elem]])==0))
+    stop(paste0(pkg, ": V0 can only have 0s on the diagonal if it is all zero"))
+  
   # Set up the maps
   elemmaps <- list()
-  for (elem in c("Z", "D", "C", "x0")) {
+  for (elem in model.elem) {
     elemmaps[[elem]] <- create.elem.maps(MLEobj, elem = elem)[["map"]]
   }
   # maps for var-cov matrices have diagonal separate from off-diagonal
@@ -72,7 +77,10 @@ MARSStmb <- function(MLEobj) {
     Y = y,
     d_Covar = d_Covars,
     c_Covar = c_Covars,
-    no_c_covars = as.numeric(no_c_covars)
+    has_c_covars = as.numeric(ncol(c_Covars) != 1),
+    has_d_covars = as.numeric(ncol(d_Covars) != 1),
+    V0_is_zero = as.numeric(V0_is_zero),
+    tinitx = MODELobj[["tinitx"]]
   )
 
   # Note x0 and V0 are fixed (stochastic prior) for DFA
@@ -81,18 +89,20 @@ MARSStmb <- function(MLEobj) {
   # Creates the list of initial (start) values of parameter list
   R <- eleminits[["R"]]
   sdR <- sqrt(diag(R))
-  corrR <- diag(1 / sdR) %*% R %*% diag(1 / sdR) # correlation matrix
+  corrR <- diag(1/sdR, n) %*% R %*% diag(1/sdR, n) # correlation matrix
   Q <- eleminits[["Q"]]
   sdQ <- sqrt(diag(Q))
-  corrQ <- diag(1 / sdQ) %*% Q %*% diag(1 / sdQ) # correlation matrix
+  corrQ <- diag(1/sdQ, m) %*% Q %*% diag(1/sdQ, m) # correlation matrix
   parameters <- list(
     X = matrix(0, ncol = TT, nrow = m), # states
     x0 = eleminits[["x0"]],
     V0 = eleminits[["V0"]],
     logsdQ = log(sdQ), # log of sqrt of diagonal of Q
     cholCorrQ = chol(corrQ)[upper.tri(Q)], # off-diagonal of chol of corr Q
+    U = eleminits[["U"]],
     C = eleminits[["C"]],
     Z = eleminits[["Z"]],
+    A = eleminits[["A"]],
     D = eleminits[["D"]],
     logsdR = log(sdR), # log of sqrt of diagonal of R
     cholCorrR = chol(corrR)[upper.tri(R)] # off-diagonal of chol of corr R
@@ -106,12 +116,19 @@ MARSStmb <- function(MLEobj) {
     V0 = factor(matrix(NA, nrow = m, ncol = m)),
     logsdQ = elemmaps[["Q"]][["diag"]],
     cholCorrQ = elemmaps[["Q"]][["offdiag"]],
+    U = elemmaps[["U"]],
     C = elemmaps[["C"]],
     Z = elemmaps[["Z"]],
+    A = elemmaps[["A"]],
     D = elemmaps[["D"]],
     logsdR = elemmaps[["R"]][["diag"]],
     cholCorrR = elemmaps[["R"]][["offdiag"]]
   )
+  if(MODELobj[["tinitx"]]==1 & V0_is_zero){
+    mat <- matrix(1:(m*TT), m, TT)
+    mat[,1] <- NA
+    maplist$X <- mat |> unlist() |> as.factor()
+  }
 
   # Creates the model object and runs the optimization
   obj1 <- TMB::MakeADFun(

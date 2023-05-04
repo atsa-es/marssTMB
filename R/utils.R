@@ -31,9 +31,10 @@ create.varcov.maps <- function(x, elem){
 create.elem.maps <- function(x, elem="Z"){
     fixed <- x$model$fixed[[elem]]
     free <- x$model$free[[elem]]
+    par.names <- colnames(free)
     var.dim <- attr(x$model, "model.dims")[[elem]][1:2]
     par.as.list <- MARSS:::fixed.free.to.formula(fixed[, , 1, drop = FALSE], free[, , 1, drop = FALSE], var.dim)
     mat <- lapply(par.as.list, function(x){ifelse(!is.character(x), NA, x)}) |>
       matrix(var.dim)
-    return(list(map = mat |> unlist() |> as.factor(), map.matrix=mat, raw.matrix=par.as.list))
+    return(list(map = mat |> unlist() |> factor(levels=par.names), map.matrix=mat, raw.matrix=par.as.list))
 }

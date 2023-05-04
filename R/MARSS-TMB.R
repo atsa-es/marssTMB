@@ -34,12 +34,13 @@ MARSS_tmb <- function(y,
                      inits = NULL,
                      miss.value = as.numeric(NA),
                      method = "TMB",
-                     form = "dfa",
+                     form = c("marxss", "dfa"),
                      fit = TRUE,
                      silent = FALSE,
                      control = list(fun.opt="nlminb"),
                      ...) {
   pkg <- "marssTMB"
+  form <- match.arg(form)
   method <- match.arg(method)
   # This section is temporary
   fun.opt <- ifelse(is.null(control$fun.opt), "nlminb", control$fun.opt )
@@ -97,46 +98,42 @@ MARSS_tmb <- function(y,
   x[["method"]] <- paste0(method, " with optimization function ", fun.opt, if(fun.opt=="optim") paste0(" with method ", optim.method))
   
   # Error check for the DFA model
-  # This section is temporary. Currently only DFA model with tinitx=1 is allowed.
-  if(x[["model"]][["tinitx"]] != 1) 
-    stop(paste0(pkg, ": tinitx must be 1. Set tinitx=1 in model list."))
   model.descrip <- MARSS:::describe.marssMODEL(x[["model"]])
-  if(form == "dfa"){
+
   is.unconstrained <- function(elem) substr(model.descrip[[elem]], 1, 5) == "uncon"
-  is.diagonal <- function(elem) substr(model.descrip[[elem]], 1, 8) == "diagonal"
+  is.diagonal <- function(elem){
+    substr(model.descrip[[elem]], 1, 8) == "diagonal" | model.descrip[[elem]] == "scalar (1 x 1)" }
   is.fixed <- function(elem) substr(model.descrip[[elem]], 1, 5) == "fixed"
   is.identity <- function(elem){
     val <- model.descrip[[elem]]
     substr(val, 1, 8) == "identity" | val == "fixed and all one (1 x 1)"
   }
   is.zero <- function(elem) substr(model.descrip[[elem]], 1, 14) == "fixed and zero"
-  
-  # Check that R is allowed
-  elem <- "R"
-  ok <- is.diagonal(elem) | is.fixed(elem) | is.unconstrained(elem)
-  if(!ok){
-    stop(paste0(pkg, ": R must be diagonal, fixed or unconstrained"))
+
+  # Check that R and Q are allowed
+  for(elem in c("R", "Q")){
+    ok <- is.diagonal(elem) | is.fixed(elem) | is.unconstrained(elem) | is.identity(elem)
+    if(!ok) stop(paste0(pkg, ": ", elem, " must be diagonal, fixed or unconstrained"))
   }
 
-  # Check that Q and B are identity
-  for(elem in c("B", "Q")){
+  # Check that B is identity
+  for(elem in c("B")){
   ok <- is.identity(elem)
   if(!ok) stop(paste0(pkg, ": ", elem, " must be identity"))
   }
   
-  # Check that u, a, and C are zero
-  for(elem in c("U", "A", "C")){
-  ok <- is.zero(elem)
-  if(!ok) stop(paste0(pkg, ": ", elem, " must be zero"))
-  }
-
-  # Check that x0 and V0 are fixed
-  for(elem in c("x0", "V0")){
-    ok <- is.fixed(elem)
+  # Check that a, and C are zero
+#  for(elem in c("A", "C")){
+#  ok <- is.zero(elem)
+#  if(!ok) stop(paste0(pkg, ": ", elem, " must be zero"))
+#  }
+  
+  # Check that V0 is fixed
+  for(elem in c("V0")){
+    ok <- is.fixed(elem) | is.identity(elem)
     if(!ok) stop(paste0(pkg, ": ", elem, " must be fixed"))
   }
-  }
-  
+
   if(fit) return(MARSStmb(x))
   return(x)
 }
