@@ -6,7 +6,7 @@
 
 Fit [MARSS](https://atsa-es.github.io/MARSS/) models as usual, but use [MARSS_tmb()] instead of [MARSS::MARSS()]. Note R and Q can only be diagonal, unconstrained or fixed. `equalvarcov` is not available nor are other custom Q matrices available with the EM algorithm in `MARSS()`. But TMB is very fast. 
 
-See the documentation at [marssTMB](https://atsa-es.github.io/marssTMB/)
+See the [Quick Start Guide](https://atsa-es.github.io/marssTMB/articles/Quick_Start.html) to get started.
 
 ## install
 

@@ -1,0 +1,234 @@
+---
+title: "Quick Start"
+output: 
+  rmarkdown::html_vignette:
+    toc: yes
+vignette: >
+  %\VignetteIndexEntry{Quick Start}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+\newcommand{\QQ}{\mathbf{Q}}
+\newcommand{\RR}{\mathbf{R}}
+\newcommand{\xx}{\mathbf{x}}
+
+```{r setup, include = FALSE}
+# knitr options
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+set.seed(1234)
+```
+
+\def\AA{\mbox{$\mathbf A$}}
+\def\aa{\mbox{$\mathbf a$}}
+\def\BB{\mbox{$\mathbf B$}}
+\def\bb{\mbox{$\mathbf b$}}
+\def\CC{\mbox{$\mathbf C$}}
+\def\cc{\mbox{$\mathbf c$}}
+\def\DD{\mbox{$\mathbf D$}}
+\def\dd{\mbox{$\mathbf d$}}
+\def\EE{\mbox{$\mathbf E$}}
+\def\ee{\mbox{$\mathbf e$}}
+\def\FF{\mbox{$\mathbf F$}}
+\def\ff{\mbox{$\mathbf f$}}
+\def\gg{\mbox{$\mathbf g$}}
+\def\GG{\mbox{$\mathbf G$}}
+\def\HH{\mbox{$\mathbf H$}}
+\def\II{\mbox{$\mathbf I$}}
+\def\LL{\mbox{$\mathbf L$}}
+\def\MM{\mbox{$\mathbf M$}}
+\def\mm{\mbox{$\mathbf m$}}
+\def\OO{\mbox{$\mathbf O$}}
+\def\PP{\mbox{$\mathbf P$}}
+\def\pp{\mbox{$\mathbf p$}}
+\def\QQ{\mbox{$\mathbf Q$}}
+\def\qq{\mbox{$\mathbf q$}}
+\def\RR{\mbox{$\mathbf R$}}
+\def\rr{\mbox{$\mathbf r$}}
+\def\UU{\mbox{$\mathbf U$}}
+\def\uu{\mbox{$\mathbf u$}}
+\def\VV{\mbox{$\mathbf V$}}
+\def\vv{\mbox{$\mathbf v$}}
+\def\WW{\mbox{$\mathbf W$}}
+\def\ww{\mbox{$\mathbf w$}}
+\def\XX{\mbox{$\mathbf X$}}
+\def\xx{\mbox{$\mathbf x$}}
+\def\YY{\mbox{$\mathbf Y$}}
+\def\yy{\mbox{$\mathbf y$}}
+\def\ZZ{\mbox{$\mathbf Z$}}
+\def\zz{\mbox{$\mathbf z$}}
+\def\et{\mbox{\boldmath $\eta$}}
+\def\ep{\mbox{\boldmath $\epsilon$}}
+\def\pipi{\pmb{\pi}}
+\def\uupsilon{\pmb{\upsilon}}
+\def\llambda{\pmb{\lambda}}
+\def\bbeta{\pmb{\beta}}
+\def\aalpha{\pmb{\alpha}}
+\def\zzeta{\pmb{\zeta}}
+\def\etaeta{\mbox{\boldmath $\eta$}}
+\def\xixi{\mbox{\boldmath $\xi$}}
+\def\PI{\mbox{\boldmath $\mathrm{\Pi}$}}
+\def\LAM{\pmb{\Lambda}}
+\def\GAM{\mbox{\boldmath $\mathrm{\Gamma}$}}
+\def\SI{\mbox{\boldmath $\mathrm{\Sigma}$}}
+\def\TH{\mbox{\boldmath $\mathrm{\Theta}$}}
+\def\PH{\mbox{\boldmath $\mathrm{\Phi}$}}
+\def\zer{\mbox{\boldmath $0$}}
+\def\vec{\,\textrm{vec}}
+\def\var{\,\textup{\textrm{var}}}
+\def\cov{\,\textup{\textrm{cov}}}
+\def\MVN{\,\textrm{MVN}}
+\def\AIC{\,\textup{\textrm{AIC}}}
+\def\E{\,\textup{\textrm{E}}}
+\def\Lik{\,\textup{\textrm{L}}}
+\def\N{\,\textup{\textrm{N}}}
+\def\R{R }
+
+The \{MARSS\} package fits multivariate autoregressive state-space (MARSS) models and the {marssTMB} is a companion package that allows fast model fitting via TMB. MARSS models take the form:
+\begin{equation}\label{eqn:marss}
+\begin{gathered}
+\xx_t = \BB_t\xx_{t-1} + \uu_t + \CC_t\cc_t + \GG_t\ww_t, \text{ where } \ww_t \sim \MVN(0,\QQ_t)\\
+\yy_t = \ZZ_t\xx_t + \aa_t + \DD_t\dd_t + \HH_t\vv_t, \text{ where } \vv_t \sim \MVN(0,\RR_t)\\
+\xx_1 \sim \MVN(\pipi,\LAM) \text{ or } \xx_0 \sim \MVN(\pipi,\LAM)
+\end{gathered}
+\end{equation}
+$\cc$ and $\dd$ are inputs (aka, exogenous variables or covariates or indicator variables) and must have no missing values.  They are not treated as `data' in the likelihood but as inputs.  
+
+Example: a mean-reverting random walk model with three observation time series:
+\begin{gather*}
+\begin{bmatrix}x_1\\ x_2\end{bmatrix}_t
+= \begin{bmatrix}b&0\\ 0&b\end{bmatrix}
+\begin{bmatrix}x_1\\ x_2\end{bmatrix}_{t-1}
++ \begin{bmatrix}w_1\\ w_2\end{bmatrix}_t, \quad 
+\begin{bmatrix}w_1\\ w_2\end{bmatrix}_t \sim \MVN\begin{pmatrix}\begin{bmatrix}0\\0\end{bmatrix},\begin{bmatrix}q_{11}&q_{12}\\ q_{12}&q_{22}\end{bmatrix} \end{pmatrix},
+\\
+\begin{bmatrix}x_1\\ x_2\end{bmatrix}_0 \sim \MVN\begin{pmatrix}\begin{bmatrix}0\\ 0\end{bmatrix},\begin{bmatrix}1&0\\ 0&1\end{bmatrix} \end{pmatrix} \\
+\\
+\begin{bmatrix}y_1\\y_2\\y_3\end{bmatrix}_t
+= \begin{bmatrix}1&1\\ 0&1\\ 1&0\end{bmatrix}
+\begin{bmatrix}x_1\\x_2\end{bmatrix}_t
++ \begin{bmatrix}v_1\\ v_2\\ v_3\end{bmatrix}_t,\quad 
+\begin{bmatrix}v_1\\ v_2\\ v_3\end{bmatrix}_t \sim MVN\begin{pmatrix}\begin{bmatrix}a_1\\ 0\\ 0\end{bmatrix},
+ \begin{bmatrix}r_{11}&0&0\\ 0&r&0\\ 0&0&r\end{bmatrix} \end{pmatrix} 
+\end{gather*}
+
+To fit a MARSS model with the \{MARSS\} package, we translate the mathematical model written in matrix form into equivalent matrices (or arrays if time-varying) in \R  code. Matrices that combine fixed and estimated values are specified using a list matrix with numerical values for fixed values and  character names for the estimated values. 
+
+The model above is written as
+```{r}
+B1 <- matrix(list("b",0,0,"b"),2,2)
+U1 <- matrix(0,2,1)
+Q1 <- matrix(c("q11","q12","q12","q22"),2,2)
+Z1 <- matrix(c(1,0,1,1,1,0),3,2)
+A1 <- matrix(list("a1",0,0),3,1)
+R1 <- matrix(list("r11",0,0,0,"r",0,0,0,"r"),3,3)
+pi1 <- matrix(0,2,1); V1=diag(1,2)
+model.list <- list(B=B1,U=U1,Q=Q1,Z=Z1,A=A1,R=R1,x0=pi1,V0=V1,tinitx=0)
+```
+Notice the one-to-one correspondence between the model in \R and the math version of the model.  The matrix names in the model list must be B, U, Q, Z, A, R, x0, V0.  The `tinitx` element tells MARSS whether the initial state for $x$ is at $t=1$ (`tinitx=1`) or $t=0$ (`tinitx=0`).   The data must be entered as a $n \times T$ matrix, or a ts object or vector (which will be converted to a $n \times T$ matrix).  MARSS has a number of text shortcuts for common parameter forms, such as ``diagonal and unequal''; see the User Guide for the possible shortcuts. You can leave off matrix names and the defaults will be used. See [MARSS::MARSS.marxss()] for the defaults.
+
+## Example
+
+Harbor seal counts:
+```{r}
+library(MARSS)
+dat <- t(harborSealWA)[2:4, ] # remove the year row
+```
+
+Fit but set B to identity.
+```{r}
+library(marssTMB)
+model.list$B <- diag(1,2)
+fit <- MARSS_tmb(dat, model=model.list)
+```
+The $\RR$, $\QQ$ and $\LAM$ variances can be set to zero to specify partially deterministic systems.  This allows you to write MAR(p) models in MARSS form for example. See the User Guide for examples. 
+
+## Parameter estimates
+
+The main function is which returns a vector of only the estimated parameters.
+```{r}
+coef(fit, type="vector")
+```
+You can include `type="matrix"` to the full parameter matrices.
+
+You can get a pretty version of the estimates with SEs and CIs with
+```{r}
+library(broom)
+tidy(fit)
+```
+
+## Estimated states
+
+To get the estimated states (the expected value), use
+```{r}
+tsSmooth(fit) |> head()
+```
+If you want a matrix of the states, you can use `fit$states`.
+
+## Fitted values
+
+The fitted values are the model estimates for the data.
+```{r}
+fitted(fit) |> head()
+```
+
+## Diagnostics
+
+Use `ggplot2::autoplot()` for a print out of various standard diagnostic plots.
+```{r eval=FALSE}
+library(ggplot2)
+autoplot(fit)
+```
+
+Use [MARSS::residuals()] for the residuals.
+```{r}
+residuals(fit) |> head()
+```
+
+## Predictions and forecasts
+
+To produce predictions and forecasts from a MARSS model, see [MARSS::predict.marssMLE()] or [MARSS::forecast.marssMLE()]
+```{r}
+library(forecast)
+forecast(fit)$pred |> head()
+```
+
+```{r}
+fr <- forecast(fit)
+autoplot(fr)
+```
+
+## Output to LaTeX
+
+[MARSS::toLatex.marssMLE()] allows you to create LaTeX for your model that you can include in your files.
+
+```{r eval=FALSE}
+toLatex(fit, output="tex")
+```
+
+## Important
+
+Specification of a properly constrained model with a unique solution is the responsibility of the user because the \{MARSS\} package has no way to tell if you have specified an insufficiently constrained model.
+
+## Tips and Tricks
+
+Use [MARSS::autoplot()] to see a series of standard plots and diagnostics for your model. Try [MARSS::MARSSinfo()] if you get errors you don't understand or fitting is taking a long time to converge.  Use `fit=FALSE` in your [MARSS_tmb()] call to set up a model without fitting. Let's say you do `fit <- MARSS_tmb(..., fit=FALSE)`.  Now you can do `summary(fit$model)` to see what [MARSStmb()] thinks you are trying to fit.  
+
+Let's say you specified your model with some text short-cuts, like `Q="unconstrained"`, but you want the list matrix form for a next step. `a <- summary(fit$model)` returns that list (invisibly).  Because the model argument of `MARSS_tmb()` will understand a list of list matrices, you can pass in `model=a` to specify the model.  `MARSSkfas(fit, return.kfas.model=TRUE)` will return your model in \{KFAS\} format (class SSModel), thus you can use all the functions available in the \{KFAS\} package on your model.
+
+## Linear constraints
+
+Not provided with {marssTMB}. See the {MARSS} package instead.
+
+## Time-varying parameters
+
+Not currently implemented in {marssTMB}. Use the {MARSS} package for time-varying parameters.
+
+## Need more information?
+
+Lectures and more examples on fitting multivariate models can be found at our course website [https://atsa-es.github.io/atsa] and course eBook [https://atsa-es.github.io/atsa-labs].
+
+The MARSS User Guide starts with some tutorials on MARSS models and walks through many examples showing how to write multivariate time-series models in MARSS form.  The User Guide also has vignettes: how to write AR(p) models in state-space form, dynamic linear models (regression models where the regression parameters are AR(p)), multivariate regression models with regression parameters that are time-varying and enter the non-AR part of your model or the AR part, detecting breakpoints using state-space models, and dynamic factor analysis.  All of these can be written in MARSS form.  It also has a series of vignettes on analysis of multivariate biological data. 

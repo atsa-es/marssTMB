@@ -1,7 +1,5 @@
 ---
 title: "Dynamic Factor Analysis"
-author: "Eli Holmes"
-date: "`r Sys.Date()`"
 output: 
   rmarkdown::html_vignette:
     toc: yes

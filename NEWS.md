@@ -1,3 +1,7 @@
+# marssTMB 0.0.8
+
+* Added a Quick Start vignette.
+
 # marssTMB 0.0.7
 
 * updated `marxss.hpp` to be in MARSS format with X and Y as mxT and nxT.

@@ -4,9 +4,9 @@
 \name{marssTMB-package}
 \alias{marssTMB}
 \alias{marssTMB-package}
-\title{marssTMB: Fits MARSS models with TMB}
+\title{marssTMB: Fast fitting of MARSS models with TMB}
 \description{
-Work on TMB files to fit MARSS models with TMB.
+Companion to the MARSS package. Fast fitting of MARSS models with TMB. See the MARSS documentation. All the model syntax and features are the same as for the MARSS package.
 }
 \seealso{
 Useful links:
