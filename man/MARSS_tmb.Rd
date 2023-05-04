@@ -10,7 +10,7 @@ MARSS_tmb(
   inits = NULL,
   miss.value = as.numeric(NA),
   method = "TMB",
-  form = "dfa",
+  form = c("marxss", "dfa"),
   fit = TRUE,
   silent = FALSE,
   control = list(fun.opt = "nlminb"),

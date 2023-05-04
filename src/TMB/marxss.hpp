@@ -14,15 +14,20 @@ Type marxss(objective_function<Type>* obj) {
   DATA_MATRIX(Y); /* n x T */
   DATA_MATRIX(d_Covar);
   DATA_MATRIX(c_Covar);
-  DATA_INTEGER(no_c_covars);
+  DATA_INTEGER(has_c_covars);
+  DATA_INTEGER(has_d_covars);
+  DATA_INTEGER(V0_is_zero);
+  DATA_INTEGER(tinitx);
   PARAMETER_MATRIX(X); /* State m x T */
   PARAMETER_MATRIX(x0);
   PARAMETER_MATRIX(V0); /* x[1] */
 //  PARAMETER_MATRIX(Q); /* x[t] - x[t-1] */
+  PARAMETER_MATRIX(U);
   PARAMETER_MATRIX(C);
   PARAMETER_VECTOR(logsdQ); /* log of the sqrt of diag Q*/
   PARAMETER_VECTOR(cholCorrQ);
   PARAMETER_MATRIX(Z);
+  PARAMETER_MATRIX(A);
   PARAMETER_MATRIX(D);
   PARAMETER_VECTOR(logsdR); /* log of the sqrt of diag R*/
   PARAMETER_VECTOR(cholCorrR);
@@ -43,30 +48,45 @@ Type marxss(objective_function<Type>* obj) {
   
   matrix<Type> predX(nX,1);  /* m x 1 */
 
-  MVNORM_t<Type> initialState(V0);
-  //MVNORM_t<Type> neg_log_density_process(Q);
-  /* Define likelihood */
-  Type ans=0;
+  
+  Type ans=0; /* Define likelihood */
   //ans -= dnorm(vector<Type>(u.row(0)),Type(0),Type(1),1).sum();
-  ans += initialState(X.col(0)); /* tinitx=1 */
+  if(V0_is_zero){
+    if(tinitx){
+      X.col(0) = x0;
+    }else{
+      predX = x0 + U;
+      if(has_c_covars){
+        predX = predX + C * c_Covar.col(0);
+      }
+      vector<Type> differ = X.col(0)-predX;
+      ans += VECSCALE(corMatGenQ,sdQ)(differ);
+    }
+  }else{
+    MVNORM_t<Type> initialState(V0);
+    ans += initialState(X.col(0)-x0); /* tinitx=1 */
+  }
   for(int i=1;i<timeSteps;i++){ 
     //ans+= neg_log_density_process(u.row(i)-u.row(i-1)); // Process likelihood
     //vector<Type> differ = u.row(i)-u.row(i-1);
-    // predX is m x 1 so u must be transposed
     // if statement is temporary until I can figure how create a
     // a diagonal matrix with 1 on the -1 diagonal
     // diag(1:(timeSteps+1))[1:timeSteps, 2:(timeSteps+1)]
-    if(no_c_covars){
-      predX = X.col(i-1) + C * c_Covar;
-    }else{
-      predX = X.col(i-1) + C * c_Covar.col(i);
+    predX = X.col(i-1) + U;
+    if(has_c_covars){
+      predX = predX + C * c_Covar.col(i);
     }
     vector<Type> differ = X.col(i)-predX;
     ans += VECSCALE(corMatGenQ,sdQ)(differ);
   }
   
   matrix<Type> predY(nY, timeSteps);  
-  predY = Z * X + D * d_Covar;
+  matrix<Type> rowOne(1, timeSteps); 
+  rowOne.setOnes();
+  predY = Z * X + A * rowOne;
+  if(has_d_covars){
+    predY = predY + D * d_Covar;
+  }
   
   for(int i=0;i<timeSteps;i++){ //move one time step at a time
     int nonNAcount = 0; //start at zero NA values

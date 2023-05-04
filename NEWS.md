@@ -1,8 +1,9 @@
 # marssTMB 0.0.7
 
-* updated `marxss.hpp` to be in MARSS format with X and Y as mxT and nxT
-* added Q estimation to `marxss.hpp` (note `MARSS_tmb()` will block this until this is tested)
-* added C estimation to `marxss.hpp` (note `MARSS_tmb()` will block this until this is tested)
+* updated `marxss.hpp` to be in MARSS format with X and Y as mxT and nxT.
+* added Q, C, U, x0 and A estimation to `marxss.hpp`. Minimal testing so far.
+* V0 = 0 is allowed.
+* tinitx=1 or tinitx=0 allowed.
 
 # marssTMB 0.0.6
 
