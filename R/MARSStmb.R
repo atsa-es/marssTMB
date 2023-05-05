@@ -35,6 +35,7 @@ MARSStmb <- function(MLEobj) {
   m <- model.dims[["x"]][1]
   d_Covars <- MODELobj[["fixed"]][["d"]]
   c_Covars <- MODELobj[["fixed"]][["c"]]
+  
   control <- MLEobj[["control"]]
   tmb.silent <- control[["tmb.silent"]]
   fun.opt <- ifelse(MLEobj[["method"]] %in% c("TMB", "nlminb.TMB"), "nlminb", "optim")

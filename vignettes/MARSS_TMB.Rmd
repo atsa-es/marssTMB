@@ -57,7 +57,7 @@ Fit with TMB.
 library(marssTMB)
 m3 <- dfaTMB(dat, model=list(m=1, R='unconstrained'))
 m4 <- MARSS_tmb(dat, model=mod.list, form='dfa')
-m5 <- MARSS_tmb(dat, model=mod.list, control=list(fun.opt="optim"), form='dfa')
+m5 <- MARSS_tmb(dat, model=mod.list, method="BFGS.TMB", form='dfa')
 ```
 
 ### Log likelihoods

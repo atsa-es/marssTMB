@@ -37,7 +37,7 @@ MARSS_tmb(
 
 \item{fit}{Whether to fit the model.}
 
-\item{silent}{Show TMB output when fitting}
+\item{silent}{Show output when fitting}
 
 \item{control}{list for the optimization function. See \code{\link[stats:nlminb]{stats::nlminb()}} or \code{\link[stats:optim]{stats::optim()}} for the options.}
 
@@ -53,11 +53,7 @@ with \code{\link[stats:nlminb]{stats::nlminb()}} or \code{\link[stats:optim]{sta
 former is much faster than the later and is the default.
 }
 \details{
-Note. Goal is to have the user call with the MARSS package as
-\code{MARSS(y, method="tmb")}, which then calls \code{MARSStmb()}. This is the mimics
-the behavior of \code{method="BFGS"} and \code{method="kem"} in \code{\link[MARSS:MARSS]{MARSS::MARSS()}} which
-looks for a fitting function called \code{MARSSxyz}, where \code{xyz} is the method.
-Further arguments for the optimization method can be passed into \code{control}.
+Note in the development version of MARSS() on GitHub, you can use \code{MARSS()} as normal.
 }
 \examples{
 library(MARSS)

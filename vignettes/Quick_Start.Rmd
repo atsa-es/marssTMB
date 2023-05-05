@@ -142,7 +142,7 @@ Fit but set B to identity.
 ```{r}
 library(marssTMB)
 model.list$B <- diag(1,2)
-fit <- MARSS_tmb(dat, model=model.list)
+fit <- MARSS_tmb(dat, model=model.list, method="TMB")
 ```
 The $\RR$, $\QQ$ and $\LAM$ variances can be set to zero to specify partially deterministic systems.  This allows you to write MAR(p) models in MARSS form for example. See the User Guide for examples. 
 

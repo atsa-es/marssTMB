@@ -5,11 +5,7 @@
 #' with [stats::nlminb()] or [stats::optim()] to optimize the likelihood. The 
 #' former is much faster than the later and is the default.
 #' 
-#' Note. Goal is to have the user call with the MARSS package as 
-#' `MARSS(y, method="tmb")`, which then calls `MARSStmb()`. This is the mimics
-#' the behavior of `method="BFGS"` and `method="kem"` in [MARSS::MARSS()] which
-#' looks for a fitting function called `MARSSxyz`, where `xyz` is the method.
-#' Further arguments for the optimization method can be passed into `control`.
+#' Note in the development version of MARSS() on GitHub, you can use `MARSS()` as normal.
 #' 
 #' @param y Vector of observations n x T.
 #' @param model list with 
@@ -21,7 +17,7 @@
 #' @param method "TMB" (default), "nlminb.TMB", or "BFGS.TMB". See details.
 #' @param form The equation form used in the marssTMB() call. The default is "dfa". 
 #' @param fit Whether to fit the model.
-#' @param silent Show TMB output when fitting
+#' @param silent Show output when fitting
 #' @param control list for the optimization function. See [stats::nlminb()] or [stats::optim()] for the options.
 #' @param ... Extra parameters. Not used.
 #' 
@@ -51,6 +47,7 @@ MARSS_tmb <- function(y,
   # x is now a marssMLE object but no par element since not fit
   x <- do.call(MARSS::MARSS, MARSS.call)
   control <- x[["control"]] # set to MARSSoptim defaults
+  x[["method"]] <- method
 
   control[["tmb.silent"]] <- TRUE
   # set up control defaults
