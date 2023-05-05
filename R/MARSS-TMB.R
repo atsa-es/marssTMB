@@ -5,11 +5,7 @@
 #' with [stats::nlminb()] or [stats::optim()] to optimize the likelihood. The 
 #' former is much faster than the later and is the default.
 #' 
-#' Note. Goal is to have the user call with the MARSS package as 
-#' `MARSS(y, method="tmb")`, which then calls `MARSStmb()`. This is the mimics
-#' the behavior of `method="BFGS"` and `method="kem"` in [MARSS::MARSS()] which
-#' looks for a fitting function called `MARSSxyz`, where `xyz` is the method.
-#' Further arguments for the optimization method can be passed into `control`.
+#' Note in the development version of MARSS() on GitHub, you can use `MARSS()` as normal.
 #' 
 #' @param y Vector of observations n x T.
 #' @param model list with 
@@ -18,11 +14,11 @@
 #'    * (if form="dfa") m the number of states (factors). default is 1
 #' @param inits list of initial conditions
 #' @param miss.value A parameter for backcompatibility. Not used.
-#' @param method must be "TMB" (case sensitive)
+#' @param method "TMB" (default), "nlminb.TMB", or "BFGS.TMB". See details.
 #' @param form The equation form used in the marssTMB() call. The default is "dfa". 
 #' @param fit Whether to fit the model.
-#' @param silent Show TMB output when fitting
-#' @param control list for the optimization function. [stats::nlminb()] or [stats::optim()], `control$fun.opt` allows you to choose optim or nlminb as the optimization function. `control$optim.method` allows you to choose method for `optim()`.
+#' @param silent Show output when fitting
+#' @param control list for the optimization function. See [stats::nlminb()] or [stats::optim()] for the options.
 #' @param ... Extra parameters. Not used.
 #' 
 #' @return The output list from [MARSStmb()]
@@ -33,43 +29,26 @@ MARSS_tmb <- function(y,
                      model = NULL,
                      inits = NULL,
                      miss.value = as.numeric(NA),
-                     method = "TMB",
+                     method = c("TMB", "BFGS.TMB", "nlminb.TMB"),
                      form = c("marxss", "dfa"),
                      fit = TRUE,
                      silent = FALSE,
-                     control = list(fun.opt="nlminb"),
+                     control = NULL,
                      ...) {
   pkg <- "marssTMB"
   form <- match.arg(form)
   method <- match.arg(method)
   # This section is temporary
-  fun.opt <- ifelse(is.null(control$fun.opt), "nlminb", control$fun.opt )
-  if(fun.opt == "optim")
-    optim.method <- ifelse(is.null(control$optim.method), "BFGS", control$optim.method)
-  # Needed here because currently MARSS does not allow fun.opt in control
-  control <- control[!(names(control) %in% c("fun.opt", "optim.method"))]
-  
+  fun.opt <- ifelse(method %in% c("TMB", "nlminb.TMB"), "nlminb", "optim")
+  if(fun.opt == "optim") optim.method <- strsplit(method, "[.]")[[1]][1]
+
   # Set up a MARSS() call list and call to get a properly set up MARSS model
   MARSS.call <- list(y = y, inits = inits, model = model, control = control, method = "BFGS", form = form, silent = TRUE, fit = FALSE, ...)
   # x is now a marssMLE object but no par element since not fit
   x <- do.call(MARSS::MARSS, MARSS.call)
   control <- x[["control"]] # set to MARSSoptim defaults
+  x[["method"]] <- method
 
-  # Set up the control list a TMB fit
-  # Temporary until method="tmb" is added to MARSS
-  allowed.fun.opt = c("optim", "nlminb")
-  if (!(fun.opt %in% allowed.fun.opt)) {
-    stop(paste0(pkg, ": control$fun.opt must be one of: ", paste(allowed.fun.opt, collapse=", ")))
-  }
-  if(fun.opt == "optim"){
-    allowed.optim.methods <- c("BFGS")
-    # Some error checks depend on an allowable method
-    if (!(optim.method %in% allowed.optim.methods)) {
-      stop(paste0(pkg, ": control$optim.method must be one of: ", paste(allowed.optim.methods, collapse=", ")))
-    }
-  }
-  control[["fun.opt"]] <- fun.opt
-  if(fun.opt == "optim") control[["optim.method"]] <- optim.method
   control[["tmb.silent"]] <- TRUE
   # set up control defaults
   if(fun.opt == "nlminb"){
@@ -90,12 +69,9 @@ MARSS_tmb <- function(y,
   # Temporary until TMB added to the optim methods in {MARSS}
   control[["minit"]] <- 0
   # These are not allowed in the optimization function but keep in control
-  allowed.in.control <- c("fun.opt", "optim.method", "tmb.silent", "silent", "maxit", "minit")
+  allowed.in.control <- c("tmb.silent", "silent", "maxit", "minit")
   control <- control[names(control) %in% c(allowed.in.control, allowed.in.opt.fun)]
   x[["control"]] <- control
-  
-  # Set up the method. Only used for printing
-  x[["method"]] <- paste0(method, " with optimization function ", fun.opt, if(fun.opt=="optim") paste0(" with method ", optim.method))
   
   # Error check for the DFA model
   model.descrip <- MARSS:::describe.marssMODEL(x[["model"]])
@@ -121,12 +97,6 @@ MARSS_tmb <- function(y,
   ok <- is.identity(elem)
   if(!ok) stop(paste0(pkg, ": ", elem, " must be identity"))
   }
-  
-  # Check that a, and C are zero
-#  for(elem in c("A", "C")){
-#  ok <- is.zero(elem)
-#  if(!ok) stop(paste0(pkg, ": ", elem, " must be zero"))
-#  }
   
   # Check that V0 is fixed
   for(elem in c("V0")){

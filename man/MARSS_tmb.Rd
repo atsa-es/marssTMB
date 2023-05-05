@@ -9,11 +9,11 @@ MARSS_tmb(
   model = NULL,
   inits = NULL,
   miss.value = as.numeric(NA),
-  method = "TMB",
+  method = c("TMB", "BFGS.TMB", "nlminb.TMB"),
   form = c("marxss", "dfa"),
   fit = TRUE,
   silent = FALSE,
-  control = list(fun.opt = "nlminb"),
+  control = NULL,
   ...
 )
 }
@@ -31,15 +31,15 @@ MARSS_tmb(
 
 \item{miss.value}{A parameter for backcompatibility. Not used.}
 
-\item{method}{must be "TMB" (case sensitive)}
+\item{method}{"TMB" (default), "nlminb.TMB", or "BFGS.TMB". See details.}
 
 \item{form}{The equation form used in the marssTMB() call. The default is "dfa".}
 
 \item{fit}{Whether to fit the model.}
 
-\item{silent}{Show TMB output when fitting}
+\item{silent}{Show output when fitting}
 
-\item{control}{list for the optimization function. \code{\link[stats:nlminb]{stats::nlminb()}} or \code{\link[stats:optim]{stats::optim()}}, \code{control$fun.opt} allows you to choose optim or nlminb as the optimization function. \code{control$optim.method} allows you to choose method for \code{optim()}.}
+\item{control}{list for the optimization function. See \code{\link[stats:nlminb]{stats::nlminb()}} or \code{\link[stats:optim]{stats::optim()}} for the options.}
 
 \item{...}{Extra parameters. Not used.}
 }
@@ -53,11 +53,7 @@ with \code{\link[stats:nlminb]{stats::nlminb()}} or \code{\link[stats:optim]{sta
 former is much faster than the later and is the default.
 }
 \details{
-Note. Goal is to have the user call with the MARSS package as
-\code{MARSS(y, method="tmb")}, which then calls \code{MARSStmb()}. This is the mimics
-the behavior of \code{method="BFGS"} and \code{method="kem"} in \code{\link[MARSS:MARSS]{MARSS::MARSS()}} which
-looks for a fitting function called \code{MARSSxyz}, where \code{xyz} is the method.
-Further arguments for the optimization method can be passed into \code{control}.
+Note in the development version of MARSS() on GitHub, you can use \code{MARSS()} as normal.
 }
 \examples{
 library(MARSS)

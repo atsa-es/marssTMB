@@ -35,16 +35,16 @@ MARSStmb <- function(MLEobj) {
   m <- model.dims[["x"]][1]
   d_Covars <- MODELobj[["fixed"]][["d"]]
   c_Covars <- MODELobj[["fixed"]][["c"]]
-  control <- MLEobj[["control"]]
-  if(is.null(control$fun.opt)) control$fun.opt <- "nlminb"
-  fun.opt <- control[["fun.opt"]]
-  tmb.silent <- control[["tmb.silent"]]
-  optim.method <- control[["optim.method"]]
-  if(control$fun.opt == "nlminb")
-    opt.control <- control[!(names(control) %in% c("fun.opt", "optim.method", "tmb.silent", "silent", "maxit", "minit"))]
-  if(control$fun.opt == "optim")
-    opt.control <- control[!(names(control) %in% c("fun.opt", "optim.method", "tmb.silent", "silent", "minit"))]
   
+  control <- MLEobj[["control"]]
+  tmb.silent <- control[["tmb.silent"]]
+  fun.opt <- ifelse(MLEobj[["method"]] %in% c("TMB", "nlminb.TMB"), "nlminb", "optim")
+  if(fun.opt == "optim") optim.method <- strsplit(MLEobj[["method"]], "[.]")[[1]][1]
+  if(fun.opt == "nlminb")
+    opt.control <- control[!(names(control) %in% c("fun.opt", "optim.method", "tmb.silent", "silent", "maxit", "minit"))]
+  if(fun.opt == "optim")
+    opt.control <- control[!(names(control) %in% c("fun.opt", "optim.method", "tmb.silent", "silent", "minit"))]
+
   # Expand out to full covariate matrix
   d_Covars <- matrix(d_Covars[,1,], nrow = nrow(d_Covars))
   c_Covars <- matrix(c_Covars[,1,], nrow = nrow(c_Covars))
@@ -157,7 +157,7 @@ MARSStmb <- function(MLEobj) {
     opt1$counts <- opt1$evaluations
   }
   if (fun.opt == "optim") {
-    opt1 <- stats::optim(obj1$par, obj1$fn, gr = obj1$gr, control = opt.control)
+    opt1 <- stats::optim(obj1$par, obj1$fn, gr = obj1$gr, control = opt.control, method = optim.method)
     opt1$objective <- opt1$value
     opt1$iterations <- opt1$counts[2]
   }
@@ -202,7 +202,7 @@ MARSStmb <- function(MLEobj) {
   MLEobj$start <- MLEobj$start
   MLEobj$convergence <- opt1$convergence
 
-  if (control$fun.opt == "optim" && opt1$convergence > 1) {
+  if (fun.opt == "optim" && opt1$convergence > 1) {
     if (!control$silent) cat(paste0(pkg, "() stopped with errors. No parameter estimates returned.\n"))
     MLEobj$par <- MLEobj$kf <- MLEobj$logLik <- NULL
     MLEobj$errors <- opt1$message
