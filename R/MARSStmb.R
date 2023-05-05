@@ -36,11 +36,15 @@ MARSStmb <- function(MLEobj) {
   d_Covars <- MODELobj[["fixed"]][["d"]]
   c_Covars <- MODELobj[["fixed"]][["c"]]
   control <- MLEobj[["control"]]
+  if(is.null(control$fun.opt)) control$fun.opt <- "nlminb"
   fun.opt <- control[["fun.opt"]]
   tmb.silent <- control[["tmb.silent"]]
   optim.method <- control[["optim.method"]]
-  opt.control <- control[!(names(control) %in% c("fun.opt", "optim.method", "tmb.silent", "silent", "maxit", "minit"))]
-
+  if(control$fun.opt == "nlminb")
+    opt.control <- control[!(names(control) %in% c("fun.opt", "optim.method", "tmb.silent", "silent", "maxit", "minit"))]
+  if(control$fun.opt == "optim")
+    opt.control <- control[!(names(control) %in% c("fun.opt", "optim.method", "tmb.silent", "silent", "minit"))]
+  
   # Expand out to full covariate matrix
   d_Covars <- matrix(d_Covars[,1,], nrow = nrow(d_Covars))
   c_Covars <- matrix(c_Covars[,1,], nrow = nrow(c_Covars))
@@ -144,13 +148,15 @@ MARSStmb <- function(MLEobj) {
   )
 
   # Optimization
-  if (MLEobj[["control"]][["fun.opt"]] == "nlminb") {
+  # remove any NULLs
+  opt.control <- opt.control[unlist(lapply(opt.control, function(x) !is.null(x)))]
+  if (fun.opt == "nlminb") {
     opt1 <- stats::nlminb(obj1$par, obj1$fn, obj1$gr, control = opt.control)
     # add output also found in optim output
     opt1$value <- opt1$objective
     opt1$counts <- opt1$evaluations
   }
-  if (MLEobj[["control"]][["fun.opt"]] == "optim") {
+  if (fun.opt == "optim") {
     opt1 <- stats::optim(obj1$par, obj1$fn, gr = obj1$gr, control = opt.control)
     opt1$objective <- opt1$value
     opt1$iterations <- opt1$counts[2]
@@ -210,7 +216,7 @@ MARSStmb <- function(MLEobj) {
   ## Add AIC and AICc to the object
   MLEobj <- MARSS::MARSSaic(MLEobj)
 
-  funinfo <- paste0("Function ", fun.opt, "used for optimization and TMB for likelihood calculation.\n")
+  funinfo <- paste0("Function ", fun.opt, " used for optimization and TMB for likelihood calculation.\n")
   if ((!control$silent || control$silent == 2) && opt1$convergence == 0) cat(paste0("Success! Converged in ", opt1$iterations, " iterations.\n", funinfo))
   if ((!control$silent || control$silent == 2) && opt1$convergence == 1) cat(paste0("Warning! Max iterations of ", control$maxit, " reached before convergence.\n", funinfo))
 
