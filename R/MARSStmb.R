@@ -39,7 +39,10 @@ MARSStmb <- function(MLEobj) {
   tmb.silent <- control[["tmb.silent"]]
   fun.opt <- ifelse(MLEobj[["method"]] %in% c("TMB", "nlminb.TMB"), "nlminb", "optim")
   if(fun.opt == "optim") optim.method <- strsplit(MLEobj[["method"]], "[.]")[[1]][1]
-  opt.control <- control[!(names(control) %in% c("tmb.silent", "silent", "maxit", "minit"))]
+  if(fun.opt == "nlminb")
+    opt.control <- control[!(names(control) %in% c("fun.opt", "optim.method", "tmb.silent", "silent", "maxit", "minit"))]
+  if(fun.opt == "optim")
+    opt.control <- control[!(names(control) %in% c("fun.opt", "optim.method", "tmb.silent", "silent", "minit"))]
 
   # Expand out to full covariate matrix
   d_Covars <- matrix(d_Covars[,1,], nrow = nrow(d_Covars))
@@ -143,8 +146,9 @@ MARSStmb <- function(MLEobj) {
     silent = MLEobj[["control"]][["tmb.silent"]], map = maplist
   )
 
-  browser()
   # Optimization
+  # remove any NULLs
+  opt.control <- opt.control[unlist(lapply(opt.control, function(x) !is.null(x)))]
   if (fun.opt == "nlminb") {
     opt1 <- stats::nlminb(obj1$par, obj1$fn, obj1$gr, control = opt.control)
     # add output also found in optim output
@@ -211,7 +215,7 @@ MARSStmb <- function(MLEobj) {
   ## Add AIC and AICc to the object
   MLEobj <- MARSS::MARSSaic(MLEobj)
 
-  funinfo <- paste0("Function ", fun.opt, "used for optimization and TMB for likelihood calculation.\n")
+  funinfo <- paste0("Function ", fun.opt, " used for optimization and TMB for likelihood calculation.\n")
   if ((!control$silent || control$silent == 2) && opt1$convergence == 0) cat(paste0("Success! Converged in ", opt1$iterations, " iterations.\n", funinfo))
   if ((!control$silent || control$silent == 2) && opt1$convergence == 1) cat(paste0("Warning! Max iterations of ", control$maxit, " reached before convergence.\n", funinfo))
 
