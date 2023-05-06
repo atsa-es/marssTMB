@@ -8,8 +8,14 @@
 #' @example inst/examples/uni_example.R
 #' @author Eric Ward and edited by Eli Holmes.
 #' @export
-uniTMB <- function(y, estimate_drift = TRUE, estimate_rho = FALSE){
-                   
+test <- function(){
+  library(MARSS)
+  x = cumsum(rnorm(30))
+  y = x + rnorm(length(x), 0, 0.01)
+  estimate_drift = TRUE # U in MARSS
+  estimate_rho = FALSE # AR(1) parameter, b in MARSS
+  
+
 parameters <- list(
   log_obs_sd = 0,
   log_pro_sd = 0,
@@ -24,13 +30,24 @@ tmb_map <- list(x = as.factor(c(NA,1:(length(y)-1))))
 if(estimate_drift == FALSE) tmb_map <- c(tmb_map, list(u = factor(NA)))
 if(estimate_rho == FALSE) tmb_map <- c(tmb_map, list(logit_rho = factor(NA)))
 
+dat <- t(harborSealWA); dat <- dat[2:4, ]
+fit <- MARSS(dat, silent=TRUE)
 # Create TMB data
+free = lapply(fit$marss$free, function(x){new <- matrix(x, dim(x)[1]*max(dim(x)[2],1), dim(x)[3]); new[is.na(new)] <- 0; new})
+fixed = lapply(fit$marss$fixed, function(x){matrix(x, dim(x)[1], dim(x)[3])})
+pars = lapply(fit$par, function(x){new <- matrix(x, max(dim(x)[1],1), dim(x)[2]); new[is.na(new)]<- 0; new})
+
+par_dims <- attr(fit$marss, "model.dims")[names(free)]
+par_dims = lapply(par_dims, as.integer)
 data_list <- list(Y = y, n = length(y),
                   est_drift = as.numeric(estimate_drift),
                   est_rho = as.numeric(estimate_rho),
                   keep = ifelse(!is.na(y),1,0),
-                  par = list(matrix(1,2,2), matrix(2,2,2)),
-                  model = "uni")
+                  free = free,
+                  fixed = fixed,
+                  par = pars,
+                  par_dims = par_dims,
+                  model = "test")
 
 # Create object for fitting
 obj <- TMB::MakeADFun(
@@ -42,27 +59,6 @@ obj <- TMB::MakeADFun(
   silent = TRUE
 )
 
-# Do the fitting with stats::nlminb, sometimes need to change default control args if not converging
-pars <- stats::nlminb(
-  start = obj$par, objective = obj$fn,
-  gradient = obj$gr
-)
 
-par_summary <- summary(TMB::sdreport(obj))
-
-indx <- grep("pred", rownames(par_summary))
-df <- data.frame(
-  pred = as.numeric(par_summary[indx,"Estimate"]),
-  se = as.numeric(par_summary[indx,"Std. Error"]),
-  y = y,
-  t = 1:length(y)
-)
-vals <- c("u", "obs_sigma", "pro_sigma")
-pardf <- data.frame(
-  name = vals,
-  estimate = as.numeric(par_summary[vals, "Estimate"]),
-  se = as.numeric(par_summary[vals,"Std. Error"])
-)
-
-return(list(df = df, coef = pardf, all = par_summary))
+return(obj$report())
 }

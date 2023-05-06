@@ -2,6 +2,7 @@
 
 * Added a Quick Start vignette.
 * Added check that no zeros on diagonal of Q or R (temporary)
+* Added marssTMBCheckPackageVersions() to `zzz.R` and `.onLoad()` to deal with users getting warnings about TMB/Matrix version mismatch and not knowing what to do. https://glmmtmb.github.io/glmmTMB/#glmmtmbtmbmatrix-mismatches
 
 # marssTMB 0.0.7
 

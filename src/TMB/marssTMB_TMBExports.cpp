@@ -4,6 +4,7 @@
 #include <TMB.hpp>
 #include "dfa.hpp"
 #include "marxss.hpp"
+#include "test.hpp"
 #include "uni.hpp"
 
 template<class Type>
@@ -13,6 +14,8 @@ Type objective_function<Type>::operator() () {
     return dfa(this);
   } else if(model == "marxss") {
     return marxss(this);
+  } else if(model == "test") {
+    return test(this);
   } else if(model == "uni") {
     return uni(this);
   } else {

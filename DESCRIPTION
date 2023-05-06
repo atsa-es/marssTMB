@@ -28,7 +28,7 @@ Suggests:
     testthat,
     broom
 LinkingTo: 
-    TMB
+    TMB, Matrix
 VignetteBuilder: 
     knitr
 ByteCompile: true

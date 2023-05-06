@@ -1,8 +1,8 @@
-/// @file uni.hpp
+/// @file test.hpp
 // univariate time series
 
-#ifndef uni_hpp
-#define uni_hpp
+#ifndef test_hpp
+#define test_hpp
 
 #include "marssTMB/LOM.hpp"
 
@@ -10,7 +10,7 @@
 #define TMB_OBJECTIVE_PTR obj
 
 template<class Type>
-Type uni(objective_function<Type>* obj) {
+Type test(objective_function<Type>* obj) {
 
   using namespace density;
   
@@ -19,8 +19,11 @@ Type uni(objective_function<Type>* obj) {
   DATA_INTEGER(est_drift);
   DATA_INTEGER(est_rho);
   DATA_IVECTOR(keep);
-  DATA_STRUCT(par, LOM); // list of model matrices
-  
+  DATA_STRUCT(free, LOM); // list of free matrices
+  DATA_STRUCT(fixed, LOM); // list of fixed matrices
+  DATA_STRUCT(par, LOM); // list of par matrices
+  DATA_STRUCT(par_dims, LOVi); // list of par matrices
+
   PARAMETER(u); // drift
   PARAMETER(logit_rho); // inv-logit(b)
   PARAMETER(log_obs_sd); // obs error
@@ -70,7 +73,11 @@ Type uni(objective_function<Type>* obj) {
   REPORT(pro_sigma);
   ADREPORT(pred); 
   REPORT(pred);
-  REPORT(par(0));
+  int nnn =par_dims(0)(0);
+  int ppp =par_dims(0)(1);
+  matrix<Type> DD(nnn, ppp);
+  DD = parmat(fixed(0), free(0), par(0), par_dims(0));
+  REPORT(DD);
   // end
   return (nll);
 }
