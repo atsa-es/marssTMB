@@ -22,7 +22,7 @@ reference:
 
 - title: Other functions
   desc: >
-    These are functions that were used as templates for the more general [MARSStmb()] function.
+    These are functions that were used as early templates.
   contents:
   - dfaTMB
   - uniTMB

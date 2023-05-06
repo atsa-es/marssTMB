@@ -47,5 +47,40 @@ matrix<Type> parmat(matrix<Type> fixed, matrix<Type> free,
   return mat;
 };
 
+// Convert the vectorized fixed, free, par into a matrix with time along the columns
+template <class Type>
+matrix<Type> parvec(matrix<Type> fixed, matrix<Type> free, 
+                    matrix<Type> par, vector<int> dims, 
+                    int tfree, int tfixed, int timeSteps) {
+  matrix<Type> mat(dims(0)*dims(1), timeSteps);
+  int rowD = dims(0)*dims(1);
+  matrix<Type> rowOne(1, timeSteps); 
+  rowOne.setOnes();
+  if(tfixed == 1) fixed = fixed * rowOne;
+  if(tfree == 1) free = free * rowOne;
+  matrix<Type> I(rowD,rowD);
+  I.setIdentity();
+  matrix<Type> tpar(1,par.rows());
+  tpar = par.transpose();
+  mat = fixed + tmbutils::kronecker(I, tpar) * free;
+  return mat;
+};
+
+template <class Type>
+matrix<Type> par(vector<Type> pars, vector<int> xpar, int elem) {
+  if(xpar(elem) == 0){
+    matrix<Type> mat(1, 1);
+    mat.setZero();
+    return mat;
+  }else{
+    matrix<Type> mat(xpar(elem), 1);
+    mat.setZero();
+    int i = 0;
+    if(elem > 0) for (int r = 0; r < elem; r++) i = i + xpar(r);
+    for (int z = i; z < (i+xpar(elem)); z++) mat(z-i,0) = pars(z);
+    return mat;
+  }
+};
+
 
 #endif

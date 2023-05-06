@@ -25,8 +25,8 @@
 #' @author Eli Holmes. This function is inspired by dfaTMB.R written by Tim Cline while a graduate student in the Fish 507 Time Series Analysis course.
 #' @seealso [MARSS::MARSSoptim()], [MARSS::MARSSkem()]
 #' @export
-MARSStmb <- function(MLEobj) {
-  pkg <- "MARSStmb"
+estimate_marss1 <- function(MLEobj) {
+  pkg <- "estimate_marss1"
   MODELobj <- MLEobj[["model"]]
   y <- MODELobj[["data"]]
   model.dims <- attr(MODELobj, "model.dims")

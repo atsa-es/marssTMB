@@ -19,11 +19,16 @@ Type test(objective_function<Type>* obj) {
   DATA_INTEGER(est_drift);
   DATA_INTEGER(est_rho);
   DATA_IVECTOR(keep);
+  DATA_MATRIX(mY);
+  DATA_MATRIX(X);
+  DATA_IVECTOR(tfixed);
+  DATA_IVECTOR(tfree);
+  DATA_IVECTOR(numpar);
   DATA_STRUCT(free, LOM); // list of free matrices
   DATA_STRUCT(fixed, LOM); // list of fixed matrices
-  DATA_STRUCT(par, LOM); // list of par matrices
   DATA_STRUCT(par_dims, LOVi); // list of par matrices
-
+  DATA_VECTOR(pars); /* vector of parameters */
+  
   PARAMETER(u); // drift
   PARAMETER(logit_rho); // inv-logit(b)
   PARAMETER(log_obs_sd); // obs error
@@ -73,12 +78,57 @@ Type test(objective_function<Type>* obj) {
   REPORT(pro_sigma);
   ADREPORT(pred); 
   REPORT(pred);
-  int nnn =par_dims(0)(0);
-  int ppp =par_dims(0)(1);
-  matrix<Type> DD(nnn, ppp);
-  DD = parmat(fixed(0), free(0), par(0), par_dims(0));
-  REPORT(DD);
-  // end
+
+  int timeSteps = mY.row(0).size();
+  int nY = mY.col(0).size(); /* n x T */
+  int nX = X.col(0).size(); /* m x T */
+  
+  
+  matrix<Type> x0(nX, 1);
+  x0 = parmat(fixed(4), free(4), par(pars, numpar, 4), par_dims(4));
+  matrix<Type> V0(nX, nX);
+  V0 = parmat(fixed(5), free(5), par(pars, numpar, 5), par_dims(5));
+  matrix<Type> U(nX, timeSteps);
+  U = parvec(fixed(3), free(3), par(pars, numpar, 3), par_dims(3), tfree(3), tfixed(3), timeSteps);
+  matrix<Type> A(nY, timeSteps);
+  A = parvec(fixed(1), free(1), par(pars, numpar, 1), par_dims(1), tfree(1), tfixed(1), timeSteps);
+  matrix<Type> Z(nX*nY, timeSteps);
+  Z = parvec(fixed(0), free(0), par(pars, numpar, 0), par_dims(0), tfree(0), tfixed(0), timeSteps);
+  matrix<Type> B(nX*nX, timeSteps);
+  B = parvec(fixed(2), free(2), par(pars, numpar, 2), par_dims(2), tfree(2), tfixed(2), timeSteps);
+
+  // Set the non time-varying parameters
+  matrix<Type> Qdiag(nX, timeSteps);
+  matrix<Type> Qoffdiag(nX * (nX - 1) / 2, timeSteps);
+  Qdiag = parvec(fixed(9), free(9), par(pars, numpar, 9), par_dims(9), tfree(9), tfixed(9), timeSteps);
+  vector<Type> sdQ=Qdiag.col(0); /* sd of Q (diag) */
+  sdQ = exp(sdQ);
+  vector<Type> cholCorrQ(nX * (nX - 1) / 2);
+  if(nX>1){
+    Qoffdiag = parvec(fixed(10), free(10), par(pars, numpar, 10), par_dims(10), tfree(10), tfixed(10), timeSteps);
+    cholCorrQ = Qoffdiag.col(0);
+  }
+  // Set the non time-varying parameters
+  matrix<Type> Rdiag(nY, timeSteps);
+  matrix<Type> Roffdiag(nY * (nY - 1) / 2, timeSteps);
+  Rdiag = parvec(fixed(11), free(11), par(pars, numpar, 11), par_dims(11), tfree(11), tfixed(11), timeSteps);
+  vector<Type> sdR=Rdiag.col(0); /* sd of Q (diag) */
+  sdR = exp(sdR);
+  vector<Type> cholCorrR(nY * (nY - 1) / 2);
+  if(nY>1){
+    Roffdiag = parvec(fixed(12), free(12), par(pars, numpar, 12), par_dims(12), tfree(12), tfixed(12), timeSteps);
+    cholCorrR = Roffdiag.col(0);
+  }
+  
+  REPORT(sdQ);
+  REPORT(cholCorrQ);
+  REPORT(Rdiag);
+  REPORT(cholCorrR);
+  REPORT(Z);
+  REPORT(A);
+  REPORT(B);
+  // end;
+  
   return (nll);
 }
 
