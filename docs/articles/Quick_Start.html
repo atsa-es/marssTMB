@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">marssTMB</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.9</span>
       </span>
     </div>
 
@@ -180,7 +180,7 @@ leave off matrix names and the defaults will be used. See
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://atsa-es.github.io/marssTMB">marssTMB</a></span><span class="op">)</span></span>
 <span><span class="va">model.list</span><span class="op">$</span><span class="va">B</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span></span>
-<span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/MARSS_tmb.html">MARSS_tmb</a></span><span class="op">(</span><span class="va">dat</span>, model<span class="op">=</span><span class="va">model.list</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/MARSS_tmb.html">MARSS_tmb</a></span><span class="op">(</span><span class="va">dat</span>, model<span class="op">=</span><span class="va">model.list</span>, method<span class="op">=</span><span class="st">"TMB"</span><span class="op">)</span></span></code></pre></div>
 <p>The <span class="math inline">\(\mbox{$\mathbf R$}\)</span>, <span class="math inline">\(\mbox{$\mathbf Q$}\)</span> and <span class="math inline">\(\pmb{\Lambda}\)</span> variances can be set to
 zero to specify partially deterministic systems. This allows you to
 write MAR(p) models in MARSS form for example. See the User Guide for
