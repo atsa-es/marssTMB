@@ -20,7 +20,7 @@ former is much faster than the later and is the default."><!-- mathjax --><scrip
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">marssTMB</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.9</span>
       </span>
     </div>
 
@@ -83,11 +83,11 @@ former is much faster than the later and is the default.</p>
 <span>  model <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  inits <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  miss.value <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="cn">NA</span><span class="op">)</span>,</span>
-<span>  method <span class="op">=</span> <span class="st">"TMB"</span>,</span>
+<span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"TMB"</span>, <span class="st">"BFGS.TMB"</span>, <span class="st">"nlminb.TMB"</span><span class="op">)</span>,</span>
 <span>  form <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"marxss"</span>, <span class="st">"dfa"</span><span class="op">)</span>,</span>
 <span>  fit <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  silent <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>fun.opt <span class="op">=</span> <span class="st">"nlminb"</span><span class="op">)</span>,</span>
+<span>  control <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -114,7 +114,7 @@ former is much faster than the later and is the default.</p>
 
 
 <dt>method</dt>
-<dd><p>must be "TMB" (case sensitive)</p></dd>
+<dd><p>"TMB" (default), "nlminb.TMB", or "BFGS.TMB". See details.</p></dd>
 
 
 <dt>form</dt>
@@ -126,11 +126,11 @@ former is much faster than the later and is the default.</p>
 
 
 <dt>silent</dt>
-<dd><p>Show TMB output when fitting</p></dd>
+<dd><p>Show output when fitting</p></dd>
 
 
 <dt>control</dt>
-<dd><p>list for the optimization function. <code><a href="https://rdrr.io/r/stats/nlminb.html" class="external-link">stats::nlminb()</a></code> or <code><a href="https://rdrr.io/r/stats/optim.html" class="external-link">stats::optim()</a></code>, <code>control$fun.opt</code> allows you to choose optim or nlminb as the optimization function. <code>control$optim.method</code> allows you to choose method for <code><a href="https://rdrr.io/r/stats/optim.html" class="external-link">optim()</a></code>.</p></dd>
+<dd><p>list for the optimization function. See <code><a href="https://rdrr.io/r/stats/nlminb.html" class="external-link">stats::nlminb()</a></code> or <code><a href="https://rdrr.io/r/stats/optim.html" class="external-link">stats::optim()</a></code> for the options.</p></dd>
 
 
 <dt>...</dt>
@@ -147,11 +147,7 @@ former is much faster than the later and is the default.</p>
     </div>
     <div id="details">
     <h2>Details</h2>
-    <p>Note. Goal is to have the user call with the MARSS package as
-<code>MARSS(y, method="tmb")</code>, which then calls <code><a href="MARSStmb.html">MARSStmb()</a></code>. This is the mimics
-the behavior of <code>method="BFGS"</code> and <code>method="kem"</code> in <code><a href="https://rdrr.io/pkg/MARSS/man/MARSS.html" class="external-link">MARSS::MARSS()</a></code> which
-looks for a fitting function called <code>MARSSxyz</code>, where <code>xyz</code> is the method.
-Further arguments for the optimization method can be passed into <code>control</code>.</p>
+    <p>Note in the development version of MARSS() on GitHub, you can use <code><a href="https://rdrr.io/pkg/MARSS/man/MARSS.html" class="external-link">MARSS()</a></code> as normal.</p>
     </div>
     <div id="author">
     <h2>Author</h2>

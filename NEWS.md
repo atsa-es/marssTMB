@@ -1,3 +1,7 @@
+# marssTMB 0.0.9
+
+Created a development version of {MARSS} with method TMB. `marssTMB()` will recognize if it was called with `MARSS()`. `MARSS_tmb()` also still works.
+
 # marssTMB 0.0.8
 
 * Added a Quick Start vignette.

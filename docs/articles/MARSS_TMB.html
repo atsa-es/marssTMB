@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">marssTMB</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.9</span>
       </span>
     </div>
 
@@ -140,7 +140,7 @@ and unequal, and unconstrained.</p>
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://atsa-es.github.io/marssTMB">marssTMB</a></span><span class="op">)</span></span>
 <span><span class="va">m3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dfaTMB.html">dfaTMB</a></span><span class="op">(</span><span class="va">dat</span>, model<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>m<span class="op">=</span><span class="fl">1</span>, R<span class="op">=</span><span class="st">'unconstrained'</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">m4</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/MARSS_tmb.html">MARSS_tmb</a></span><span class="op">(</span><span class="va">dat</span>, model<span class="op">=</span><span class="va">mod.list</span>, form<span class="op">=</span><span class="st">'dfa'</span><span class="op">)</span></span>
-<span><span class="va">m5</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/MARSS_tmb.html">MARSS_tmb</a></span><span class="op">(</span><span class="va">dat</span>, model<span class="op">=</span><span class="va">mod.list</span>, control<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>fun.opt<span class="op">=</span><span class="st">"optim"</span><span class="op">)</span>, form<span class="op">=</span><span class="st">'dfa'</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">m5</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/MARSS_tmb.html">MARSS_tmb</a></span><span class="op">(</span><span class="va">dat</span>, model<span class="op">=</span><span class="va">mod.list</span>, method<span class="op">=</span><span class="st">"BFGS.TMB"</span>, form<span class="op">=</span><span class="st">'dfa'</span><span class="op">)</span></span></code></pre></div>
 <div class="section level3">
 <h3 id="log-likelihoods">Log likelihoods<a class="anchor" aria-label="anchor" href="#log-likelihoods"></a>
 </h3>
@@ -168,7 +168,7 @@ and unequal, and unconstrained.</p>
 </tr>
 <tr class="odd">
 <td align="left">MARSS_tmb-optim-BFGS</td>
-<td align="right">-880.4601</td>
+<td align="right">-783.0395</td>
 </tr>
 </tbody>
 </table>
@@ -222,25 +222,25 @@ then pass in covariates with <code>model$d</code> or
 <tr class="odd">
 <td align="left">MARSS-EM</td>
 <td align="right">1</td>
-<td align="right">0.438</td>
+<td align="right">0.426</td>
 <td align="right">-752.5472</td>
 </tr>
 <tr class="even">
 <td align="left">MARSS_tmb-nlminb</td>
 <td align="right">1</td>
-<td align="right">0.088</td>
+<td align="right">0.212</td>
 <td align="right">-752.5438</td>
 </tr>
 <tr class="odd">
 <td align="left">MARSS-EM</td>
 <td align="right">2</td>
-<td align="right">0.481</td>
+<td align="right">0.476</td>
 <td align="right">-745.5611</td>
 </tr>
 <tr class="even">
 <td align="left">MARSS_tmb-nlminb</td>
 <td align="right">2</td>
-<td align="right">0.090</td>
+<td align="right">0.246</td>
 <td align="right">-745.5548</td>
 </tr>
 </tbody>
