@@ -4,6 +4,7 @@
 #ifndef LOM_hpp
 #define LOM_hpp 1
 
+// List of Matrices
 template <class Type>
 struct LOM : vector<matrix<Type> > {
   LOM(SEXP x) {  // x = list passed from R
@@ -30,25 +31,6 @@ struct LOVi : vector<vector<int> > {
 // Convert the vectorized fixed, free, par into a 2D matrix
 // fixed, free, and par are all column vectors, dims is a vector of the
 // matrix dimensions
-template <class Type>
-matrix<Type> parmat(matrix<Type> fixed, matrix<Type> free, 
-            matrix<Type> par, vector<int> dims) {
-  int nn = dims(0)*dims(1); /* num elements */
-  int pp = par.col(0).size(); /* num parameters */
-  matrix<Type> mat(dims(0), dims(1));
-  matrix<Type> F(nn, pp);
-  int i = 0;
-  for (int r = 0; r < nn; r++)
-    for (int c = 0; c < pp; c++)
-      F(r,c) = free(i++,0);
-  i = 0;
-  vector<Type> fil = fixed + F*par; // vec of the matrix
-  for (int r = 0; r < dims(1); r++)
-    for (int c = 0; c < dims(0); c++)
-      mat(r,c) = fil(i++);
-  return mat;
-};
-
 template <class Type>
 matrix<Type> parmat2(matrix<Type> fixed, matrix<Type> free, 
                     matrix<Type> par, vector<int> dims) {
