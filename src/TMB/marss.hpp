@@ -1,8 +1,9 @@
-/// @file marxss2.hpp
-// MARSS model with covariates
+/// @file marss.hpp
+// MARSS model in vectorized marss form
+// Allowed: covariates, time-varying and linear constraints
 
-#ifndef marxss2_hpp
-#define marxss2_hpp
+#ifndef marss_hpp
+#define marss_hpp
 
 #include "marssTMB/isNA.hpp"
 #include "marssTMB/LOM.hpp"
@@ -11,13 +12,9 @@
 #define TMB_OBJECTIVE_PTR obj
 
 template<class Type>
-Type marxss2(objective_function<Type>* obj) {
+Type marss(objective_function<Type>* obj) {
   DATA_MATRIX(Y); /* n x T */
   PARAMETER_MATRIX(X); /* State m x T */
-  PARAMETER_MATRIX(Rdiag);
-  PARAMETER_VECTOR(Roffdiag);
-  PARAMETER_MATRIX(Qdiag);
-  PARAMETER_VECTOR(Qoffdiag);
   DATA_INTEGER(V0_is_zero);
   DATA_INTEGER(tinitx);
   DATA_IVECTOR(tfixed);
@@ -26,7 +23,7 @@ Type marxss2(objective_function<Type>* obj) {
   DATA_STRUCT(free, LOM); // list of free matrices
   DATA_STRUCT(fixed, LOM); // list of fixed matrices
   DATA_STRUCT(par_dims, LOVi); // list of par matrices
-  DATA_VECTOR(pars); /* vector of parameters */
+  PARAMETER_VECTOR(pars); /* vector of parameters */
   
   int timeSteps = Y.row(0).size();
   int nY = Y.col(0).size(); /* n x T */
@@ -49,40 +46,37 @@ Type marxss2(objective_function<Type>* obj) {
   // Set the non time-varying parameters
   matrix<Type> QdiagMat(nX, timeSteps);
   matrix<Type> QoffdiagMat(nX * (nX - 1) / 2, timeSteps);
-  QdiagMat = parvec(fixed(9), free(9), Qdiag, par_dims(9), tfree(9), tfixed(9), timeSteps);
+  QdiagMat = parvec(fixed(9), free(9), par(pars, numpar, 9), par_dims(9), tfree(9), tfixed(9), timeSteps);
   vector<Type> sdQ=QdiagMat.col(0); /* log sd of Q (diag) */
   sdQ = exp(sdQ);
   vector<Type> cholCorrQ(nX * (nX - 1) / 2);
   if(nX>1){
-//   QoffdiagMat = parvec(fixed(10), free(10), Qoffdiag, par_dims(10), tfree(10), tfixed(10), timeSteps);
-//    cholCorrQ = QoffdiagMat.col(0);
-    cholCorrQ = Qoffdiag;
+    QoffdiagMat = parvec(fixed(10), free(10), par(pars, numpar, 10), par_dims(10), tfree(10), tfixed(10), timeSteps);
+    cholCorrQ = QoffdiagMat.col(0);
   }
   // Set the non time-varying parameters
   matrix<Type> RdiagMat(nY, timeSteps);
   matrix<Type> RoffdiagMat(nY * (nY - 1) / 2, timeSteps);
-  RdiagMat = parvec(fixed(11), free(11), Rdiag, par_dims(11), tfree(11), tfixed(11), timeSteps);
+  RdiagMat = parvec(fixed(11), free(11), par(pars, numpar, 11), par_dims(11), tfree(11), tfixed(11), timeSteps);
   vector<Type> sdR=RdiagMat.col(0); /* log sd of R (diag) */
   sdR = exp(sdR);
   vector<Type> cholCorrR(nY * (nY - 1) / 2);
   if(nY>1){
-//    RoffdiagMat = parvec(fixed(12), free(12), Roffdiag, par_dims(12), tfree(12), tfixed(12), timeSteps);
-//    cholCorrR = RoffdiagMat.col(0);
-    cholCorrR = Roffdiag;
+    RoffdiagMat = parvec(fixed(12), free(12), par(pars, numpar, 12), par_dims(12), tfree(12), tfixed(12), timeSteps);
+    cholCorrR = RoffdiagMat.col(0);
   }
 
   // https://kaskr.github.io/adcomp/classdensity_1_1UNSTRUCTURED__CORR__t.html
   using namespace density;
-  UNSTRUCTURED_CORR_t<Type> corMatGenR(Roffdiag);// This is the lower tri
+  UNSTRUCTURED_CORR_t<Type> corMatGenR(cholCorrR);// This is the lower tri
   matrix<Type> FullCorrMatR = corMatGenR.cov(); /* full corr matrix has 1 on diag */
-  UNSTRUCTURED_CORR_t<Type> corMatGenQ(Qoffdiag);// This is the lower tri
+  UNSTRUCTURED_CORR_t<Type> corMatGenQ(cholCorrQ);// This is the lower tri
   matrix<Type> FullCorrMatQ = corMatGenQ.cov(); /* full corr matrix has 1 on diag */
   
   // Compute the likelihoods
   matrix<Type> predX(nX,1);  /* m x 1 */
 
   Type ans=0; /* Define likelihood */
-  //ans -= dnorm(vector<Type>(u.row(0)),Type(0),Type(1),1).sum();
   if(V0_is_zero){
     if(tinitx){
       X.col(0) = x0.col(0);
@@ -98,11 +92,8 @@ Type marxss2(objective_function<Type>* obj) {
   }
 
   for(int i=1;i<timeSteps;i++){ 
-    //ans+= neg_log_density_process(u.row(i)-u.row(i-1)); // Process likelihood
-    //vector<Type> differ = u.row(i)-u.row(i-1);
-    // if statement is temporary until I can figure how create a
-    // a diagonal matrix with 1 on the -1 diagonal
-    // diag(1:(timeSteps+1))[1:timeSteps, 2:(timeSteps+1)]
+    // Process likelihood Note marss form so covariates appear in the
+    // time-varying U
     predX = X.col(i-1) + U.col(i);
     vector<Type> differ = X.col(i)-predX.col(0);
     ans += VECSCALE(corMatGenQ,sdQ)(differ);
@@ -113,8 +104,7 @@ Type marxss2(objective_function<Type>* obj) {
   matrix<Type> I(nY,nY);
   I.setIdentity();
   matrix<Type> Xi(1,nX);
-  Xi = X.col(0).transpose();
-  
+
 //  std::cout << std::scientific;
 //  std::cout << Xi.rows() << std::endl;
 //  std::cout << Xi.cols() << std::endl;
@@ -166,18 +156,9 @@ Type marxss2(objective_function<Type>* obj) {
   // Parameters with derivatives
   ADREPORT(X);
   ADREPORT(pars);
-  ADREPORT(Rdiag);
-  ADREPORT(Qdiag);
-  ADREPORT(Roffdiag);
-  ADREPORT(Qoffdiag);
-  
 
   // Report wo derivatives
   REPORT(X);
-  REPORT(ans);
-  REPORT(V0);
-  REPORT(Z);
-  REPORT(Rdiag);
   REPORT(FullCorrMatQ);
   REPORT(FullCovMatQ);
   REPORT(FullCorrMatR);

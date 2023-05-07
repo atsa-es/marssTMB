@@ -10,5 +10,5 @@ dat <- as.data.frame(lakeWAplanktonTrans) |>
 # set-up the model
 mod <- MARSS_tmb(dat, model=list(m=3, tinitx=1), form="dfa", fit=FALSE)
 # fit
-fit <- MARSStmb(mod)
+fit <- estimate_marxss(mod)
 

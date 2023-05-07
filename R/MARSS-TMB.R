@@ -104,6 +104,6 @@ MARSS_tmb <- function(y,
     if(!ok) stop(paste0(pkg, ": ", elem, " must be fixed"))
   }
 
-  if(fit) return(estimate_marss1(x))
+  if(fit) return(estimate_marxss(x))
   return(x)
 }
