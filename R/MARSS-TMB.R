@@ -21,7 +21,7 @@
 #' @param control list for the optimization function. See [stats::nlminb()] or [stats::optim()] for the options.
 #' @param ... Extra parameters. Not used.
 #' 
-#' @return The output list from [MARSStmb()]
+#' @return A [MARSS::marssMLE] object
 #' @example inst/examples/MARSS_TMB_example.R
 #' @author Eli Holmes
 #' @export
@@ -104,6 +104,6 @@ MARSS_tmb <- function(y,
     if(!ok) stop(paste0(pkg, ": ", elem, " must be fixed"))
   }
 
-  if(fit) return(MARSStmb(x))
+  if(fit) return(estimate_marxss(x))
   return(x)
 }

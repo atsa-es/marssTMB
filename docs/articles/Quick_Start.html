@@ -303,11 +303,10 @@ to tell if you have specified an insufficiently constrained model.</p>
 <p>Use [MARSS::autoplot()] to see a series of standard plots and
 diagnostics for your model. Try [MARSS::MARSSinfo()] if you get errors
 you don’t understand or fitting is taking a long time to converge. Use
-<code>fit=FALSE</code> in your [MARSS_tmb()] call to set up a model
-without fitting. Let’s say you do
-<code>fit &lt;- MARSS_tmb(..., fit=FALSE)</code>. Now you can do
-<code>summary(fit$model)</code> to see what [MARSStmb()] thinks you are
-trying to fit.</p>
+<code>fit=FALSE</code> in your [MARSS()] call to set up a model without
+fitting. Let’s say you do <code>fit &lt;- MARSS(..., fit=FALSE)</code>.
+Now you can do <code>summary(fit$model)</code> to see what [MARSS()]
+thinks you are trying to fit.</p>
 <p>Let’s say you specified your model with some text short-cuts, like
 <code>Q="unconstrained"</code>, but you want the list matrix form for a
 next step. <code>a &lt;- summary(fit$model)</code> returns that list

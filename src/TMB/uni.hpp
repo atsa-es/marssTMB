@@ -4,6 +4,7 @@
 #ifndef uni_hpp
 #define uni_hpp
 
+#include "marssTMB/LOM.hpp"
 
 #undef TMB_OBJECTIVE_PTR
 #define TMB_OBJECTIVE_PTR obj
@@ -18,6 +19,7 @@ Type uni(objective_function<Type>* obj) {
   DATA_INTEGER(est_drift);
   DATA_INTEGER(est_rho);
   DATA_IVECTOR(keep);
+  DATA_STRUCT(par, LOM); // list of model matrices
   
   PARAMETER(u); // drift
   PARAMETER(logit_rho); // inv-logit(b)
@@ -68,6 +70,7 @@ Type uni(objective_function<Type>* obj) {
   REPORT(pro_sigma);
   ADREPORT(pred); 
   REPORT(pred);
+  REPORT(par(0));
   // end
   return (nll);
 }

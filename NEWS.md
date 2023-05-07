@@ -2,10 +2,16 @@
 
 Created a development version of {MARSS} with method TMB. `marssTMB()` will recognize if it was called with `MARSS()`. `MARSS_tmb()` also still works.
 
+* Added   `marss.hpp`, a major update for MARSS models in vectorized "marss" form. This will allow time-varying parameters more easily and models with linear constraints. It's companion function is `estimate_marss.R`.
+* Changed `MARSStmb.R` to `estimate_marxss.R`. It will become an internal function later.
+* Added various helper functions in `inst/include/LOM.hpp`
+
+
 # marssTMB 0.0.8
 
 * Added a Quick Start vignette.
 * Added check that no zeros on diagonal of Q or R (temporary)
+* Added marssTMBCheckPackageVersions() to `zzz.R` and `.onLoad()` to deal with users getting warnings about TMB/Matrix version mismatch and not knowing what to do. https://glmmtmb.github.io/glmmTMB/#glmmtmbtmbmatrix-mismatches
 
 # marssTMB 0.0.7
 

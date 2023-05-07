@@ -1,5 +1,10 @@
 #' Internal function: Parameter estimation using TMB
 #'
+#' This function was the first working version and used a 
+#' non-vectorized marxss form (aka the form you would write out on paper).
+#' It is replaced by [estimate_marss()] but is kept here because the 
+#' code might be easier to follow.
+#' 
 #' Minimal error checking is done in this function.
 #' Normal calling function is [MARSS_tmb()] which in
 #' turn calls this function. Note when MARSS is updated, the
@@ -17,16 +22,15 @@
 #' * `obj.function` is the raw output from the [TMB::MakeADFun()] call.
 #' * `opt.output` is the raw output from the optimization call (optim or nlminb)
 #'
-#'
 #' @param MLEobj A properly formatted MARSS model as output by [MARSS_tmb()]
 
 #' @return A [MARSS::marssMLE] object
-#' @example inst/examples/MARSStmb_example.R
+#' @example inst/examples/estimate_marxss.R
 #' @author Eli Holmes. This function is inspired by dfaTMB.R written by Tim Cline while a graduate student in the Fish 507 Time Series Analysis course.
 #' @seealso [MARSS::MARSSoptim()], [MARSS::MARSSkem()]
 #' @export
-MARSStmb <- function(MLEobj) {
-  pkg <- "MARSStmb"
+estimate_marxss <- function(MLEobj) {
+  pkg <- "estimate_marxss"
   MODELobj <- MLEobj[["model"]]
   y <- MODELobj[["data"]]
   model.dims <- attr(MODELobj, "model.dims")

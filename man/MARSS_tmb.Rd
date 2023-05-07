@@ -44,7 +44,7 @@ MARSS_tmb(
 \item{...}{Extra parameters. Not used.}
 }
 \value{
-The output list from \code{\link[=MARSStmb]{MARSStmb()}}
+A \link[MARSS:marssMLE-class]{MARSS::marssMLE} object
 }
 \description{
 Fit a MARSS model with TMB + optimization. TMB does fast computation of the

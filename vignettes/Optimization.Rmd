@@ -54,7 +54,7 @@ MARSS and marssTMB provide three functions for likelihood calculations.
 
 ### TMB
 
-[TMB](https://cran.r-project.org/package=TMB) uses applied Laplace approximation to provide the gradients (exact derivatives) of a likelihood surface that is a function of the states (X) and parameters. It also returns the value of the likelihood surface at a set of states and parameter values. The implementation is very fast and efficient. These two elements (the gradients and likelihood) can then be given to an optimization algorithm for fast calculation of the maximum likelihood states (X) and parameters. [MARSStmb()] uses the output from TMB and finds the maximum likelihood states and parameters via either [stats::nlminb()] or [stats:optim()].
+[TMB](https://cran.r-project.org/package=TMB) uses applied Laplace approximation to provide the gradients (exact derivatives) of a likelihood surface that is a function of the states (X) and parameters. It also returns the value of the likelihood surface at a set of states and parameter values. The implementation is very fast and efficient. These two elements (the gradients and likelihood) can then be given to an optimization algorithm for fast calculation of the maximum likelihood states (X) and parameters. [estimate_marss()] uses the output from TMB and finds the maximum likelihood states and parameters via either [stats::nlminb()] or [stats:optim()].
 
 
 

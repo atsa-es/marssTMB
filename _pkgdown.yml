@@ -16,13 +16,15 @@ reference:
   desc: >
     These are the functions that the developers are working on. All are exported for now and can be used.
   contents:
-  - MARSStmb
+  - estimate_marxss
+  - estimate_marss
   - create.elem.maps
   - create.varcov.maps
+  - marssTMB_CheckPackageVersions
 
 - title: Other functions
   desc: >
-    These are functions that were used as templates for the more general [MARSStmb()] function.
+    These are functions that were used as early templates.
   contents:
   - dfaTMB
   - uniTMB

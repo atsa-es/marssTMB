@@ -29,6 +29,7 @@ data_list <- list(Y = y, n = length(y),
                   est_drift = as.numeric(estimate_drift),
                   est_rho = as.numeric(estimate_rho),
                   keep = ifelse(!is.na(y),1,0),
+                  par = list(matrix(1,2,2), matrix(2,2,2)),
                   model = "uni")
 
 # Create object for fitting
