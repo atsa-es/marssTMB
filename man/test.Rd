@@ -2,43 +2,56 @@
 % Please edit documentation in R/test.R
 \name{test}
 \alias{test}
-\title{Fit a univariate MARSS model with TMB.}
+\title{Internal function: MARSS parameter estimation using TMB}
 \usage{
-test()
+test(MLEobj, method = c("TMB", "nlminb.TMB", "BFGS.TMB"), opt.control = NULL)
 }
 \arguments{
-\item{y}{the data. Can have NAs.}
+\item{MLEobj}{A properly formatted MARSS model as output by \code{\link[=MARSS]{MARSS()}}}
 
-\item{estimate_drift}{estimate the u parameter}
+\item{method}{Normally passed in as MLEobj$method, but allows user to pass in a new method if they want to use MLEobj with another method. Allowed values are "TMB", "nlminb.TMB", "BFGS.TMB".}
 
-\item{estimate_rho}{estimate b parameter}
+\item{opt.control}{Normally this is passed in as MLEobj$control, but if the MLEobj was set up using a different method, then you will need to set the opt.control options. See details.}
 }
 \value{
-A data frame with estimates and se's
+A list with the objective and optimization objects.
+\itemize{
+\item \code{obj} is the raw output from the \code{\link[TMB:MakeADFun]{TMB::MakeADFun()}} call.
+\item \code{op} is the raw output from the optimization call (optim or nlminb)
+\item \code{opt.control} is the controls sent to the optimization function.
+}
 }
 \description{
-Fit a univariate MARSS model with TMB.
+Minimal error checking is done in this function.
+Normal calling function is \code{\link[MARSS:MARSS]{MARSS::MARSS()}} with \code{method="TMB"}.
 }
-\examples{
-library(ggplot2)
+\details{
+The main thing this does is
+\itemize{
+\item collapse the 3D fixed and free matrices into 2D
+\item separate out the diag and offdiag parameter elements of R and Q
+}
 
-set.seed(123)
-x = cumsum(rnorm(30))
-y = x + rnorm(length(x), 0, 0.01)
-estimate_drift = TRUE # U in MARSS
-estimate_rho = FALSE # AR(1) parameter, b in MARSS
+Restrictions
+\itemize{
+\item No time-varying parameters
+\item V0 fixed (not estimated)
+\item No B estimation
+}
 
-res <- uniTMB(y)
+\code{opt.control} is what is passed to the control argument in \code{\link[=nlminb]{nlminb()}} or \code{\link[=optim]{optim()}}. If you use \code{MARSS(x, method="TMB")}, this will be set to appropriate defaults which you can see via \code{MLEobj$control}. But if you call \code{estimate_marss()} with a MLEobj from a call such as \code{MARSS(x, method="kem")} (so not a TMB method), you will need to set \code{opt.control} if you want values different from the base defaults for those functions. Note as a shortcut for \code{nlminb()}, you can set both \code{eval.max}, \code{iter.max} to the same value with \code{opt.control=list(maxit=1000)}. Note, if you pass in \code{opt.control}, this will replace all values currently in \code{MLEobj$control} that are associated with the optimizer function.
 
-res$coef
+The defaults set in \code{\link[MARSS:MARSS]{MARSS::MARSS()}} are
+\itemize{
+\item \code{nlminb}: \code{eval.max = 5000}, \code{iter.max = 5000} and \code{trace = 0}.
+\item \code{optim}: \code{maxit = 5000} and \code{trace = 0}
+}
 
-ggplot(res$df, aes(t, pred)) + 
-  geom_ribbon(aes(ymin=pred-2*se, ymax = pred+2*se),alpha=0.5) + 
-  geom_line() + 
-  geom_point(aes(t,y),col="red",alpha=0.5) + 
-  xlab("Time") + ylab("Data") + 
-  theme_bw()
+All other controls for the optimization function are left at NULL.
+}
+\seealso{
+\code{\link[MARSS:MARSSoptim]{MARSS::MARSSoptim()}}, \code{\link[MARSS:MARSSkem]{MARSS::MARSSkem()}}
 }
 \author{
-Eric Ward and edited by Eli Holmes.
+Eli Holmes. This function is inspired by dfaTMB.R written by Tim Cline while a graduate student in the Fish 507 Time Series Analysis course.
 }

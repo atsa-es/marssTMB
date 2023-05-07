@@ -13,17 +13,31 @@
 #' * No B estimation
 #'
 #' @param MLEobj A properly formatted MARSS model as output by [MARSS()]
+#' @param method Normally passed in as MLEobj$method, but allows user to pass in a new method if they want to use MLEobj with another method. Allowed values are "TMB", "nlminb.TMB", "BFGS.TMB".
+#' @param opt.control Normally this is passed in as MLEobj$control, but if the MLEobj was set up using a different method, then you will need to set the opt.control options. See details.
+#' 
+#' @details
+#' `opt.control` is what is passed to the control argument in [nlminb()] or [optim()]. If you use `MARSS(x, method="TMB")`, this will be set to appropriate defaults which you can see via `MLEobj$control`. But if you call `estimate_marss()` with a MLEobj from a call such as `MARSS(x, method="kem")` (so not a TMB method), you will need to set `opt.control` if you want values different from the base defaults for those functions. Note as a shortcut for `nlminb()`, you can set both `eval.max`, `iter.max` to the same value with `opt.control=list(maxit=1000)`. Note, if you pass in `opt.control`, this will replace all values currently in `MLEobj$control` that are associated with the optimizer function.
+#' 
+#' The defaults set in [MARSS::MARSS()] are 
+#' 
+#' * `nlminb`: `eval.max = 5000`, `iter.max = 5000` and `trace = 0`. 
+#' * `optim`: `maxit = 5000` and `trace = 0`
+#' 
+#' All other controls for the optimization function are left at NULL.
 
 #' @return A list with the objective and optimization objects.
 #' * `obj` is the raw output from the [TMB::MakeADFun()] call.
 #' * `op` is the raw output from the optimization call (optim or nlminb)
+#' * `opt.control` is the controls sent to the optimization function.
 
 #' @author Eli Holmes. This function is inspired by dfaTMB.R written by Tim Cline while a graduate student in the Fish 507 Time Series Analysis course.
 #' @seealso [MARSS::MARSSoptim()], [MARSS::MARSSkem()]
 #' @export
-estimate_marss <- function(MLEobj) {
+estimate_marss <- function(MLEobj, method=c("TMB", "nlminb.TMB", "BFGS.TMB"), opt.control = NULL) {
   if(!inherits(MLEobj, "marssMLE"))
     stop("marssTMB::estimate_marss_parameters requires a marssMLE object from the MARSS package.")
+  method <- match.arg(method)
   pkg <- "estimate_marss"
   MODELobj <- MLEobj[["model"]]
   y <- MODELobj[["data"]]
@@ -33,13 +47,32 @@ estimate_marss <- function(MLEobj) {
   m <- model.dims[["x"]][1]
 
   control <- MLEobj[["control"]]
-  tmb.silent <- control[["tmb.silent"]]
-  fun.opt <- ifelse(MLEobj[["method"]] %in% c("TMB", "nlminb.TMB"), "nlminb", "optim")
-  if(fun.opt == "optim") optim.method <- strsplit(MLEobj[["method"]], "[.]")[[1]][1]
-  if(fun.opt == "nlminb")
-    opt.control <- control[!(names(control) %in% c("fun.opt", "optim.method", "tmb.silent", "silent", "maxit", "minit"))]
-  if(fun.opt == "optim")
-    opt.control <- control[!(names(control) %in% c("fun.opt", "optim.method", "tmb.silent", "silent", "minit"))]
+  tmb.silent <- ifelse(is.null(control[["tmb.silent"]]), TRUE, control[["tmb.silent"]])
+  method.in.TMB <- MLEobj[["method"]] %in% c("TMB", "nlminb.TMB", "BFGS.TMB")
+  # Set method to TMB is MLEobj is not a TMB method
+  method <- ifelse(method.in.TMB, method, "TMB")
+  fun.opt <- ifelse(method %in% c("TMB", "nlminb.TMB"), "nlminb", "optim")
+  if(fun.opt == "optim"){
+    optim.method <- strsplit(MLEobj[["method"]], "[.]")[[1]][1]
+  }
+  if(fun.opt == "nlminb"){
+    if(!is.null(opt.control)){ # user passed in a value
+      if(!is.null(opt.control$maxit)){
+        opt.control$eval.max <- opt.control$iter.max <- opt.control$maxit
+        opt.control$maxit <- NULL
+      }
+      opt.control <- opt.control
+    }else{
+      opt.control <- control
+    }
+    allowed.in.opt.control <- c("eval.max", "iter.max", "trace", "abs.tol", "rel.tol", "x.tol", "xf.tol", "step.min", "step.max", "sing.tol", "scale.init", "diff.g")
+    opt.control <- opt.control[names(opt.control) %in% allowed.in.opt.control]
+  }
+  if(fun.opt == "optim"){
+    opt.control <- ifelse(!is.null(opt.control), opt.control, control)
+    allowed.in.opt.control <- c("trace", "fnscale", "parscale", "ndeps", "maxit", "abstol", "reltol", "alpha", "beta", "gamma", "REPORT", "warn.1d.NelderMead", "type", "lmm", "factr", "pgtol", "temp", "tmax")
+    opt.control <- opt.control[names(opt.control) %in% allowed.in.opt.control]
+  }
 
   # Set up the initial matrices
   eleminits <- list()
@@ -54,8 +87,10 @@ estimate_marss <- function(MLEobj) {
     stop(paste0(pkg, ": V0 can only have 0s on the diagonal if it is all zero"))
   # No zeros on diagonal of Q or R by definition
   for(elem in c("R", "Q")){
-  if(any(diag(eleminits[[elem]])==0))
-    stop(paste0(pkg, ": No zeros allowed on the diagonal of ", elem, "."))
+    if(is.na(dim(eleminits[[elem]])[3]))
+      dim(eleminits[[elem]]) <- c(dim(eleminits[[elem]]), 1)
+    bad <- apply(eleminits[[elem]], 3, function(x){any(diag(x)==0)}) |> unlist() |> any()
+   if(bad) stop(paste0(pkg, ": No zeros allowed on the diagonal of ", elem, "."))
   }
   
   free <- MLEobj$marss$free
@@ -74,27 +109,46 @@ estimate_marss <- function(MLEobj) {
     free[[dname]] <- free[[elem]][d,,,drop=FALSE]
     fixed[[dname]] <- fixed[[elem]][d,,,drop=FALSE]
     free[[oname]] <- free[[elem]]
-    free[[oname]][ut,,] <- 0
-    free[[oname]] <- free[[elem]][od,,,drop=FALSE]
-    fixed[[oname]] <- fixed[[elem]][od,,,drop=FALSE]
+#    free[[oname]][ut,,] <- 0
+    free[[oname]] <- free[[elem]][ut,,,drop=FALSE] # only upper tri
+    fixed[[oname]] <- fixed[[elem]][ut,,,drop=FALSE]
+    # Drop cols and rows associated with values not on d or o
     pars[[dname]] <- pars[[elem]][colSums(free[[dname]])>0,,drop=FALSE]
     pars[[oname]] <- pars[[elem]][colSums(free[[oname]])>0,,drop=FALSE]
+    free[[dname]] <- free[[dname]][,colSums(free[[dname]])>0,,drop=FALSE]
+    free[[oname]] <- free[[oname]][,colSums(free[[oname]])>0,,drop=FALSE]
+    # This only works since no linear constraints or mixing of fixed/free on
+    # diagonal allowed
     pars[[dname]] <- log(sqrt(pars[[dname]]))
-    par_dims[[dname]] <- par_dims[[elem]]
-    par_dims[[oname]] <- par_dims[[elem]]
+    fixed[[dname]][fixed[[dname]]!=0] <- log(sqrt(fixed[[dname]][fixed[[dname]]!=0]))
+    # Chols of corr mat; these are either in fixed or in par
+    # This awful code is because free is a permutation matrix and I have
+    # no idea how it is permuting, but I know it is only 1s and 0s
+    if(mn>1){ # there are off-diagonals
+    no <- mn*(mn-1)/2 # number of upper tri off diagonals
+    chols <- apply(eleminits[[elem]], 3, function(x){ tmp = chol(diag(1/sqrt(diag(x)))%*%x%*%diag(1/sqrt(diag(x)))); tmp[upper.tri(tmp)]})
+    parind <- apply(free[[oname]], 3, function(x){rowSums(x)>0})
+    fixed[[oname]] <- array(chols*!parind, dim=c(no, 1, dim(chols)[2]))
+    tmp <- 0*pars[[oname]]
+    for(t in 1:dim(chols)[2]) tmp <- tmp+t(free[[oname]][,,t])%*%(chols*parind)[,t]
+    pars[[oname]] <- tmp
+    }
+    par_dims[[dname]] <- c(mn,1,1)
+    par_dims[[oname]] <- c(mn * (mn - 1) / 2, 1, 1)
   }
   free <- free[!(names(free) %in% c("Q", "R"))]
   fixed <- fixed[!(names(fixed) %in% c("Q", "R"))]
   pars <- pars[!(names(pars) %in% c("Q", "R"))]
-
+  
   tfixed <- unlist(lapply(fixed, function(x){dim(x)[3]}))
   tfree <- unlist(lapply(free, function(x){dim(x)[3]}))
-  free = lapply(free, function(x){new <- matrix(x, dim(x)[1]*max(dim(x)[2],1), dim(x)[3]); new[is.na(new)] <- 0; new})
+  # Make time-varying matrices in 2D vec form d1*d2*npar x T for free and d1*d2 x T for fixed
+  free = lapply(free, function(x){new <- matrix(x, max(dim(x)[1],1)*max(dim(x)[2],1), dim(x)[3]); new[is.na(new)] <- 0; new})
   fixed = lapply(fixed, function(x){matrix(x, dim(x)[1], dim(x)[3])})
   pars0 = lapply(pars, function(x){new <- matrix(x, max(dim(x)[1],1), dim(x)[2]); new[is.na(new)]<- 0; new})
   par_dims = par_dims[names(fixed)]
   par_dims = lapply(par_dims, as.integer)
-  npar <- unlist(lapply(pars, nrow))
+  numpar <- unlist(lapply(pars, nrow))
   # a vector of the parameters
   pars <- unlist(lapply(pars, function(x){x[,1]}))
   
@@ -105,12 +159,13 @@ estimate_marss <- function(MLEobj) {
     Y = y,
     V0_is_zero = as.numeric(V0_is_zero),
     tinitx = MODELobj[["tinitx"]],
+    tfixed = tfixed,
+    tfree = tfree, 
+    numpar = numpar, 
     free = free,
     fixed = fixed,
     par_dims = par_dims,
-    npar = npar,
-    tfixed = tfixed,
-    tfree = tfree
+    pars = pars
   )
 
   # Note x0 and V0 are fixed (stochastic prior) for DFA
@@ -118,8 +173,7 @@ estimate_marss <- function(MLEobj) {
 
   # Creates the list of initial (start) values of parameter list
   parameters <- list(
-    X = matrix(0, ncol = TT, nrow = m), # states
-    pars = pars
+    X = matrix(0, ncol = TT, nrow = m) # states
   )
 
   # Create the map (mask) that indicates what parameters to not estimate
@@ -131,9 +185,26 @@ estimate_marss <- function(MLEobj) {
     mat[,1] <- NA
     maplist$X <- mat |> unlist() |> as.factor()
   }
-
+  for(i in c("Rdiag", "Qdiag")){
+   if(numpar[i]==0){
+     maplist[[i]] <- as.factor(matrix(NA))
+   }else{
+     maplist[[i]] <- as.factor(1:numpar[i])
+   }
+   parameters[[i]] <- pars0[[i]]
+#   parameters[[i]] <- as.vector(parameters[[i]])
+  }
+  for(i in c("Roffdiag", "Qoffdiag")){
+    if(numpar[i]==0){
+      maplist[[i]] <- as.factor(rep(NA, par_dims[[i]][1]))
+    }else{
+      maplist[[i]] <- as.factor(1:numpar[i])
+    }
+    parameters[[i]] <- fixed[[i]][,1]+(diag(1,par_dims[[i]][1])%x%t(pars0[[i]]))%*%free[[i]][,1]
+    parameters[[i]] <- as.vector(parameters[[i]])
+  }
+  browser()
   MLEobj[["control"]][["tmb.silent"]] <- TRUE
-  
   # Creates the model object and runs the optimization
   obj1 <- TMB::MakeADFun(
     data, parameters,
@@ -157,6 +228,7 @@ estimate_marss <- function(MLEobj) {
     opt1$objective <- opt1$value
     opt1$iterations <- opt1$counts[2]
   }
+  names(opt1$par) <- names(pars)
 
-  return(list(obj = obj1, opt = opt1))
+  return(list(obj = obj1, opt = opt1, fun.opt = fun.opt, opt.control = opt.control, method = method))
 }
