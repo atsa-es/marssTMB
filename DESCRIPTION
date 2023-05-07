@@ -17,7 +17,8 @@ Depends: R (>= 3.5.0)
 Imports: 
     TMB (>= 1.9.3),
     stats,
-    MARSS (>= 3.11.4)
+    MARSS (>= 3.11.4),
+    utils
 Suggests: 
     ggplot2,
     dplyr,

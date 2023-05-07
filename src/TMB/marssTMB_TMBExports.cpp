@@ -3,9 +3,8 @@
 #define TMB_LIB_INIT R_init_marssTMB_TMBExports
 #include <TMB.hpp>
 #include "dfa.hpp"
+#include "marss.hpp"
 #include "marxss.hpp"
-#include "marxss2.hpp"
-#include "test.hpp"
 #include "uni.hpp"
 
 template<class Type>
@@ -13,12 +12,10 @@ Type objective_function<Type>::operator() () {
   DATA_STRING(model);
   if(model == "dfa") {
     return dfa(this);
+  } else if(model == "marss") {
+    return marss(this);
   } else if(model == "marxss") {
     return marxss(this);
-  } else if(model == "marxss2") {
-    return marxss2(this);
-  } else if(model == "test") {
-    return test(this);
   } else if(model == "uni") {
     return uni(this);
   } else {

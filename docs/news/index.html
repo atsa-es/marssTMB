@@ -67,9 +67,19 @@
     </div>
 
     <div class="section level2">
+<h2 class="page-header" data-toc-text="0.0.9" id="marsstmb-009">marssTMB 0.0.9<a class="anchor" aria-label="anchor" href="#marsstmb-009"></a></h2>
+<p>Created a development version of {MARSS} with method TMB. <code><a href="../reference/marssTMB-package.html">marssTMB()</a></code> will recognize if it was called with <code><a href="https://rdrr.io/pkg/MARSS/man/MARSS.html" class="external-link">MARSS()</a></code>. <code><a href="../reference/MARSS_tmb.html">MARSS_tmb()</a></code> also still works.</p>
+<ul><li>Added <code>marss.hpp</code>, a major update for MARSS models in vectorized “marss” form. This will allow time-varying parameters more easily and models with linear constraints. It’s companion function is <code>estimate_marss.R</code>.</li>
+<li>Changed <code>MARSStmb.R</code> to <code>estimate_marxss.R</code>. It will become an internal function later.</li>
+<li>Added various helper functions in <code>inst/include/LOM.hpp</code>
+</li>
+</ul></div>
+    <div class="section level2">
 <h2 class="page-header" data-toc-text="0.0.8" id="marsstmb-008">marssTMB 0.0.8<a class="anchor" aria-label="anchor" href="#marsstmb-008"></a></h2>
 <ul><li>Added a Quick Start vignette.</li>
 <li>Added check that no zeros on diagonal of Q or R (temporary)</li>
+<li>Added marssTMBCheckPackageVersions() to <code>zzz.R</code> and <code>.onLoad()</code> to deal with users getting warnings about TMB/Matrix version mismatch and not knowing what to do. <a href="https://glmmtmb.github.io/glmmTMB/#glmmtmbtmbmatrix-mismatches" class="external-link uri">https://glmmtmb.github.io/glmmTMB/#glmmtmbtmbmatrix-mismatches</a>
+</li>
 </ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.0.7" id="marsstmb-007">marssTMB 0.0.7<a class="anchor" aria-label="anchor" href="#marsstmb-007"></a></h2>
@@ -81,12 +91,12 @@
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.0.6" id="marsstmb-006">marssTMB 0.0.6<a class="anchor" aria-label="anchor" href="#marsstmb-006"></a></h2>
 <ul><li>removed <code>to_marssTMB()</code> (not needed)</li>
-<li>completed <code><a href="../reference/MARSStmb.html">MARSStmb()</a></code> so that the marssMLE object is in proper form. All the {MARSS} helper functions should work.</li>
+<li>completed <code>MARSStmb()</code> so that the marssMLE object is in proper form. All the {MARSS} helper functions should work.</li>
 <li>add more time comparisons to MARSS_tmb vignette and upped the maxit for MARSS()</li>
 </ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.0.5" id="marsstmb-005">marssTMB 0.0.5<a class="anchor" aria-label="anchor" href="#marsstmb-005"></a></h2>
-<ul><li>Got <code><a href="../reference/MARSStmb.html">MARSStmb()</a></code> mostly working with marssMLE structure for output</li>
+<ul><li>Got <code>MARSStmb()</code> mostly working with marssMLE structure for output</li>
 <li>made default optimizer nlminb (faster)</li>
 </ul></div>
     <div class="section level2">
@@ -94,7 +104,7 @@
 <ul><li>Eric added tests and covariates to DFA vignette.</li>
 <li>moved MARSS into Depends and added to imports in <code>marssTMB-package.R</code>
 </li>
-<li>added some more info to <code><a href="../reference/MARSStmb.html">MARSStmb()</a></code> description</li>
+<li>added some more info to <code>MARSStmb()</code> description</li>
 <li>started draft of vignette for <code><a href="../reference/MARSS_tmb.html">MARSS_tmb()</a></code>
 </li>
 </ul></div>
@@ -109,11 +119,11 @@
 </ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.0.2" id="marsstmb-002">marssTMB 0.0.2<a class="anchor" aria-label="anchor" href="#marsstmb-002"></a></h2>
-<ul><li>Added <code><a href="../reference/MARSS_tmb.html">MARSS_tmb()</a></code>. This sets up the model for <code><a href="../reference/MARSStmb.html">MARSStmb()</a></code> and for now ensures that the model will work with <code>marxss.hpp</code> which only allows DFA at the moment.</li>
-<li>Added <code><a href="../reference/MARSStmb.html">MARSStmb()</a></code>. This is symmetric to <code><a href="https://rdrr.io/pkg/MARSS/man/MARSSoptim.html" class="external-link">MARSS::MARSSoptim()</a></code>. Working to match the output to <code><a href="https://rdrr.io/pkg/MARSS/man/MARSS.html" class="external-link">MARSS::MARSS()</a></code> so that all the MARSS functions work.</li>
+<ul><li>Added <code><a href="../reference/MARSS_tmb.html">MARSS_tmb()</a></code>. This sets up the model for <code>MARSStmb()</code> and for now ensures that the model will work with <code>marxss.hpp</code> which only allows DFA at the moment.</li>
+<li>Added <code>MARSStmb()</code>. This is symmetric to <code><a href="https://rdrr.io/pkg/MARSS/man/MARSSoptim.html" class="external-link">MARSS::MARSSoptim()</a></code>. Working to match the output to <code><a href="https://rdrr.io/pkg/MARSS/man/MARSS.html" class="external-link">MARSS::MARSS()</a></code> so that all the MARSS functions work.</li>
 <li>Added <code>src/TMB/marxss.hpp</code> which is the MARSS model version with MARSS parameter names.</li>
 </ul><p><strong>To do</strong></p>
-<ul><li>Currently <code><a href="../reference/MARSStmb.html">MARSStmb()</a></code> just fits a model. Next up is to convert this to MARSS output format. <em>Done 0.0.5</em>
+<ul><li>Currently <code>MARSStmb()</code> just fits a model. Next up is to convert this to MARSS output format. <em>Done 0.0.5</em>
 </li>
 </ul></div>
     <div class="section level2">

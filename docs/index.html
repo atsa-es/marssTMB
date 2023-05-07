@@ -94,7 +94,7 @@
 <div class="section level2">
 <h2 id="to-use">To use<a class="anchor" aria-label="anchor" href="#to-use"></a>
 </h2>
-<p>Fit <a href="https://atsa-es.github.io/MARSS/" class="external-link">MARSS</a> models as usual, but use [MARSS_tmb()] instead of [MARSS::MARSS()]. Note R and Q can only be diagonal, unconstrained or fixed. <code>equalvarcov</code> is not available nor are other custom Q matrices available with the EM algorithm in <code>MARSS()</code>. But TMB is very fast.</p>
+<p>Fit <a href="https://atsa-es.github.io/MARSS/" class="external-link">MARSS</a> models as usual, but use [MARSS_tmb()] instead of [MARSS::MARSS()]. Note R and Q can only be diagonal, unconstrained or fixed. <code>equalvarcov</code> is not available nor are other custom Q matrices available with the EM algorithm in <code>MARSS()</code>. But TMB is very fast. Also be aware that in preliminary tests, the TMB algorithm seems to struggle with estimation of unconstrained Q matrices. Double-check first with other algorithms.</p>
 <p>See the <a href="https://atsa-es.github.io/marssTMB/articles/Quick_Start.html">Quick Start Guide</a> to get started.</p>
 </div>
 <div class="section level2">

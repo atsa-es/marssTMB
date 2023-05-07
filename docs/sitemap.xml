@@ -49,10 +49,19 @@
     <loc>https://atsa-es.github.io/marssTMB/reference/dfaTMB.html</loc>
   </url>
   <url>
+    <loc>https://atsa-es.github.io/marssTMB/reference/estimate_marss.html</loc>
+  </url>
+  <url>
+    <loc>https://atsa-es.github.io/marssTMB/reference/estimate_marxss.html</loc>
+  </url>
+  <url>
     <loc>https://atsa-es.github.io/marssTMB/reference/index.html</loc>
   </url>
   <url>
     <loc>https://atsa-es.github.io/marssTMB/reference/marssTMB-package.html</loc>
+  </url>
+  <url>
+    <loc>https://atsa-es.github.io/marssTMB/reference/marssTMB_CheckPackageVersions.html</loc>
   </url>
   <url>
     <loc>https://atsa-es.github.io/marssTMB/reference/to.marssMLE.html</loc>

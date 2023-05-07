@@ -1,13 +1,13 @@
 #' Check TMB and Matrix versions
 #' 
 #' Helper function to provide instructions if there is a mis-match
-#' @param silent=TRUE If FALSE, then gives the full instructions
+#' @param silent Default is TRUE. If FALSE, then gives the full instructions
 #' @export
 marssTMB_CheckPackageVersions <- function(silent=TRUE) {
   file1 <- paste0(system.file(package="marssTMB"),"/Matrix-version")
   file2 <- paste0(system.file(package="marssTMB"),"/TMB-version")
-  cur.Matrix.version <- as.character(packageVersion("Matrix"))
-  cur.TMB.version <- as.character(packageVersion("TMB"))
+  cur.Matrix.version <- as.character(utils::packageVersion("Matrix"))
+  cur.TMB.version <- as.character(utils::packageVersion("TMB"))
   if(!file.exists(file1)) {
     writeLines(cur.Matrix.version, con = file1)
   }

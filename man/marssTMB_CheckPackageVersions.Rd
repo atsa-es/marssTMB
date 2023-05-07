@@ -7,7 +7,7 @@
 marssTMB_CheckPackageVersions(silent = TRUE)
 }
 \arguments{
-\item{silent=TRUE}{If FALSE, then gives the full instructions}
+\item{silent}{Default is TRUE. If FALSE, then gives the full instructions}
 }
 \description{
 Helper function to provide instructions if there is a mis-match

@@ -1,6 +1,7 @@
 #' @rawNamespace useDynLib(marssTMB, .registration=TRUE); useDynLib(marssTMB_TMBExports)
 #' @import MARSS
 #' @importFrom stats coef
+#' @importFrom utils packageVersion
 #' @keywords internal
 "_PACKAGE"
 
