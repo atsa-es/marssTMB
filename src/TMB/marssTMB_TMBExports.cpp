@@ -4,6 +4,7 @@
 #include <TMB.hpp>
 #include "dfa.hpp"
 #include "marss.hpp"
+#include "marss2.hpp"
 #include "marxss.hpp"
 #include "uni.hpp"
 
@@ -14,6 +15,8 @@ Type objective_function<Type>::operator() () {
     return dfa(this);
   } else if(model == "marss") {
     return marss(this);
+  } else if(model == "marss2") {
+    return marss2(this);
   } else if(model == "marxss") {
     return marxss(this);
   } else if(model == "uni") {

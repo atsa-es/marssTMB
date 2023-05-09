@@ -37,7 +37,7 @@
 #' @example inst/examples/estimate_marss.R
 #' @seealso [MARSS::MARSSoptim()], [MARSS::MARSSkem()]
 #' @export
-estimate_marss <- function(MLEobj, method = c("TMB", "nlminb_TMB", "BFGS_TMB"), opt.control = NULL, ...) {
+estimate_marss2 <- function(MLEobj, method = c("TMB", "nlminb_TMB", "BFGS_TMB"), opt.control = NULL, ...) {
   if (!inherits(MLEobj, "marssMLE")) {
     stop("marssTMB::estimate_marss_parameters requires a marssMLE object from the MARSS package.")
   }
@@ -100,62 +100,12 @@ estimate_marss <- function(MLEobj, method = c("TMB", "nlminb_TMB", "BFGS_TMB"), 
     if (bad) stop(paste0(pkg, ": No zeros allowed on the diagonal of ", elem, "."))
   }
 
+  # Convert var-cov matrices to the chol form
+  MLEobj <- var_to_cholvar(MLEobj)
   free <- MODELobj$free
   fixed <- MODELobj$fixed
   pars <- MLEobj$start
   par_dims <- attr(MODELobj, "model.dims")
-  # Helper code to find the diagonals and off-diagonal pars in the vector
-  # Need to fix if offdiags of start are not 0
-  # Why is this so horrible?? Because the free matrix is a general linear
-  # constraint matrix and I don't know what it looks like. It have 1 or 0 for
-  # RowSums and ColSums but the ordering depends on how the user constructed
-  # their Q and R constraints. This painful code makes no assumptions and uses
-  # the free matrix to back calculate which par are assoc with diagonal or
-  # off diagonal elements.
-  for (elem in c("Q", "R")) {
-    dname <- paste0(elem, "diag")
-    oname <- paste0(elem, "offdiag")
-    mn <- sqrt(dim(free[[elem]])[1])
-    d <- seq(1, mn * mn, mn + 1) # diagonal rows
-    ut <- matrix(1:(mn * mn), mn, mn)
-    ut <- ut[upper.tri(ut)]
-    od <- (1:(mn * mn))
-    od <- od[!(od %in% d)] # offdiagonal rows
-    free[[dname]] <- free[[elem]][d, , , drop = FALSE]
-    fixed[[dname]] <- fixed[[elem]][d, , , drop = FALSE]
-    free[[oname]] <- free[[elem]]
-    free[[oname]] <- free[[elem]][ut, , , drop = FALSE] # only upper tri
-    fixed[[oname]] <- fixed[[elem]][ut, , , drop = FALSE]
-    # Drop cols and rows associated with values not on d or o
-    pars[[dname]] <- pars[[elem]][colSums(free[[dname]]) > 0, , drop = FALSE]
-    pars[[oname]] <- pars[[elem]][colSums(free[[oname]]) > 0, , drop = FALSE]
-    free[[dname]] <- free[[dname]][, colSums(free[[dname]]) > 0, , drop = FALSE]
-    free[[oname]] <- free[[oname]][, colSums(free[[oname]]) > 0, , drop = FALSE]
-    # Works since no linear constraints or mixing of fixed/free on
-    # diagonal allowed
-    pars[[dname]] <- log(sqrt(pars[[dname]]))
-    fixed[[dname]][fixed[[dname]] != 0] <- log(sqrt(fixed[[dname]][fixed[[dname]] != 0]))
-    # Chols of corr mat; these are either in fixed or in par
-    if (mn > 1) { # there are off-diagonals
-      no <- mn * (mn - 1) / 2 # number of upper tri off diagonals
-      chols <- apply(eleminits[[elem]], 3, function(x) {
-        tmp <- chol(diag(1 / sqrt(diag(x))) %*% x %*% diag(1 / sqrt(diag(x))))
-        tmp[upper.tri(tmp)]
-      })
-      parind <- apply(free[[oname]], 3, function(x) {
-        rowSums(x) > 0
-      })
-      fixed[[oname]] <- array(chols * !parind, dim = c(no, 1, dim(chols)[2]))
-      tmp <- 0 * pars[[oname]]
-      for (t in 1:dim(chols)[2]) tmp <- tmp + t(free[[oname]][, , t]) %*% (chols * parind)[, t]
-      pars[[oname]] <- tmp
-    }
-    par_dims[[dname]] <- c(mn, 1, 1)
-    par_dims[[oname]] <- c(mn * (mn - 1) / 2, 1, 1)
-  }
-  free <- free[!(names(free) %in% c("Q", "R"))]
-  fixed <- fixed[!(names(fixed) %in% c("Q", "R"))]
-  pars <- pars[!(names(pars) %in% c("Q", "R"))]
 
   tfixed <- unlist(lapply(fixed, function(x) {dim(x)[3]}))
   tfree <- unlist(lapply(free, function(x) {dim(x)[3]}))
@@ -167,11 +117,6 @@ estimate_marss <- function(MLEobj, method = c("TMB", "nlminb_TMB", "BFGS_TMB"), 
   })
   fixed <- lapply(fixed, function(x) {
     matrix(x, dim(x)[1], dim(x)[3])
-  })
-  pars0 <- lapply(pars, function(x) {
-    new <- matrix(x, max(dim(x)[1], 1), dim(x)[2])
-    new[is.na(new)] <- 0
-    new
   })
   par_dims <- par_dims[names(fixed)]
   par_dims <- lapply(par_dims, as.integer)
@@ -191,7 +136,8 @@ estimate_marss <- function(MLEobj, method = c("TMB", "nlminb_TMB", "BFGS_TMB"), 
     numpar = numpar,
     free = free,
     fixed = fixed,
-    par_dims = par_dims
+    par_dims = par_dims,
+    pars
   )
 
   # Creates the list of initial (start) values of parameter list
