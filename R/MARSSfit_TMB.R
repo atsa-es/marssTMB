@@ -75,11 +75,10 @@ MARSSfit.TMB <- function(MLEobj, fun=2, ...) {
   parvec <- parvec[ord]
   MLEobj <- MARSS::MARSSvectorizeparam(MLEobj, parvec = parvec)
   
+  MLEobj$iter.record <- list(message = opt1$message, opt.output = opt1)
   if(MLEobj$control$trace == TRUE)
-    MLEobj$iter.record <-
-    list(obj.function = obj1, opt.output = opt1, message = opt1$message)
+    MLEobj$iter.record <-c(MLEobj$iter.record, list(obj.function = obj1))
   MLEobj$convergence <- opt1$convergence
-  
   MLEobj$numIter <- opt1$iterations
 
   return(MLEobj)
