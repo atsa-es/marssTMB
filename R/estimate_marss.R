@@ -226,6 +226,8 @@ estimate_marss <- function(MLEobj, method = c("TMB", "nlminb_TMB", "BFGS_TMB"), 
   # remove any NULLs
   opt.control <- opt.control[unlist(lapply(opt.control, function(x) !is.null(x)))]
   if (fun.opt == "nlminb") {
+    # Only show output if trace = 1
+    if(opt.control$trace > 1) opt.control$trace <- 0
     opt1 <- stats::nlminb(obj1$par, obj1$fn, obj1$gr, control = opt.control)
     # add output also found in optim output
     opt1$value <- opt1$objective
