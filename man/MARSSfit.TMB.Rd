@@ -4,7 +4,7 @@
 \alias{MARSSfit.TMB}
 \title{MARSS parameter estimation using TMB}
 \usage{
-\method{MARSSfit}{TMB}(MLEobj)
+\method{MARSSfit}{TMB}(MLEobj, fun = 2, ...)
 }
 \arguments{
 \item{MLEobj}{A properly formatted \link[MARSS:marssMLE-class]{MARSS::marssMLE} object ready for fitting.}

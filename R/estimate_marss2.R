@@ -127,7 +127,7 @@ estimate_marss2 <- function(MLEobj, method = c("TMB", "nlminb_TMB", "BFGS_TMB"),
   # Creates the input data list
   # For now, we will assume V0 is a fixed (diagonal) matrix
   data <- list(
-    model = "marss",
+    model = "marss2",
     Y = y,
     V0_is_zero = as.numeric(V0_is_zero),
     tinitx = MODELobj[["tinitx"]],
@@ -136,8 +136,7 @@ estimate_marss2 <- function(MLEobj, method = c("TMB", "nlminb_TMB", "BFGS_TMB"),
     numpar = numpar,
     free = free,
     fixed = fixed,
-    par_dims = par_dims,
-    pars
+    par_dims = par_dims
   )
 
   # Creates the list of initial (start) values of parameter list

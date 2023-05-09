@@ -43,9 +43,10 @@
 #' @author Eli Holmes. 
 #' @seealso [MARSS::MARSSoptim()], [MARSS::MARSSkem()]
 #' @export
-MARSSfit.TMB <- function(MLEobj) {
+MARSSfit.TMB <- function(MLEobj, fun=2, ...) {
   
-  out <- marssTMB::estimate_marss2(MLEobj)
+  if(fun==1) out <- marssTMB::estimate_marss(MLEobj)
+  if(fun==2) out <- marssTMB::estimate_marss2(MLEobj)
   obj1 <- out$obj
   opt1 <- out$opt
   

@@ -121,6 +121,7 @@ Type marss(objective_function<Type>* obj) {
         nonNAcount++; //increment the values of
       }
     }
+    if(nonNAcount == 0) continue; // no data
     if(nonNAcount<nY){ //if NA values present
       matrix<Type> subCorr(nonNAcount,nonNAcount);
       vector<Type> subSds(nonNAcount);

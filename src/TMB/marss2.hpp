@@ -109,9 +109,10 @@ Type marss2(objective_function<Type>* obj) {
         nonNAcount++; //increment the values of
       }
     }
-    if(nonNAcount<nY){ //if NA values present
+    if(nonNAcount == 0) continue; // no data
+    if(nonNAcount<nY){ 
+      //if NA values present and some data
       matrix<Type> subCov(nonNAcount,nonNAcount);
-      vector<Type> subSds(nonNAcount);
       vector<Type> subData(nonNAcount);
       vector<Type> subPred(nonNAcount);
       
@@ -120,11 +121,11 @@ Type marss2(objective_function<Type>* obj) {
         subPred(j) = predY.col(0)(GoodVals(j));
         for(int k=0;k<nonNAcount;k++){
           subCov(j,k) = FullCovMatR(GoodVals(j),GoodVals(k));
-        }//end of loop through for truncated cormat
+        }//end of loop through for truncated covmat
       }//end of removal of NA's from sets
       vector<Type> subDiffer = subData-subPred;
 //      ans += VECSCALE(MVNORM(subCorr),subSds)(subDiffer);
-      ans += YVar(subDiffer); /* tinitx=1 */
+      ans += MVNORM(subCov)(subDiffer); /* tinitx=1 */
     }else{
       vector<Type> differ = Y.col(i)-predY.col(0);
  //     ans += VECSCALE(corMatGenR, sdR)(differ);
