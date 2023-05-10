@@ -1,3 +1,8 @@
+# marssTMB 0.0.11
+
+* various bug fixes. Major one involving Z. Had (t(X) %x% I) instead of (I %x% t(X))
+* bug with covariates since did not pass in form="marss" to coef()
+
 # marssTMB 0.0.10
 
 * added `marss2.hpp` and `estimate_marss2.R`. These use the chol() of the var-cov matrices and don't split into diag and corrmat. Seems more stable.

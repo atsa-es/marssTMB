@@ -8,9 +8,9 @@ home:
 reference:
 - title: Main function
   desc: >
-    This is the main user function. On top of this all MARSS functions should work.
+    Main function is regular MARSS() with method="TMB".
   contents:
-  - MARSS_tmb
+  - MARSSfit.TMB
   
 - title: Internal functions
   desc: >
@@ -18,14 +18,17 @@ reference:
   contents:
   - estimate_marxss
   - estimate_marss
+  - estimate_marss2
   - create.elem.maps
   - create.varcov.maps
+  - var_to_cholvar
   - marssTMB_CheckPackageVersions
 
 - title: Other functions
   desc: >
     These are functions that were used as early templates.
   contents:
+  - MARSS_tmb
   - dfaTMB
   - uniTMB
   

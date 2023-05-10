@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">marssTMB</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.9</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.11</span>
       </span>
     </div>
 
@@ -67,12 +67,12 @@
 
     <table class="ref-index"><colgroup><col class="alias"><col class="title"></colgroup><tbody><tr><th colspan="2">
           <h2 id="main-function">Main function <a href="#main-function" class="anchor" aria-hidden="true"></a></h2>
-          <p class="section-desc"></p><p>This is the main user function. On top of this all MARSS functions should work.</p>
+          <p class="section-desc"></p><p>Main function is regular MARSS() with method=“TMB”.</p>
         </th>
       </tr></tbody><tbody><tr><td>
-          <p><code><a href="MARSS_tmb.html">MARSS_tmb()</a></code> </p>
+          <p><code><a href="MARSSfit.TMB.html">MARSSfit(<i>&lt;TMB&gt;</i>)</a></code> </p>
         </td>
-        <td><p>Main marssTMB function</p></td>
+        <td><p>MARSS parameter estimation using TMB</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
           <h2 id="internal-functions">Internal functions <a href="#internal-functions" class="anchor" aria-hidden="true"></a></h2>
           <p class="section-desc"></p><p>These are the functions that the developers are working on. All are exported for now and can be used.</p>
@@ -86,6 +86,10 @@
         </td>
         <td><p>Internal function: MARSS parameter estimation using TMB</p></td>
       </tr><tr><td>
+          <p><code><a href="estimate_marss2.html">estimate_marss2()</a></code> </p>
+        </td>
+        <td><p>Internal function: MARSS parameter estimation using TMB</p></td>
+      </tr><tr><td>
           <p><code><a href="create.elem.maps.html">create.elem.maps()</a></code> </p>
         </td>
         <td><p>Create maps for diagonal and unconstrained varcov matrices</p></td>
@@ -93,6 +97,10 @@
           <p><code><a href="create.varcov.maps.html">create.varcov.maps()</a></code> </p>
         </td>
         <td><p>Create maps for diagonal and unconstrained varcov matrices</p></td>
+      </tr><tr><td>
+          <p><code><a href="var_to_cholvar.html">var_to_cholvar()</a></code> </p>
+        </td>
+        <td><p>Return R, Q and V0 with free and par for chol of matrix</p></td>
       </tr><tr><td>
           <p><code><a href="marssTMB_CheckPackageVersions.html">marssTMB_CheckPackageVersions()</a></code> </p>
         </td>
@@ -102,6 +110,10 @@
           <p class="section-desc"></p><p>These are functions that were used as early templates.</p>
         </th>
       </tr></tbody><tbody><tr><td>
+          <p><code><a href="MARSS_tmb.html">MARSS_tmb()</a></code> </p>
+        </td>
+        <td><p>Main marssTMB function</p></td>
+      </tr><tr><td>
           <p><code><a href="dfaTMB.html">dfaTMB()</a></code> </p>
         </td>
         <td><p>Tim Cline's original code to Fit a DFA model with TMB.</p></td>

@@ -20,7 +20,7 @@ code might be easier to follow."><!-- mathjax --><script src="https://cdnjs.clou
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">marssTMB</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.9</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.11</span>
       </span>
     </div>
 
@@ -130,6 +130,7 @@ of the object, the following are returned as a list:</p><ul><li><p><code>obj.fun
 <span class="r-in"><span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="MARSS_tmb.html">MARSS_tmb</a></span><span class="op">(</span><span class="va">dat</span>, model<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>m<span class="op">=</span><span class="fl">3</span>, tinitx<span class="op">=</span><span class="fl">1</span><span class="op">)</span>, form<span class="op">=</span><span class="st">"dfa"</span>, fit<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># fit</span></span></span>
 <span class="r-in"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu">estimate_marxss</span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in if (!(class.x %in% c("marssMODEL", "marssMLE"))) {    stop("Stopped in marss_to_marxss(): x$model must be a marssMODEL or marssMLE.",         call. = FALSE)}:</span> the condition has length &gt; 1</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

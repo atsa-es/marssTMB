@@ -23,7 +23,7 @@ run.comparisons <- FALSE
 set.seed(1234)
 ```
 
-The `MARSS_tmb()` function allows you to fit DFAs with the same form as `MARSS(x, form="dfa")`. This has a diagonal $\QQ$ with 1 on the diagonal and a stochastic $\xx_1$ with mean 0 and variance of 5 (diagonal variance-covariance matrix). There are only 3 options allowed for $\RR$:
+The `MARSS()` function allows you to fit DFAs with the same form as `MARSS(x, form="dfa")`. This has a diagonal $\QQ$ with 1 on the diagonal and a stochastic $\xx_1$ with mean 0 and variance of 5 (diagonal variance-covariance matrix). There are only 3 options allowed for $\RR$:
 diagonal and equal, diagonal and unequal, and unconstrained.
 
 ## Example data
@@ -56,8 +56,8 @@ Fit with TMB.
 ```{r}
 library(marssTMB)
 m3 <- dfaTMB(dat, model=list(m=1, R='unconstrained'))
-m4 <- MARSS_tmb(dat, model=mod.list, form='dfa')
-m5 <- MARSS_tmb(dat, model=mod.list, method="BFGS.TMB", form='dfa')
+m4 <- MARSS(dat, model=mod.list, form='dfa', method="TMB", silent=TRUE)
+m5 <- MARSS(dat, model=mod.list, method="BFGS_TMB", form='dfa', silent=TRUE)
 ```
 
 ### Log likelihoods
@@ -104,7 +104,7 @@ temp <- as.data.frame(lakeWAplanktonTrans) |>
     subset(Year >= 1980 & Year <= 1989) |>
     subset(select=Temp)
 covar <- t(temp) |> zscore()
-t6 <- system.time(m6 <- MARSS_tmb(dat, model=mod.list2, form="dfa", covariates=covar, silent = TRUE, z.score = FALSE))
+t6 <- system.time(m6 <- MARSS(dat, model=mod.list2, form="dfa", covariates=covar, silent = TRUE, z.score = FALSE, method="TMB"))
 t7 <- system.time(m7 <- MARSS(dat, model=mod.list2, form="dfa", covariates=covar, silent = TRUE, control=list(maxit=10000), z.score = FALSE))
 ```
 
@@ -115,7 +115,7 @@ TP <- as.data.frame(lakeWAplanktonTrans) |>
     subset(Year >= 1980 & Year <= 1989) |>
     subset(select=TP)
 covar <- rbind(covar, t(TP)) |> zscore()
-t8 <- system.time(m8 <- MARSS_tmb(dat, model=mod.list2, form="dfa", covariates=covar, silent = TRUE, z.score=FALSE))
+t8 <- system.time(m8 <- MARSS(dat, model=mod.list2, form="dfa", covariates=covar, silent = TRUE, z.score=FALSE, method="TMB"))
 t9 <- system.time(m9 <- MARSS(dat, model=mod.list2, form="dfa", covariates=covar, silent = TRUE, control=list(maxit=10000), z.score=FALSE))
 ```
 
@@ -172,7 +172,7 @@ for(R in c("diagonal and equal", "diagonal and unequal", "unconstrained")){
     tfit <- system.time(fit <- MARSS(dat, model=mod, form="dfa", method="BFGS"))
     df <- rbind(df, data.frame(fun="MARSS", opt.function="BFGS", m=m, R=R, ncovar = 0, time=tfit[1], logLik=fit$logLik, convergence = fit$convergence))
     mods <- c(mods, list(fit))
-    tfit <- system.time(fit <- MARSS_tmb(dat, model=mod, form="dfa"))
+    tfit <- system.time(fit <- MARSS(dat, model=mod, form="dfa", method="TMB"))
     df <- rbind(df, data.frame(fun="TMB", opt.function="nlminb", m=m, R=R, ncovar = 0, time=tfit[1], logLik=fit$logLik, convergence = fit$convergence))
     mods <- c(mods, list(fit))
   }
@@ -195,7 +195,7 @@ for(R in c("diagonal and equal", "diagonal and unequal", "unconstrained")){
     tfit <- system.time(fit <- MARSS(dat, model=mod, form="dfa", covariates=covar, method="BFGS"))
     df <- rbind(df, data.frame(fun="MARSS", opt.function="BFGS", m=m, R=R, ncovar=2, time=tfit[1], logLik=fit$logLik, convergence = fit$convergence))
     mods <- c(mods, list(fit))
-    tfit <- system.time(fit <- MARSS_tmb(dat, model=mod, form="dfa", covariates=covar))
+    tfit <- system.time(fit <- MARSS(dat, model=mod, form="dfa", covariates=covar, method="TMB"))
     df <- rbind(df, data.frame(fun="TMB", opt.function="nlminb", m=m, R=R, ncovar=2, time=tfit[1], logLik=fit$logLik, convergence = fit$convergence))
     mods <- c(mods, list(fit))
   }

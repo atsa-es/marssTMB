@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">marssTMB</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.9</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.11</span>
       </span>
     </div>
 
@@ -66,6 +66,15 @@
       <small>Source: <a href="https://github.com/atsa-es/marssTMB/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.0.11" id="marsstmb-0011">marssTMB 0.0.11<a class="anchor" aria-label="anchor" href="#marsstmb-0011"></a></h2>
+<ul><li>various bug fixes. Major one involving Z. Had (t(X) %x% I) instead of (I %x% t(X))</li>
+<li>bug with covariates since did not pass in form=“marss” to coef()</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.0.10" id="marsstmb-0010">marssTMB 0.0.10<a class="anchor" aria-label="anchor" href="#marsstmb-0010"></a></h2>
+<ul><li>added <code>marss2.hpp</code> and <code>estimate_marss2.R</code>. These use the chol() of the var-cov matrices and don’t split into diag and corrmat. Seems more stable.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.0.9" id="marsstmb-009">marssTMB 0.0.9<a class="anchor" aria-label="anchor" href="#marsstmb-009"></a></h2>
 <p>Created a development version of {MARSS} with method TMB. <code><a href="../reference/marssTMB-package.html">marssTMB()</a></code> will recognize if it was called with <code><a href="https://rdrr.io/pkg/MARSS/man/MARSS.html" class="external-link">MARSS()</a></code>. <code><a href="../reference/MARSS_tmb.html">MARSS_tmb()</a></code> also still works.</p>

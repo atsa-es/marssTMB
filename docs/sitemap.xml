@@ -37,6 +37,9 @@
     <loc>https://atsa-es.github.io/marssTMB/reference/MARSS_tmb.html</loc>
   </url>
   <url>
+    <loc>https://atsa-es.github.io/marssTMB/reference/MARSSfit.TMB.html</loc>
+  </url>
+  <url>
     <loc>https://atsa-es.github.io/marssTMB/reference/MARSStmb.html</loc>
   </url>
   <url>
@@ -52,6 +55,9 @@
     <loc>https://atsa-es.github.io/marssTMB/reference/estimate_marss.html</loc>
   </url>
   <url>
+    <loc>https://atsa-es.github.io/marssTMB/reference/estimate_marss2.html</loc>
+  </url>
+  <url>
     <loc>https://atsa-es.github.io/marssTMB/reference/estimate_marxss.html</loc>
   </url>
   <url>
@@ -64,6 +70,9 @@
     <loc>https://atsa-es.github.io/marssTMB/reference/marssTMB_CheckPackageVersions.html</loc>
   </url>
   <url>
+    <loc>https://atsa-es.github.io/marssTMB/reference/sub3D.html</loc>
+  </url>
+  <url>
     <loc>https://atsa-es.github.io/marssTMB/reference/to.marssMLE.html</loc>
   </url>
   <url>
@@ -71,5 +80,11 @@
   </url>
   <url>
     <loc>https://atsa-es.github.io/marssTMB/reference/uniTMB.html</loc>
+  </url>
+  <url>
+    <loc>https://atsa-es.github.io/marssTMB/reference/var_to_cholvar.html</loc>
+  </url>
+  <url>
+    <loc>https://atsa-es.github.io/marssTMB/reference/vec.html</loc>
   </url>
 </urlset>

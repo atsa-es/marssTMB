@@ -142,7 +142,7 @@ Fit but set B to identity.
 ```{r}
 library(marssTMB)
 model.list$B <- diag(1,2)
-fit <- MARSS_tmb(dat, model=model.list, method="TMB")
+fit <- MARSS(dat, model=model.list, method="TMB")
 ```
 The $\RR$, $\QQ$ and $\LAM$ variances can be set to zero to specify partially deterministic systems.  This allows you to write MAR(p) models in MARSS form for example. See the User Guide for examples. 
 
@@ -217,7 +217,7 @@ Specification of a properly constrained model with a unique solution is the resp
 
 Use [MARSS::autoplot()] to see a series of standard plots and diagnostics for your model. Try [MARSS::MARSSinfo()] if you get errors you don't understand or fitting is taking a long time to converge.  Use `fit=FALSE` in your [MARSS()] call to set up a model without fitting. Let's say you do `fit <- MARSS(..., fit=FALSE)`.  Now you can do `summary(fit$model)` to see what [MARSS()] thinks you are trying to fit.  
 
-Let's say you specified your model with some text short-cuts, like `Q="unconstrained"`, but you want the list matrix form for a next step. `a <- summary(fit$model)` returns that list (invisibly).  Because the model argument of `MARSS_tmb()` will understand a list of list matrices, you can pass in `model=a` to specify the model.  `MARSSkfas(fit, return.kfas.model=TRUE)` will return your model in \{KFAS\} format (class SSModel), thus you can use all the functions available in the \{KFAS\} package on your model.
+Let's say you specified your model with some text short-cuts, like `Q="unconstrained"`, but you want the list matrix form for a next step. `a <- summary(fit$model)` returns that list (invisibly).  Because the model argument of `MARSS()` will understand a list of list matrices, you can pass in `model=a` to specify the model.  `MARSSkfas(fit, return.kfas.model=TRUE)` will return your model in \{KFAS\} format (class SSModel), thus you can use all the functions available in the \{KFAS\} package on your model.
 
 ## Linear constraints
 
