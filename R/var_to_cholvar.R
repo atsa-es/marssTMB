@@ -48,7 +48,7 @@ var_to_cholvar <- function(MLEobj) {
       if (dim(d)[2] != 0) { # something is estimated
         MLEobj[[what]][[elem]] <- solve(crossprod(d)) %*% t(d) %*% vec(the.par)
       } else {
-        MLEobj$par[[elem]] <- matrix(0, 0, 1)
+        MLEobj[[what]][[elem]] <- matrix(0, 0, 1)
       }
     }
     # update so that lower tri is zero
