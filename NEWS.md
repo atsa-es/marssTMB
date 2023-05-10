@@ -1,3 +1,7 @@
+# marssTMB 0.0.10
+
+* added `marss2.hpp` and `estimate_marss2.R`. These use the chol() of the var-cov matrices and don't split into diag and corrmat. Seems more stable.
+
 # marssTMB 0.0.9
 
 Created a development version of {MARSS} with method TMB. `marssTMB()` will recognize if it was called with `MARSS()`. `MARSS_tmb()` also still works.
