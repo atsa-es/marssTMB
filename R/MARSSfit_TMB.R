@@ -71,7 +71,7 @@ MARSSfit.TMB <- function(MLEobj, fun=2, ...) {
       parvec <- c(parvec, tmp)
     } 
   }
-  ord <- names(coef(MLEobj, what="start", type="vector"))
+  ord <- names(coef(MLEobj, what="start", type="vector", form="marss"))
   parvec <- parvec[ord]
   MLEobj <- MARSS::MARSSvectorizeparam(MLEobj, parvec = parvec)
   
