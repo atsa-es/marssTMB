@@ -2,6 +2,7 @@
 #' @import MARSS
 #' @importFrom stats coef
 #' @importFrom utils packageVersion
+#' @importFrom MARSS MARSSfit
 #' @keywords internal
 "_PACKAGE"
 

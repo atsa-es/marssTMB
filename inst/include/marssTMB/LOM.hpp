@@ -43,7 +43,8 @@ matrix<Type> parmat2(matrix<Type> fixed, matrix<Type> free,
   return mat;
 };
 
-// Convert the vectorized fixed, free, par into a matrix with time along the columns
+// Convert the vectorized fixed, free, par into matrix with each column
+// a vec of free * par and time along the columns
 template <class Type>
 matrix<Type> parvec(matrix<Type> fixed, matrix<Type> free, 
                     matrix<Type> par, vector<int> dims, 
@@ -58,7 +59,7 @@ matrix<Type> parvec(matrix<Type> fixed, matrix<Type> free,
   I.setIdentity();
   matrix<Type> tpar(1,par.rows());
   tpar = par.transpose();
-  mat = fixed + tmbutils::kronecker(I, tpar) * free;
+  mat = fixed + tmbutils::kronecker(tpar, I) * free;
   return mat;
 };
 

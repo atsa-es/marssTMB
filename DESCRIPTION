@@ -13,11 +13,10 @@ Maintainer: Elizabeth E. Holmes <eli.holmes@noaa.gov>
 URL: https://atsa-es.github.io/marssTMB, https://github.com/atsa-es/marssTMB
 BugReports: https://github.com/atsa-es/marssTMB/issues
 License: GPL (>= 2)
-Depends: R (>= 3.5.0)
+Depends: R (>= 3.5.0), MARSS (>= 3.11.5)
 Imports: 
     TMB (>= 1.9.3),
     stats,
-    MARSS (>= 3.11.4),
     utils
 Suggests: 
     ggplot2,

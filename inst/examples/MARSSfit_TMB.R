@@ -8,7 +8,6 @@ dat <- as.data.frame(lakeWAplanktonTrans) |>
   MARSS::zscore()
 
 # set-up the model
-mod <- MARSS(dat, model=list(m=3, tinitx=1), form="dfa", fit=FALSE, silent=TRUE)
-# fit
-fit <- estimate_marss(mod)
+m1 <- MARSS(dat, model=list(m=3, tinitx=1), form="dfa", method="TMB")
+m2 <- MARSS(dat, model=list(m=3, tinitx=1), form="dfa")
 
