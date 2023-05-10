@@ -99,7 +99,7 @@ Type marss2(objective_function<Type>* obj) {
   
   for(int i=0;i<timeSteps;i++){ //move one time step at a time
     Xi = X.col(i).transpose();
-    predY = tmbutils::kronecker(I, Xi) * Z.col(i) + A.col(i);
+    predY = tmbutils::kronecker(Xi, I) * Z.col(i) + A.col(i);
 
     int nonNAcount = 0; //start at zero NA values
     vector<int> GoodVals(nY);
