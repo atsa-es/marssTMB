@@ -156,7 +156,6 @@ You can include `type="matrix"` to the full parameter matrices.
 
 You can get a pretty version of the estimates with SEs and CIs with
 ```{r}
-library(broom)
 tidy(fit)
 ```
 
@@ -190,13 +189,13 @@ residuals(fit) |> head()
 
 ## Predictions and forecasts
 
-To produce predictions and forecasts from a MARSS model, see [MARSS::predict.marssMLE()] or [MARSS::forecast.marssMLE()]
+To produce predictions and forecasts from a MARSS model, see [MARSS::predict()] or [MARSS::forecast()]
 ```{r}
-library(forecast)
 forecast(fit)$pred |> head()
 ```
 
 ```{r}
+library(ggplot2)
 fr <- forecast(fit)
 autoplot(fr)
 ```
