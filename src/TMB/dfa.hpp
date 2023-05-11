@@ -54,6 +54,7 @@ Type dfa(objective_function<Type>* obj) {
         nonNAcount++; //increment the values of
       }
     }
+    if(nonNAcount == 0) continue; // no data
     if(nonNAcount<obs.row(i).size()){ //if NA values present
       matrix<Type> subCorr(nonNAcount,nonNAcount);
       vector<Type> subSds(nonNAcount);

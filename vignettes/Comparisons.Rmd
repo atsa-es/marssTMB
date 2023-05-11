@@ -212,7 +212,7 @@ for(R in c("diagonal and equal", "diagonal and unequal", "unconstrained")){
 # save(df, mods, file="vignettes/dfa-time-comparisons.rda")
 ```
 
-```{r}
+```{r include=FALSE}
 df2 <- df |> mutate(mod = paste0(fun, "-", opt.function)) |>
   mutate(ncovar = as.factor(ncovar)) |>
   group_by(ncovar)
@@ -237,7 +237,7 @@ ggplot(df2, aes(alpha=ncovar, fill=name, y=value, x=m)) +
     geom_bar(stat="identity", position="dodge", color="black") +
   facet_wrap(~R, scales = "free_y") +
   scale_y_continuous() +
-  ggtitle("relative speed")
+  ggtitle("speed relative to TMB. Generally 5-10 fold improvement")
 ```
 
 ```{r}

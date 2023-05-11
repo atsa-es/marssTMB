@@ -171,7 +171,7 @@ and unequal, and unconstrained.</p>
 </tr>
 <tr class="odd">
 <td align="left">MARSS_tmb-optim-BFGS</td>
-<td align="right">-812.7629</td>
+<td align="right">-783.0387</td>
 </tr>
 </tbody>
 </table>
@@ -216,45 +216,45 @@ then pass in covariates with <code>model$d</code> or
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">tidy</span><span class="op">(</span><span class="va">m.cov1</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                           term    estimate  std.error    conf.low     conf.up</span></span>
-<span><span class="co">#&gt; 1                         Z.11  0.31419447 0.05434002  0.20768999  0.42069895</span></span>
-<span><span class="co">#&gt; 2                         Z.21  0.23028346 0.05025012  0.13179504  0.32877189</span></span>
-<span><span class="co">#&gt; 3                         Z.31  0.15133524 0.04841090  0.05645162  0.24621885</span></span>
-<span><span class="co">#&gt; 4                         Z.41  0.56773924 0.06970755  0.43111495  0.70436352</span></span>
-<span><span class="co">#&gt; 5                         Z.51 -0.05856294 0.04136142 -0.13962983  0.02250396</span></span>
-<span><span class="co">#&gt; 6  R.(Cryptomonas,Cryptomonas)  0.75260038 0.10172886  0.55321547  0.95198529</span></span>
-<span><span class="co">#&gt; 7          R.(Diatoms,Diatoms)  0.77088344 0.10199599  0.57097498  0.97079190</span></span>
-<span><span class="co">#&gt; 8            R.(Greens,Greens)  0.71350721 0.09469724  0.52790403  0.89911040</span></span>
-<span><span class="co">#&gt; 9        R.(Unicells,Unicells)  0.20848782 0.05388199  0.10288105  0.31409459</span></span>
-<span><span class="co">#&gt; 10 R.(Other.algae,Other.algae)  0.68761307 0.08891880  0.51333542  0.86189072</span></span>
-<span><span class="co">#&gt; 11               D.Cryptomonas  0.05877309 0.09805692 -0.13341495  0.25096113</span></span>
-<span><span class="co">#&gt; 12                   D.Diatoms -0.27858940 0.09131456 -0.45756266 -0.09961615</span></span>
-<span><span class="co">#&gt; 13                    D.Greens  0.51108196 0.08392930  0.34658356  0.67558036</span></span>
-<span><span class="co">#&gt; 14                  D.Unicells  0.13121210 0.10950376 -0.08341132  0.34583553</span></span>
-<span><span class="co">#&gt; 15               D.Other.algae  0.53925359 0.07722433  0.38789669  0.69061049</span></span></code></pre></div>
+<span><span class="co">#&gt; 1                         Z.11  0.31418922 0.05433970  0.20768536  0.42069309</span></span>
+<span><span class="co">#&gt; 2                         Z.21  0.23028343 0.05024996  0.13179531  0.32877154</span></span>
+<span><span class="co">#&gt; 3                         Z.31  0.15133602 0.04841083  0.05645254  0.24621950</span></span>
+<span><span class="co">#&gt; 4                         Z.41  0.56773162 0.06970745  0.43110752  0.70435571</span></span>
+<span><span class="co">#&gt; 5                         Z.51 -0.05856336 0.04136120 -0.13962982  0.02250309</span></span>
+<span><span class="co">#&gt; 6  R.(Cryptomonas,Cryptomonas)  0.75260003 0.10172886  0.55321512  0.95198493</span></span>
+<span><span class="co">#&gt; 7          R.(Diatoms,Diatoms)  0.77087944 0.10199558  0.57097177  0.97078711</span></span>
+<span><span class="co">#&gt; 8            R.(Greens,Greens)  0.71350994 0.09469766  0.52790594  0.89911394</span></span>
+<span><span class="co">#&gt; 9        R.(Unicells,Unicells)  0.20849764 0.05388283  0.10288923  0.31410604</span></span>
+<span><span class="co">#&gt; 10 R.(Other.algae,Other.algae)  0.68761333 0.08891885  0.51333560  0.86189107</span></span>
+<span><span class="co">#&gt; 11               D.Cryptomonas  0.05877344 0.09805646 -0.13341369  0.25096058</span></span>
+<span><span class="co">#&gt; 12                   D.Diatoms -0.27858516 0.09131446 -0.45755821 -0.09961210</span></span>
+<span><span class="co">#&gt; 13                    D.Greens  0.51108061 0.08392952  0.34658177  0.67557945</span></span>
+<span><span class="co">#&gt; 14                  D.Unicells  0.13121433 0.10950305 -0.08340770  0.34583636</span></span>
+<span><span class="co">#&gt; 15               D.Other.algae  0.53925536 0.07722438  0.38789836  0.69061236</span></span></code></pre></div>
 <p>Model with two covariates.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">tidy</span><span class="op">(</span><span class="va">m.cov2</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                           term    estimate  std.error    conf.low      conf.up</span></span>
-<span><span class="co">#&gt; 1                         Z.11  0.34060232 0.05594388  0.23095433  0.450250318</span></span>
-<span><span class="co">#&gt; 2                         Z.21  0.26339308 0.05139878  0.16265332  0.364132843</span></span>
-<span><span class="co">#&gt; 3                         Z.31  0.18775224 0.04887540  0.09195822  0.283546254</span></span>
-<span><span class="co">#&gt; 4                         Z.41  0.54020665 0.06833008  0.40628216  0.674131144</span></span>
-<span><span class="co">#&gt; 5                         Z.51 -0.04027672 0.04035490 -0.11937087  0.038817436</span></span>
-<span><span class="co">#&gt; 6  R.(Cryptomonas,Cryptomonas)  0.71286400 0.09804095  0.52070728  0.905020724</span></span>
-<span><span class="co">#&gt; 7          R.(Diatoms,Diatoms)  0.72982732 0.09775709  0.53822694  0.921427690</span></span>
-<span><span class="co">#&gt; 8            R.(Greens,Greens)  0.68092706 0.09112610  0.50232319  0.859530925</span></span>
-<span><span class="co">#&gt; 9        R.(Unicells,Unicells)  0.23936809 0.05464593  0.13226403  0.346472148</span></span>
-<span><span class="co">#&gt; 10 R.(Other.algae,Other.algae)  0.67572340 0.08731341  0.50459226  0.846854536</span></span>
-<span><span class="co">#&gt; 11        D.(Cryptomonas,Temp) -0.07369577 0.12487880 -0.31845372  0.171062174</span></span>
-<span><span class="co">#&gt; 12            D.(Diatoms,Temp) -0.40186083 0.11652890 -0.63025328 -0.173468378</span></span>
-<span><span class="co">#&gt; 13             D.(Greens,Temp)  0.39488818 0.10539713  0.18831361  0.601462753</span></span>
-<span><span class="co">#&gt; 14           D.(Unicells,Temp)  0.13345591 0.13402472 -0.12922771  0.396139533</span></span>
-<span><span class="co">#&gt; 15        D.(Other.algae,Temp)  0.45801701 0.09598251  0.26989475  0.646139265</span></span>
-<span><span class="co">#&gt; 16          D.(Cryptomonas,TP) -0.22323469 0.12563853 -0.46948169  0.023012305</span></span>
-<span><span class="co">#&gt; 17              D.(Diatoms,TP) -0.20993745 0.11623664 -0.43775708  0.017882182</span></span>
-<span><span class="co">#&gt; 18               D.(Greens,TP) -0.21065019 0.10653987 -0.41946450 -0.001835876</span></span>
-<span><span class="co">#&gt; 19             D.(Unicells,TP)  0.01447848 0.13811676 -0.25622540  0.285182360</span></span>
-<span><span class="co">#&gt; 20          D.(Other.algae,TP) -0.13976357 0.09523744 -0.32642552  0.046898377</span></span></code></pre></div>
+<span><span class="co">#&gt; 1                         Z.11  0.34060027 0.05594385  0.23095234  0.450248197</span></span>
+<span><span class="co">#&gt; 2                         Z.21  0.26339330 0.05139875  0.16265360  0.364132998</span></span>
+<span><span class="co">#&gt; 3                         Z.31  0.18775387 0.04887535  0.09195995  0.283547783</span></span>
+<span><span class="co">#&gt; 4                         Z.41  0.54020043 0.06833001  0.40627607  0.674124789</span></span>
+<span><span class="co">#&gt; 5                         Z.51 -0.04027862 0.04035477 -0.11937251  0.038815271</span></span>
+<span><span class="co">#&gt; 6  R.(Cryptomonas,Cryptomonas)  0.71286331 0.09804098  0.52070651  0.905020102</span></span>
+<span><span class="co">#&gt; 7          R.(Diatoms,Diatoms)  0.72982361 0.09775673  0.53822393  0.921423283</span></span>
+<span><span class="co">#&gt; 8            R.(Greens,Greens)  0.68092518 0.09112594  0.50232163  0.859528736</span></span>
+<span><span class="co">#&gt; 9        R.(Unicells,Unicells)  0.23937755 0.05464675  0.13227188  0.346483221</span></span>
+<span><span class="co">#&gt; 10 R.(Other.algae,Other.algae)  0.67572369 0.08731346  0.50459246  0.846854916</span></span>
+<span><span class="co">#&gt; 11        D.(Cryptomonas,Temp) -0.07369866 0.12487871 -0.31845644  0.171059118</span></span>
+<span><span class="co">#&gt; 12            D.(Diatoms,Temp) -0.40186330 0.11652894 -0.63025583 -0.173470765</span></span>
+<span><span class="co">#&gt; 13             D.(Greens,Temp)  0.39488271 0.10539729  0.18830781  0.601457608</span></span>
+<span><span class="co">#&gt; 14           D.(Unicells,Temp)  0.13345292 0.13402433 -0.12922993  0.396135771</span></span>
+<span><span class="co">#&gt; 15        D.(Other.algae,Temp)  0.45802179 0.09598266  0.26989923  0.646144350</span></span>
+<span><span class="co">#&gt; 16          D.(Cryptomonas,TP) -0.22323976 0.12563874 -0.46948716  0.023007643</span></span>
+<span><span class="co">#&gt; 17              D.(Diatoms,TP) -0.20994256 0.11623684 -0.43776258  0.017877454</span></span>
+<span><span class="co">#&gt; 18               D.(Greens,TP) -0.21065665 0.10654015 -0.41947151 -0.001841801</span></span>
+<span><span class="co">#&gt; 19             D.(Unicells,TP)  0.01447560 0.13811710 -0.25622893  0.285180138</span></span>
+<span><span class="co">#&gt; 20          D.(Other.algae,TP) -0.13975971 0.09523756 -0.32642189  0.046902476</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="plot-estimates">Plot estimates<a class="anchor" aria-label="anchor" href="#plot-estimates"></a>
