@@ -17,6 +17,8 @@ estimate_marss(
 \item{method}{Normally passed in as MLEobj$method, but allows user to pass in a new method if they want to use MLEobj with another method. Allowed values are "TMB", "nlminb.TMB", "BFGS.TMB".}
 
 \item{opt.control}{Normally this is passed in as MLEobj$control, but if the MLEobj was set up using a different method, then you will need to set the opt.control options. See details.}
+
+\item{...}{not used}
 }
 \value{
 A list with the objective and optimization objects.
@@ -28,7 +30,7 @@ A list with the objective and optimization objects.
 }
 }
 \description{
-This model is in the general "marss" vectorized form.
+This model is in the general "marss" vectorized form. The diagonals and offdiagonals of R and Q are split apart like Tim Cline did. In \code{\link[=estimate_marss2]{estimate_marss2()}}, I use instead the approach in \code{\link[MARSS:MARSSoptim]{MARSS::MARSSoptim()}} where I just use the \code{\link[=chol]{chol()}} of these matrices. Technically there are 2 equal solutions since the diagonals appear as the square so -a and a are the same. But I have not observed that this affects the behavior of optim().
 }
 \details{
 Minimal error checking is done in this function.

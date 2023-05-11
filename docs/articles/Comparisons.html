@@ -5,13 +5,13 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dynamic Factor Analysis • marssTMB</title>
+<title>Speed Comparisons • marssTMB</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="Dynamic Factor Analysis">
+<script src="../pkgdown.js"></script><meta property="og:title" content="Speed Comparisons">
 <meta property="og:description" content="marssTMB">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -90,23 +90,18 @@
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Dynamic Factor Analysis</h1>
+      <h1 data-toc-skip>Speed Comparisons</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/atsa-es/marssTMB/blob/HEAD/vignettes/MARSS_TMB.Rmd" class="external-link"><code>vignettes/MARSS_TMB.Rmd</code></a></small>
-      <div class="hidden name"><code>MARSS_TMB.Rmd</code></div>
+      <small class="dont-index">Source: <a href="https://github.com/atsa-es/marssTMB/blob/HEAD/vignettes/Comparisons.Rmd" class="external-link"><code>vignettes/Comparisons.Rmd</code></a></small>
+      <div class="hidden name"><code>Comparisons.Rmd</code></div>
 
     </div>
 
     
     
-<p>The <code><a href="https://rdrr.io/pkg/MARSS/man/MARSS.html" class="external-link">MARSS()</a></code> function allows you to fit DFAs with the
-same form as <code>MARSS(x, form="dfa")</code>. This has a diagonal
-<span class="math inline">\(\mathbf{Q}\)</span> with 1 on the diagonal
-and a stochastic <span class="math inline">\(\mathbf{x}_1\)</span> with
-mean 0 and variance of 5 (diagonal variance-covariance matrix). There
-are only 3 options allowed for <span class="math inline">\(\mathbf{R}\)</span>: diagonal and equal, diagonal
-and unequal, and unconstrained.</p>
+<p>Here are speed and estimate comparisons of EM, BFGS with the Kalmon
+filter (no gradient functions), TMB and Tim Clines original code.</p>
 <div class="section level2">
 <h2 id="example-data">Example data<a class="anchor" aria-label="anchor" href="#example-data"></a>
 </h2>
@@ -179,7 +174,7 @@ and unequal, and unconstrained.</p>
 <div class="section level3">
 <h3 id="compare-parameter-estimates">Compare parameter estimates<a class="anchor" aria-label="anchor" href="#compare-parameter-estimates"></a>
 </h3>
-<p><img src="MARSS_TMB_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
+<p><img src="Comparisons_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
 </div>
 </div>
 <div class="section level2">
@@ -200,82 +195,84 @@ then pass in covariates with <code>model$d</code> or
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">Year</span> <span class="op">&gt;=</span> <span class="fl">1980</span> <span class="op">&amp;</span> <span class="va">Year</span> <span class="op">&lt;=</span> <span class="fl">1989</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span>select<span class="op">=</span><span class="va">Temp</span><span class="op">)</span></span>
 <span><span class="va">covar</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">temp</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/pkg/MARSS/man/zscore.html" class="external-link">zscore</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="va">m.cov1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/MARSS/man/MARSS.html" class="external-link">MARSS</a></span><span class="op">(</span><span class="va">dat</span>, model<span class="op">=</span><span class="va">mod.list2</span>, form<span class="op">=</span><span class="st">"dfa"</span>, covariates<span class="op">=</span><span class="va">covar</span>, silent <span class="op">=</span> <span class="cn">TRUE</span>, z.score <span class="op">=</span> <span class="cn">FALSE</span>, method<span class="op">=</span><span class="st">"TMB"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">t6</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="va">m6</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/MARSS/man/MARSS.html" class="external-link">MARSS</a></span><span class="op">(</span><span class="va">dat</span>, model<span class="op">=</span><span class="va">mod.list2</span>, form<span class="op">=</span><span class="st">"dfa"</span>, covariates<span class="op">=</span><span class="va">covar</span>, silent <span class="op">=</span> <span class="cn">TRUE</span>, z.score <span class="op">=</span> <span class="cn">FALSE</span>, method<span class="op">=</span><span class="st">"TMB"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">t7</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="va">m7</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/MARSS/man/MARSS.html" class="external-link">MARSS</a></span><span class="op">(</span><span class="va">dat</span>, model<span class="op">=</span><span class="va">mod.list2</span>, form<span class="op">=</span><span class="st">"dfa"</span>, covariates<span class="op">=</span><span class="va">covar</span>, silent <span class="op">=</span> <span class="cn">TRUE</span>, control<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>maxit<span class="op">=</span><span class="fl">10000</span><span class="op">)</span>, z.score <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>Add a 2nd covariate</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">TP</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">lakeWAplanktonTrans</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">Year</span> <span class="op">&gt;=</span> <span class="fl">1980</span> <span class="op">&amp;</span> <span class="va">Year</span> <span class="op">&lt;=</span> <span class="fl">1989</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span>select<span class="op">=</span><span class="va">TP</span><span class="op">)</span></span>
 <span><span class="va">covar</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">covar</span>, <span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">TP</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/pkg/MARSS/man/zscore.html" class="external-link">zscore</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="va">m.cov2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/MARSS/man/MARSS.html" class="external-link">MARSS</a></span><span class="op">(</span><span class="va">dat</span>, model<span class="op">=</span><span class="va">mod.list2</span>, form<span class="op">=</span><span class="st">"dfa"</span>, covariates<span class="op">=</span><span class="va">covar</span>, silent <span class="op">=</span> <span class="cn">TRUE</span>, z.score<span class="op">=</span><span class="cn">FALSE</span>, method<span class="op">=</span><span class="st">"TMB"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">t8</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="va">m8</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/MARSS/man/MARSS.html" class="external-link">MARSS</a></span><span class="op">(</span><span class="va">dat</span>, model<span class="op">=</span><span class="va">mod.list2</span>, form<span class="op">=</span><span class="st">"dfa"</span>, covariates<span class="op">=</span><span class="va">covar</span>, silent <span class="op">=</span> <span class="cn">TRUE</span>, z.score<span class="op">=</span><span class="cn">FALSE</span>, method<span class="op">=</span><span class="st">"TMB"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">t9</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="va">m9</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/MARSS/man/MARSS.html" class="external-link">MARSS</a></span><span class="op">(</span><span class="va">dat</span>, model<span class="op">=</span><span class="va">mod.list2</span>, form<span class="op">=</span><span class="st">"dfa"</span>, covariates<span class="op">=</span><span class="va">covar</span>, silent <span class="op">=</span> <span class="cn">TRUE</span>, control<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>maxit<span class="op">=</span><span class="fl">10000</span><span class="op">)</span>, z.score<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
-<h3 id="parameter-estimates">Parameter estimates<a class="anchor" aria-label="anchor" href="#parameter-estimates"></a>
+<h3 id="compare-time-and-log-likelihoods">Compare time and log likelihoods<a class="anchor" aria-label="anchor" href="#compare-time-and-log-likelihoods"></a>
 </h3>
-<p>Model with one covariate.</p>
+<table class="table">
+<thead><tr class="header">
+<th align="left">name</th>
+<th align="right">num_covar</th>
+<th align="right">time</th>
+<th align="right">logLik</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">MARSS-EM</td>
+<td align="right">1</td>
+<td align="right">0.535</td>
+<td align="right">-752.5472</td>
+</tr>
+<tr class="even">
+<td align="left">MARSS_tmb-nlminb</td>
+<td align="right">1</td>
+<td align="right">0.601</td>
+<td align="right">-752.5438</td>
+</tr>
+<tr class="odd">
+<td align="left">MARSS-EM</td>
+<td align="right">2</td>
+<td align="right">0.739</td>
+<td align="right">-745.5611</td>
+</tr>
+<tr class="even">
+<td align="left">MARSS_tmb-nlminb</td>
+<td align="right">2</td>
+<td align="right">0.897</td>
+<td align="right">-745.5548</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section level3">
+<h3 id="compare-parameter-estimates-1">Compare parameter estimates<a class="anchor" aria-label="anchor" href="#compare-parameter-estimates-1"></a>
+</h3>
+<p><img src="Comparisons_files/figure-html/unnamed-chunk-11-1.png" width="700"></p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="run-some-time-comparisons">Run some time comparisons<a class="anchor" aria-label="anchor" href="#run-some-time-comparisons"></a>
+</h2>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">tidy</span><span class="op">(</span><span class="va">m.cov1</span><span class="op">)</span></span>
-<span><span class="co">#&gt;                           term    estimate  std.error    conf.low     conf.up</span></span>
-<span><span class="co">#&gt; 1                         Z.11  0.31419447 0.05434002  0.20768999  0.42069895</span></span>
-<span><span class="co">#&gt; 2                         Z.21  0.23028346 0.05025012  0.13179504  0.32877189</span></span>
-<span><span class="co">#&gt; 3                         Z.31  0.15133524 0.04841090  0.05645162  0.24621885</span></span>
-<span><span class="co">#&gt; 4                         Z.41  0.56773924 0.06970755  0.43111495  0.70436352</span></span>
-<span><span class="co">#&gt; 5                         Z.51 -0.05856294 0.04136142 -0.13962983  0.02250396</span></span>
-<span><span class="co">#&gt; 6  R.(Cryptomonas,Cryptomonas)  0.75260038 0.10172886  0.55321547  0.95198529</span></span>
-<span><span class="co">#&gt; 7          R.(Diatoms,Diatoms)  0.77088344 0.10199599  0.57097498  0.97079190</span></span>
-<span><span class="co">#&gt; 8            R.(Greens,Greens)  0.71350721 0.09469724  0.52790403  0.89911040</span></span>
-<span><span class="co">#&gt; 9        R.(Unicells,Unicells)  0.20848782 0.05388199  0.10288105  0.31409459</span></span>
-<span><span class="co">#&gt; 10 R.(Other.algae,Other.algae)  0.68761307 0.08891880  0.51333542  0.86189072</span></span>
-<span><span class="co">#&gt; 11               D.Cryptomonas  0.05877309 0.09805692 -0.13341495  0.25096113</span></span>
-<span><span class="co">#&gt; 12                   D.Diatoms -0.27858940 0.09131456 -0.45756266 -0.09961615</span></span>
-<span><span class="co">#&gt; 13                    D.Greens  0.51108196 0.08392930  0.34658356  0.67558036</span></span>
-<span><span class="co">#&gt; 14                  D.Unicells  0.13121210 0.10950376 -0.08341132  0.34583553</span></span>
-<span><span class="co">#&gt; 15               D.Other.algae  0.53925359 0.07722433  0.38789669  0.69061049</span></span></code></pre></div>
-<p>Model with two covariates.</p>
+<code class="sourceCode R"><span><span class="va">df2</span> <span class="op">&lt;-</span> <span class="va">df</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>mod <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">fun</span>, <span class="st">"-"</span>, <span class="va">opt.function</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>ncovar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">ncovar</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">ncovar</span><span class="op">)</span></span>
+<span><span class="fu">ggplot</span><span class="op">(</span><span class="va">df2</span>, <span class="fu">aes</span><span class="op">(</span>alpha<span class="op">=</span><span class="va">ncovar</span>, fill<span class="op">=</span><span class="va">mod</span>, y<span class="op">=</span><span class="va">time</span>, x<span class="op">=</span><span class="va">m</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>    <span class="fu">geom_bar</span><span class="op">(</span>stat<span class="op">=</span><span class="st">"identity"</span>, position<span class="op">=</span><span class="st">"dodge"</span>, color<span class="op">=</span><span class="st">"black"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">facet_wrap</span><span class="op">(</span><span class="op">~</span><span class="va">R</span>, scales <span class="op">=</span> <span class="st">"free_y"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_y_continuous</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">ggtitle</span><span class="op">(</span><span class="st">"TMB is faster than MARSS EM"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: Using alpha for a discrete variable is not advised.</span></span></code></pre></div>
+<p><img src="Comparisons_files/figure-html/unnamed-chunk-14-1.png" width="700"></p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">tidy</span><span class="op">(</span><span class="va">m.cov2</span><span class="op">)</span></span>
-<span><span class="co">#&gt;                           term    estimate  std.error    conf.low      conf.up</span></span>
-<span><span class="co">#&gt; 1                         Z.11  0.34060232 0.05594388  0.23095433  0.450250318</span></span>
-<span><span class="co">#&gt; 2                         Z.21  0.26339308 0.05139878  0.16265332  0.364132843</span></span>
-<span><span class="co">#&gt; 3                         Z.31  0.18775224 0.04887540  0.09195822  0.283546254</span></span>
-<span><span class="co">#&gt; 4                         Z.41  0.54020665 0.06833008  0.40628216  0.674131144</span></span>
-<span><span class="co">#&gt; 5                         Z.51 -0.04027672 0.04035490 -0.11937087  0.038817436</span></span>
-<span><span class="co">#&gt; 6  R.(Cryptomonas,Cryptomonas)  0.71286400 0.09804095  0.52070728  0.905020724</span></span>
-<span><span class="co">#&gt; 7          R.(Diatoms,Diatoms)  0.72982732 0.09775709  0.53822694  0.921427690</span></span>
-<span><span class="co">#&gt; 8            R.(Greens,Greens)  0.68092706 0.09112610  0.50232319  0.859530925</span></span>
-<span><span class="co">#&gt; 9        R.(Unicells,Unicells)  0.23936809 0.05464593  0.13226403  0.346472148</span></span>
-<span><span class="co">#&gt; 10 R.(Other.algae,Other.algae)  0.67572340 0.08731341  0.50459226  0.846854536</span></span>
-<span><span class="co">#&gt; 11        D.(Cryptomonas,Temp) -0.07369577 0.12487880 -0.31845372  0.171062174</span></span>
-<span><span class="co">#&gt; 12            D.(Diatoms,Temp) -0.40186083 0.11652890 -0.63025328 -0.173468378</span></span>
-<span><span class="co">#&gt; 13             D.(Greens,Temp)  0.39488818 0.10539713  0.18831361  0.601462753</span></span>
-<span><span class="co">#&gt; 14           D.(Unicells,Temp)  0.13345591 0.13402472 -0.12922771  0.396139533</span></span>
-<span><span class="co">#&gt; 15        D.(Other.algae,Temp)  0.45801701 0.09598251  0.26989475  0.646139265</span></span>
-<span><span class="co">#&gt; 16          D.(Cryptomonas,TP) -0.22323469 0.12563853 -0.46948169  0.023012305</span></span>
-<span><span class="co">#&gt; 17              D.(Diatoms,TP) -0.20993745 0.11623664 -0.43775708  0.017882182</span></span>
-<span><span class="co">#&gt; 18               D.(Greens,TP) -0.21065019 0.10653987 -0.41946450 -0.001835876</span></span>
-<span><span class="co">#&gt; 19             D.(Unicells,TP)  0.01447848 0.13811676 -0.25622540  0.285182360</span></span>
-<span><span class="co">#&gt; 20          D.(Other.algae,TP) -0.13976357 0.09523744 -0.32642552  0.046898377</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="plot-estimates">Plot estimates<a class="anchor" aria-label="anchor" href="#plot-estimates"></a>
-</h3>
-<p>The estimated factors for one covariate model.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="va">m.cov1</span>, plot.type<span class="op">=</span><span class="st">"xtT"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="MARSS_TMB_files/figure-html/unnamed-chunk-11-1.png" width="700"></p>
-<pre><code><span><span class="co">#&gt; plot.type = xtT</span></span></code></pre>
-<p><img src="MARSS_TMB_files/figure-html/unnamed-chunk-11-2.png" width="700"></p>
-<pre><code><span><span class="co">#&gt; Finished plots.</span></span></code></pre>
-<p>The estimated factors for two covariate model.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="va">m.cov2</span>, plot.type<span class="op">=</span><span class="st">"xtT"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="MARSS_TMB_files/figure-html/unnamed-chunk-12-1.png" width="700"></p>
-<pre><code><span><span class="co">#&gt; plot.type = xtT</span></span></code></pre>
-<p><img src="MARSS_TMB_files/figure-html/unnamed-chunk-12-2.png" width="700"></p>
-<pre><code><span><span class="co">#&gt; Finished plots.</span></span></code></pre>
-</div>
+<code class="sourceCode R"><span><span class="va">df2</span> <span class="op">&lt;-</span> <span class="va">df</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>mod <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">fun</span>, <span class="st">"-"</span>, <span class="va">opt.function</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">df2</span><span class="op">$</span><span class="va">ncovar</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">df2</span><span class="op">$</span><span class="va">ncovar</span><span class="op">)</span></span>
+<span><span class="fu">ggplot</span><span class="op">(</span><span class="va">df2</span>, <span class="fu">aes</span><span class="op">(</span>col<span class="op">=</span><span class="va">ncovar</span>, y<span class="op">=</span><span class="va">logLik</span>, x<span class="op">=</span><span class="va">m</span>, shape<span class="op">=</span><span class="va">mod</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>    <span class="fu">geom_point</span><span class="op">(</span>position<span class="op">=</span><span class="fu">position_dodge</span><span class="op">(</span>width<span class="op">=</span><span class="fl">0.3</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">facet_wrap</span><span class="op">(</span><span class="op">~</span><span class="va">R</span>, scales <span class="op">=</span> <span class="st">"free_y"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_y_continuous</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">ggtitle</span><span class="op">(</span><span class="st">"logLik comparison"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="Comparisons_files/figure-html/unnamed-chunk-15-1.png" width="700"></p>
 </div>
   </div>
 

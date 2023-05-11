@@ -4,28 +4,28 @@
 \alias{MARSSfit.TMB}
 \title{MARSS parameter estimation using TMB}
 \usage{
-\method{MARSSfit}{TMB}(MLEobj, fun = 2, ...)
+\method{MARSSfit}{TMB}(x, fun = 1, ...)
 }
 \arguments{
-\item{MLEobj}{A properly formatted \link[MARSS:marssMLE-class]{MARSS::marssMLE} object ready for fitting.}
+\item{x}{A properly formatted \link[MARSS:marssMLE-class]{MARSS::marssMLE} object ready for fitting.}
 
-\item{method}{Normally passed in as MLEobj$method, but allows user to pass in a new method so supercede that in \code{MLEobj$method}. Allowed values are "TMB", "nlminb.TMB", "BFGS.TMB".}
+\item{fun}{A debugging option to switch between estimate_marss() and estimate_marss2()}
 
-\item{opt.control}{Normally this is passed in as MLEobj$control, but if the MLEobj was set up using a different method, then you will need to set the opt.control options. See details.}
+\item{...}{not used}
 }
 \value{
 The \link[MARSS:marssMLE-class]{MARSS::marssMLE} object which was passed in, with additional components:
 \itemize{
 \item \code{method}: From the call or argument method if user passed that in.
 \item \code{kf}: Kalman filter output.
-\item \code{iter.record}: If \code{MLEobj$control$trace = TRUE}, then this is the \code{$message} value from \code{\link[stats:optim]{stats::optim()}} or \code{\link[stats:nlminb]{stats::nlminb()}} plus the output from the \code{\link[TMB:MakeADFun]{TMB::MakeADFun()}} call and the output from the optimization function.
+\item \code{iter.record}: If \code{x$control$trace = TRUE}, then this is the \code{$message} value from \code{\link[stats:optim]{stats::optim()}} or \code{\link[stats:nlminb]{stats::nlminb()}} plus the output from the \code{\link[TMB:MakeADFun]{TMB::MakeADFun()}} call and the output from the optimization function.
 \item \code{numIter}: Number of iterations needed for convergence.
 \item \code{convergence}: Did estimation converge successfully?
 \itemize{
-\item \code{convergence=0}: Converged in less than \code{MLEobj$control$maxit} iterations and no evidence of degenerate solution.
+\item \code{convergence=0}: Converged in less than \code{x$control$maxit} iterations and no evidence of degenerate solution.
 \item \code{convergence=3}: No convergence diagnostics were computed because all parameters were fixed thus no fitting required.
 \item \code{convergence=-1}: No convergence diagnostics were computed because the MLE object was not fit (called with fit=FALSE). This is not a convergence error just information. There is not par element so no functions can be run with the object.
-\item \code{convergence=1}: Maximum number of iterations \code{MLEobj$control$maxit} was reached before convergence.
+\item \code{convergence=1}: Maximum number of iterations \code{x$control$maxit} was reached before convergence.
 \item For other convergence errors, see\code{\link[stats:optim]{stats::optim()}} or \code{\link[stats:nlminb]{stats::nlminb()}}.
 }
 \item \code{logLik}: Log-likelihood.
@@ -46,7 +46,7 @@ Restrictions
 \item Q and R cannot be time-varying (at the moment)
 }
 
-\code{opt.control} is what is passed to the control argument in \code{\link[=nlminb]{nlminb()}} or \code{\link[=optim]{optim()}}. If you use \code{MARSS(x, method="TMB")}, this will be set to appropriate defaults which you can see via \code{MLEobj$control}. But if you call \code{estimate_marss()} with a MLEobj from a call such as \code{MARSS(x, method="kem")} (so not a TMB method), you will need to set \code{opt.control} if you want values different from the base defaults for those functions. Note as a shortcut for \code{nlminb()}, you can set both \code{eval.max}, \code{iter.max} to the same value with \code{opt.control=list(maxit=1000)}. Note, if you pass in \code{opt.control}, this will replace all values currently in \code{MLEobj$control} that are associated with the optimizer function.
+\code{opt.control} is what is passed to the control argument in \code{\link[=nlminb]{nlminb()}} or \code{\link[=optim]{optim()}}. If you use \code{fit <- MARSS(data, method="TMB")}, this will be set to appropriate defaults which you can see via \code{fit$control}. But if you call \code{estimate_marss()} with a marssMLE object from a call such as \code{MARSS(data, method="kem")} (so not a TMB method), you will need to set \code{opt.control} if you want values different from the base defaults for those functions. Note as a shortcut for \code{nlminb()}, you can set both \code{eval.max}, \code{iter.max} to the same value with \code{opt.control=list(maxit=1000)}. Note, if you pass in \code{opt.control}, this will replace all values currently in \code{fit$control} that are associated with the optimizer function.
 
 The defaults set in \code{\link[MARSS:MARSS]{MARSS::MARSS()}} are
 \itemize{

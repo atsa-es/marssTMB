@@ -5,8 +5,6 @@
 #include "dfa.hpp"
 #include "marss.hpp"
 #include "marss2.hpp"
-#include "marxss.hpp"
-#include "uni.hpp"
 
 template<class Type>
 Type objective_function<Type>::operator() () {
@@ -17,10 +15,6 @@ Type objective_function<Type>::operator() () {
     return marss(this);
   } else if(model == "marss2") {
     return marss2(this);
-  } else if(model == "marxss") {
-    return marxss(this);
-  } else if(model == "uni") {
-    return uni(this);
   } else {
     Rf_error("Unknown model.");
   }

@@ -16,22 +16,17 @@ reference:
   desc: >
     These are the functions that the developers are working on. All are exported for now and can be used.
   contents:
-  - estimate_marxss
   - estimate_marss
   - estimate_marss2
-  - create.elem.maps
-  - create.varcov.maps
   - var_to_cholvar
   - marssTMB_CheckPackageVersions
 
 - title: Other functions
   desc: >
-    These are functions that were used as early templates.
+    This the original Tim Cline function that was used as the early template.
   contents:
-  - MARSS_tmb
   - dfaTMB
-  - uniTMB
-  
+
 articles:
 - title: Articles
   navbar: ~
@@ -40,6 +35,7 @@ articles:
   - MARSS_TMB
   - dfaTMB
   - Optimization
+  - Comparisons
 
 
 

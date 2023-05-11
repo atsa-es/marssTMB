@@ -4,7 +4,10 @@
 
 ## To use
 
-Fit [MARSS](https://atsa-es.github.io/MARSS/) models as usual, but use [MARSS_tmb()] instead of [MARSS::MARSS()]. Note R and Q can only be diagonal, unconstrained or fixed. `equalvarcov` is not available nor are other custom Q matrices available with the EM algorithm in `MARSS()`. But TMB is very fast. Also be aware that in preliminary tests, the TMB algorithm seems to struggle with estimation of unconstrained Q matrices. Double-check first with other algorithms.
+Call `MARSS()` as usual but add `method="TMB"`. The default uses `nlminb()` for optimization.
+Use `method="BFGS_TMB"` for `optim()` and the BFGS algorithm.
+
+Note R and Q can only be diagonal, unconstrained or fixed. `equalvarcov` is not available nor are zeros allowed on the diagonal as is available with the Kalman filter + EM and BFGS algorithm in `MARSS()`. But TMB is very fast. Also be aware that {marssTMB} is still in early development and you should check your answers against `method="kem"` and `method="BFGS"`.
 
 See the [Quick Start Guide](https://atsa-es.github.io/marssTMB/articles/Quick_Start.html) to get started.
 
@@ -15,9 +18,9 @@ See the [Quick Start Guide](https://atsa-es.github.io/marssTMB/articles/Quick_St
 install.packages('marssTMB', repos = c('https://atsa-es.r-universe.dev', 'https://cloud.r-project.org'))
 ```
 
-## Notes
+## Developer notes
 
-I used the {[TMBtools](https://github.com/mlysy/TMBtools)} package to set-up the R package to work with TMB. See the documentation there.
+Install {[TMBtools](https://github.com/mlysy/TMBtools)} package which is being used to help with set-up.
 
 Rebuilding
 

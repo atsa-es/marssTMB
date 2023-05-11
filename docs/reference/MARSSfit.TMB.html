@@ -19,7 +19,7 @@ The typical use would be to call as MARSS(data, method="TMB").'><!-- mathjax -->
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">marssTMB</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.11</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.12</span>
       </span>
     </div>
 
@@ -71,27 +71,27 @@ The typical use would be to call as MARSS(data, method="TMB").'><!-- mathjax -->
 
     <div class="ref-description">
     <p>This takes a MARSS::marssMLE object (fitted or not) and estimates
-parameters. Note this is the TMB method for the MARSS::MARSSfit generic.
+parameters. Note this is the TMB method for the <a href="https://rdrr.io/pkg/MARSS/man/MARSSfit.html" class="external-link">MARSS::MARSSfit</a> generic.
 The typical use would be to call as <code>MARSS(data, method="TMB")</code>.</p>
     </div>
 
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S3 method for TMB</span></span>
-<span><span class="fu">MARSSfit</span><span class="op">(</span><span class="va">MLEobj</span>, fun <span class="op">=</span> <span class="fl">2</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">MARSSfit</span><span class="op">(</span><span class="va">x</span>, fun <span class="op">=</span> <span class="fl">2</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>MLEobj</dt>
+    <dl><dt>x</dt>
 <dd><p>A properly formatted MARSS::marssMLE object ready for fitting.</p></dd>
 
 
-<dt>method</dt>
-<dd><p>Normally passed in as MLEobj$method, but allows user to pass in a new method so supercede that in <code>MLEobj$method</code>. Allowed values are "TMB", "nlminb.TMB", "BFGS.TMB".</p></dd>
+<dt>fun</dt>
+<dd><p>A debugging option to switch between estimate_marss() and estimate_marss2()</p></dd>
 
 
-<dt>opt.control</dt>
-<dd><p>Normally this is passed in as MLEobj$control, but if the MLEobj was set up using a different method, then you will need to set the opt.control options. See details.</p></dd>
+<dt>...</dt>
+<dd><p>not used</p></dd>
 
 </dl></div>
     <div id="value">
@@ -100,12 +100,12 @@ The typical use would be to call as <code>MARSS(data, method="TMB")</code>.</p>
 
 <p>The MARSS::marssMLE object which was passed in, with additional components:</p><ul><li><p><code>method</code>: From the call or argument method if user passed that in.</p></li>
 <li><p><code>kf</code>: Kalman filter output.</p></li>
-<li><p><code>iter.record</code>: If <code>MLEobj$control$trace = TRUE</code>, then this is the <code>$message</code> value from <code><a href="https://rdrr.io/r/stats/optim.html" class="external-link">stats::optim()</a></code> or <code><a href="https://rdrr.io/r/stats/nlminb.html" class="external-link">stats::nlminb()</a></code> plus the output from the <code><a href="https://rdrr.io/pkg/TMB/man/MakeADFun.html" class="external-link">TMB::MakeADFun()</a></code> call and the output from the optimization function.</p></li>
+<li><p><code>iter.record</code>: If <code>x$control$trace = TRUE</code>, then this is the <code>$message</code> value from <code><a href="https://rdrr.io/r/stats/optim.html" class="external-link">stats::optim()</a></code> or <code><a href="https://rdrr.io/r/stats/nlminb.html" class="external-link">stats::nlminb()</a></code> plus the output from the <code><a href="https://rdrr.io/pkg/TMB/man/MakeADFun.html" class="external-link">TMB::MakeADFun()</a></code> call and the output from the optimization function.</p></li>
 <li><p><code>numIter</code>: Number of iterations needed for convergence.</p></li>
-<li><p><code>convergence</code>: Did estimation converge successfully?</p><ul><li><p><code>convergence=0</code>: Converged in less than <code>MLEobj$control$maxit</code> iterations and no evidence of degenerate solution.</p></li>
+<li><p><code>convergence</code>: Did estimation converge successfully?</p><ul><li><p><code>convergence=0</code>: Converged in less than <code>x$control$maxit</code> iterations and no evidence of degenerate solution.</p></li>
 <li><p><code>convergence=3</code>: No convergence diagnostics were computed because all parameters were fixed thus no fitting required.</p></li>
 <li><p><code>convergence=-1</code>: No convergence diagnostics were computed because the MLE object was not fit (called with fit=FALSE). This is not a convergence error just information. There is not par element so no functions can be run with the object.</p></li>
-<li><p><code>convergence=1</code>: Maximum number of iterations <code>MLEobj$control$maxit</code> was reached before convergence.</p></li>
+<li><p><code>convergence=1</code>: Maximum number of iterations <code>x$control$maxit</code> was reached before convergence.</p></li>
 <li><p>For other convergence errors, see<code><a href="https://rdrr.io/r/stats/optim.html" class="external-link">stats::optim()</a></code> or <code><a href="https://rdrr.io/r/stats/nlminb.html" class="external-link">stats::nlminb()</a></code>.</p></li>
 </ul></li>
 <li><p><code>logLik</code>: Log-likelihood.</p></li>
@@ -117,7 +117,7 @@ The typical use would be to call as <code>MARSS(data, method="TMB")</code>.</p>
     <h2>Details</h2>
     <p>Restrictions</p><ul><li><p>V0 fixed (not estimated)</p></li>
 <li><p>Q and R cannot be time-varying (at the moment)</p></li>
-</ul><p><code>opt.control</code> is what is passed to the control argument in <code><a href="https://rdrr.io/r/stats/nlminb.html" class="external-link">nlminb()</a></code> or <code><a href="https://rdrr.io/r/stats/optim.html" class="external-link">optim()</a></code>. If you use <code>MARSS(x, method="TMB")</code>, this will be set to appropriate defaults which you can see via <code>MLEobj$control</code>. But if you call <code><a href="estimate_marss.html">estimate_marss()</a></code> with a MLEobj from a call such as <code>MARSS(x, method="kem")</code> (so not a TMB method), you will need to set <code>opt.control</code> if you want values different from the base defaults for those functions. Note as a shortcut for <code><a href="https://rdrr.io/r/stats/nlminb.html" class="external-link">nlminb()</a></code>, you can set both <code>eval.max</code>, <code>iter.max</code> to the same value with <code>opt.control=list(maxit=1000)</code>. Note, if you pass in <code>opt.control</code>, this will replace all values currently in <code>MLEobj$control</code> that are associated with the optimizer function.</p>
+</ul><p><code>opt.control</code> is what is passed to the control argument in <code><a href="https://rdrr.io/r/stats/nlminb.html" class="external-link">nlminb()</a></code> or <code><a href="https://rdrr.io/r/stats/optim.html" class="external-link">optim()</a></code>. If you use <code>fit &lt;- MARSS(data, method="TMB")</code>, this will be set to appropriate defaults which you can see via <code>fit$control</code>. But if you call <code><a href="estimate_marss.html">estimate_marss()</a></code> with a marssMLE object from a call such as <code>MARSS(data, method="kem")</code> (so not a TMB method), you will need to set <code>opt.control</code> if you want values different from the base defaults for those functions. Note as a shortcut for <code><a href="https://rdrr.io/r/stats/nlminb.html" class="external-link">nlminb()</a></code>, you can set both <code>eval.max</code>, <code>iter.max</code> to the same value with <code>opt.control=list(maxit=1000)</code>. Note, if you pass in <code>opt.control</code>, this will replace all values currently in <code>fit$control</code> that are associated with the optimizer function.</p>
 <p>The defaults set in <code><a href="https://rdrr.io/pkg/MARSS/man/MARSS.html" class="external-link">MARSS::MARSS()</a></code> are</p><ul><li><p><code>nlminb</code>: <code>eval.max = 5000</code>, <code>iter.max = 5000</code> and <code>trace = 0</code>.</p></li>
 <li><p><code>optim</code>: <code>maxit = 5000</code> and <code>trace = 0</code></p></li>
 </ul><p>All other controls for the optimization function are left at NULL. You can

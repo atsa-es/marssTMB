@@ -1,6 +1,6 @@
 #' Internal function: MARSS parameter estimation using TMB
 #'
-#' This model is in the general "marss" vectorized form.
+#' This model is in the general "marss" vectorized form. In [estimate_marss2()], I use the approach in [MARSS::MARSSoptim()] where I just use the [chol()] of these matrices. Technically there are 2 equal solutions since the diagonals appear as the square so -a and a are the same. But I have not observed that this affects the LL of optim() but it definitely seems to slow things down. In [estimate_marss()], the diagonals and offdiagonals of R and Q are split apart like Tim Cline did. I had some problems with the splitting approach for some models with Q unconstrained, though now it seems fixed.
 #'
 #' Minimal error checking is done in this function.
 #' Normal calling function is [MARSS::MARSS()] with `method="TMB"`.
@@ -16,7 +16,7 @@
 #' @param MLEobj A properly formatted MARSS model as output by [MARSS()]
 #' @param method Normally passed in as MLEobj$method, but allows user to pass in a new method if they want to use MLEobj with another method. Allowed values are "TMB", "nlminb.TMB", "BFGS.TMB".
 #' @param opt.control Normally this is passed in as MLEobj$control, but if the MLEobj was set up using a different method, then you will need to set the opt.control options. See details.
-#'
+#' @param ... not used
 #' @details
 #' `opt.control` is what is passed to the control argument in [nlminb()] or [optim()]. If you use `MARSS(x, method="TMB")`, this will be set to appropriate defaults which you can see via `MLEobj$control`. But if you call `estimate_marss()` with a MLEobj from a call such as `MARSS(x, method="kem")` (so not a TMB method), you will need to set `opt.control` if you want values different from the base defaults for those functions. Note as a shortcut for `nlminb()`, you can set both `eval.max`, `iter.max` to the same value with `opt.control=list(maxit=1000)`. Note, if you pass in `opt.control`, this will replace all values currently in `MLEobj$control` that are associated with the optimizer function.
 #'
@@ -41,7 +41,16 @@ estimate_marss2 <- function(MLEobj, method = c("TMB", "nlminb_TMB", "BFGS_TMB"),
   if (!inherits(MLEobj, "marssMLE")) {
     stop("marssTMB::estimate_marss_parameters requires a marssMLE object from the MARSS package.")
   }
-  method <- ifelse(missing(method), MLEobj[["method"]], match.arg(method))
+  if(missing(method)){
+    if(MLEobj[["method"]] %in% c("TMB", "nlminb_TMB", "BFGS_TMB")){
+      method <- MLEobj[["method"]]
+    }else{
+      cat("MARSSfit.TMB: The method in the marssMLE object is not TMB. Setting to nlminb_TMB for fitting.\n")
+      method <- "nlminb_TMB"
+    }
+  }else{
+    method <- match.arg(method)
+  }
   pkg <- "estimate_marss"
   MODELobj <- MLEobj[["marss"]]
   y <- MODELobj[["data"]]
@@ -52,7 +61,7 @@ estimate_marss2 <- function(MLEobj, method = c("TMB", "nlminb_TMB", "BFGS_TMB"),
 
   control <- MLEobj[["control"]]
   tmb.silent <- ifelse(is.null(control[["tmb.silent"]]), TRUE, control[["tmb.silent"]])
-  fun.opt <- ifelse(method %in% c("TMB", "nlminb.TMB"), "nlminb", "optim")
+  fun.opt <- ifelse(method %in% c("TMB", "nlminb_TMB"), "nlminb", "optim")
   if (fun.opt == "optim") {
     optim.method <- strsplit(method, "[_]")[[1]][1]
   }

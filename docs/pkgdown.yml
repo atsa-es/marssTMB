@@ -2,11 +2,12 @@ pandoc: 2.19.2
 pkgdown: 2.0.7
 pkgdown_sha: ~
 articles:
+  Comparisons: Comparisons.html
   MARSS_TMB: MARSS_TMB.html
   Optimization: Optimization.html
   Quick_Start: Quick_Start.html
   dfaTMB: dfaTMB.html
-last_built: 2023-05-10T05:39Z
+last_built: 2023-05-11T02:16Z
 urls:
   reference: https://atsa-es.github.io/marssTMB/reference
   article: https://atsa-es.github.io/marssTMB/articles

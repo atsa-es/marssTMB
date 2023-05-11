@@ -1,3 +1,8 @@
+# marssTMB 0.0.12
+
+* Big clean. Move out uni.hpp (and R), estimate_marxss.hpp (and R), MARSS_tmb.R
+* Keep dfaTMB for now while testing.
+
 # marssTMB 0.0.11
 
 * various bug fixes. Major one involving Z. Had (t(X) %x% I) instead of (I %x% t(X))

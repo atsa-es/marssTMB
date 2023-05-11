@@ -128,7 +128,6 @@ t2.bfgs <- system.time(m2.bfgs <- MARSS(dat2, model=mod.list, form='dfa', z.scor
 c(t2.bfgs, m2.bfgs$logLik)
 
 ## -----------------------------------------------------------------------------
-library(broom)
 df <- data.frame(t=1:37, bfgs=tidy(m1.bfgs)$estimate, em=tidy(m1.em)$estimate) |>
   pivot_longer(2:3)
 ggplot(df, aes(x=t, y=value, col=name)) + geom_point()
