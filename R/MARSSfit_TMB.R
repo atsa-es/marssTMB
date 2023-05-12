@@ -77,7 +77,7 @@ MARSSfit.TMB <- function(x, fun=1, ...) {
   x <- MARSS::MARSSvectorizeparam(x, parvec = parvec)
   
   x$iter.record <- list(message = opt1$message, opt.output = opt1)
-  if(x$control$trace == TRUE)
+  if(x$control$trace > 0)
     x$iter.record <-c(x$iter.record, list(obj.function = obj1))
   x$convergence <- opt1$convergence
   x$numIter <- opt1$iterations
