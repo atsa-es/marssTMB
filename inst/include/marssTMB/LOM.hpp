@@ -49,17 +49,27 @@ template <class Type>
 matrix<Type> parvec(matrix<Type> fixed, matrix<Type> free, 
                     matrix<Type> par, vector<int> dims, 
                     int tfree, int tfixed, int timeSteps) {
-  matrix<Type> mat(dims(0)*dims(1), timeSteps);
   int rowD = dims(0)*dims(1);
+  int npar = par.rows();
+  matrix<Type> mat(rowD, timeSteps);
+  matrix<Type> D(rowD, npar);
+//  matrix<Type> I(rowD,rowD);
+//  I.setIdentity();
+//  matrix<Type> tpar(1,par.rows());
+//  tpar = par.transpose();
+  for(int i=0;i<tfree;i++){ 
+//  mat = fixed + tmbutils::kronecker(tpar, I) * free;
+    D = free.col(i);
+    D.resize(rowD, npar);
+    mat.col(i) = D * par;
+  }
+  if(timeSteps != 1){
   matrix<Type> rowOne(1, timeSteps); 
   rowOne.setOnes();
+  if(tfree == 1) mat = mat.col(0) * rowOne;
   if(tfixed == 1) fixed = fixed * rowOne;
-  if(tfree == 1) free = free * rowOne;
-  matrix<Type> I(rowD,rowD);
-  I.setIdentity();
-  matrix<Type> tpar(1,par.rows());
-  tpar = par.transpose();
-  mat = fixed + tmbutils::kronecker(tpar, I) * free;
+  }
+  mat = fixed + mat;  
   return mat;
 };
 

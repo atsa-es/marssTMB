@@ -1,6 +1,5 @@
 /// @file marss2.hpp
 // MARSS model in vectorized marss form
-// The Q and R are not split into diag and
 // Allowed: covariates, time-varying and linear constraints
 
 #ifndef marss2_hpp
@@ -15,7 +14,6 @@
 template<class Type>
 Type marss2(objective_function<Type>* obj) {
   DATA_MATRIX(Y); /* n x T */
-  PARAMETER_MATRIX(X); /* State m x T */
   DATA_INTEGER(V0_is_zero);
   DATA_INTEGER(tinitx);
   DATA_IVECTOR(tfixed);
@@ -24,6 +22,7 @@ Type marss2(objective_function<Type>* obj) {
   DATA_STRUCT(free, LOM); // list of free matrices
   DATA_STRUCT(fixed, LOM); // list of fixed matrices
   DATA_STRUCT(par_dims, LOVi); // list of par matrices
+  PARAMETER_MATRIX(X); /* State m x T */
   PARAMETER_VECTOR(pars); /* vector of parameters */
   
   int timeSteps = Y.row(0).size();
@@ -31,54 +30,18 @@ Type marss2(objective_function<Type>* obj) {
   int nX = X.col(0).size(); /* m x T */
   
   // Create the vec mat x T matrices
-  int elem = 0;
-  int TZ = std::max(tfree(elem), tfixed(elem));
-  matrix<Type> Z(nX*nY, TZ);
-  if(numpar(elem) != elem){
-    Z = parvec(fixed(elem), free(elem), par(pars, numpar, elem), par_dims(elem), tfree(elem), tfixed(elem), TZ);
-  }else{
-    Z = fixed(elem);
-  }
-  elem = 1;
-  int TA = std::max(tfree(elem), tfixed(elem));
-  matrix<Type> A(nY, TA);
-  if(numpar(elem) != elem){
-    A = parvec(fixed(elem), free(elem), par(pars, numpar, elem), par_dims(elem), tfree(elem), tfixed(elem), TA);
-  }else{
-    A = fixed(elem);
-  }
-  elem = 2;
-  int TR = std::max(tfree(elem), tfixed(elem));
-  matrix<Type> R(nY*nY, TR);
-  if(numpar(elem) != elem){
-    R = parvec(fixed(elem), free(elem), par(pars, numpar, elem), par_dims(elem), tfree(elem), tfixed(elem), TR);
-  }else{
-    R = fixed(elem);
-  }
-  elem = 3;
-  int TB = std::max(tfree(elem), tfixed(elem));
-  matrix<Type> B(nX*nX, TB);
-  if(numpar(elem) != elem){
-    B = parvec(fixed(elem), free(elem), par(pars, numpar, elem), par_dims(elem), tfree(elem), tfixed(elem), TB);
-  }else{
-    B = fixed(elem);
-  }
-  elem = 4;
-  int TU = std::max(tfree(elem), tfixed(elem));
-  matrix<Type> U(nX, TU);
-  if(numpar(elem) != elem){
-    U = parvec(fixed(elem), free(elem), par(pars, numpar, elem), par_dims(elem), tfree(elem), tfixed(elem), TU);
-  }else{
-    U = fixed(elem);
-  }
-  elem = 5;
-  int TQ = std::max(tfree(elem), tfixed(elem));
-  matrix<Type> Q(nX*nX, TQ);
-  if(numpar(elem) != elem){
-    Q = parvec(fixed(elem), free(elem), par(pars, numpar, elem), par_dims(elem), tfree(elem), tfixed(elem), TQ);
-  }else{
-    Q = fixed(elem);
-  }
+  matrix<Type> Z(nX*nY, timeSteps);
+  Z = parvec(fixed(0), free(0), par(pars, numpar, 0), par_dims(0), tfree(0), tfixed(0), timeSteps);
+  matrix<Type> A(nY, timeSteps);
+  A = parvec(fixed(1), free(1), par(pars, numpar, 1), par_dims(1), tfree(1), tfixed(1), timeSteps);
+  matrix<Type> R(nY*nY, timeSteps);
+  R = parvec(fixed(2), free(2), par(pars, numpar, 2), par_dims(2), tfree(2), tfixed(2), timeSteps);
+  matrix<Type> B(nX*nX, timeSteps);
+  B = parvec(fixed(3), free(3), par(pars, numpar, 3), par_dims(3), tfree(3), tfixed(3), timeSteps);
+  matrix<Type> U(nX, timeSteps);
+  U = parvec(fixed(4), free(4), par(pars, numpar, 4), par_dims(4), tfree(4), tfixed(4), timeSteps);
+  matrix<Type> Q(nX*nX, timeSteps);
+  Q = parvec(fixed(5), free(5), par(pars, numpar, 5), par_dims(5), tfree(5), tfixed(5), timeSteps);
   matrix<Type> x0(nX, 1);
   x0 = parmat2(fixed(6), free(6), par(pars, numpar, 6), par_dims(6));
   matrix<Type> V0(nX, nX);
@@ -95,7 +58,7 @@ Type marss2(objective_function<Type>* obj) {
   FullCovMatR.resize(nY,nY);
   FullCovMatR = FullCovMatR.transpose() * FullCovMatR;
   MVNORM_t<Type> YVar(FullCovMatR);
-
+  
   // Compute the likelihoods
   matrix<Type> predX(nX,1);  /* m x 1 */
 
@@ -104,54 +67,43 @@ Type marss2(objective_function<Type>* obj) {
     if(tinitx){
       X.col(0) = x0.col(0);
     }else{
-      predX.col(0) = x0.col(0) + U.col(0);
+      predX = x0.col(0) + U.col(0);
       vector<Type> differ = X.col(0)-predX.col(0);
+//      ans += VECSCALE(corMatGenQ,sdQ)(differ0);
       ans += XVar(differ); /* tinitx=1 */
     }
   }else{
-    if(tinitx){
-      MVNORM_t<Type> initialState(V0);
-      ans += initialState(X.col(0)-x0.col(0)); /* tinitx=1 */
-    }else{
-      // Need to to check against the KF code
-      predX.col(0) = x0.col(0) + U.col(0);
-      vector<Type> differ0 = X.col(0)-predX.col(0);
-      MVNORM_t<Type> initialState(V0+FullCovMatQ);
-      ans += initialState(differ0); /* tinitx=1 */
-    }
+    // I think this is wrong if tinitx=0
+    MVNORM_t<Type> initialState(V0);
+    ans += initialState(X.col(0)-x0.col(0)); /* tinitx=1 */
   }
-int ui = 0;
-for(int i=1;i<timeSteps;i++){ 
+
+  for(int i=1;i<timeSteps;i++){ 
     // Process likelihood Note marss form so covariates appear in the
     // time-varying U
-    if(TU != 1){
-      ui = i;
-    }
-    predX = X.col(i-1) + U.col(ui);
+    predX = X.col(i-1) + U.col(i);
     vector<Type> differ = X.col(i)-predX.col(0);
+//    ans += VECSCALE(corMatGenQ,sdQ)(differ);
     ans += XVar(differ); /* tinitx=1 */
-}
+  }
   
   matrix<Type> predY(nY,1);  
-  predY.setZero();
-  matrix<Type> ZZ(nY*nX, 1);
+//  predY.setZero();
+  matrix<Type> I(nY,nY);
+  I.setIdentity();
+  matrix<Type> Xi(1,nX);
+  matrix<Type> ZZ(nX*nY, 1);
   
-  //  std::cout << std::scientific;
-  //  std::cout << Xi.rows() << std::endl;
-  //  std::cout << Xi.cols() << std::endl;
-  ZZ = Z.col(0);
-  ZZ.resize(nY, nX);
-  int ai = 0;
-  
+//  std::cout << std::scientific;
+//  std::cout << Xi.rows() << std::endl;
+//  std::cout << Xi.cols() << std::endl;
+ZZ = Z.col(0);
+ZZ.resize(nY, nX);
+
   for(int i=0;i<timeSteps;i++){ //move one time step at a time
-if(TA != 1){ 
-  ai = i;
-}
-if(TZ != 1){
-  ZZ = Z.col(i);
-  ZZ.resize(nY, nX);
-}
-predY = ZZ * X.col(i) + A.col(ai);
+//    Xi = X.col(i).transpose();
+//    predY = tmbutils::kronecker(Xi, I) * Z.col(i) + A.col(i);
+    predY = ZZ * X.col(i) + A.col(i);
 
     int nonNAcount = 0; //start at zero NA values
     vector<int> GoodVals(nY);
@@ -176,9 +128,11 @@ predY = ZZ * X.col(i) + A.col(ai);
         }//end of loop through for truncated covmat
       }//end of removal of NA's from sets
       vector<Type> subDiffer = subData-subPred;
+//      ans += VECSCALE(MVNORM(subCorr),subSds)(subDiffer);
       ans += MVNORM(subCov)(subDiffer); /* tinitx=1 */
     }else{
       vector<Type> differ = Y.col(i)-predY.col(0);
+ //     ans += VECSCALE(corMatGenR, sdR)(differ);
       ans += YVar(differ); /* tinitx=1 */
     }//end of data likelihood for this time step
   }//end of loop over time steps

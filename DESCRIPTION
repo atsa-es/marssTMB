@@ -1,7 +1,7 @@
 Package: marssTMB
 Title: Fast fitting of MARSS models with TMB
 Description: Companion to the MARSS package. Fast fitting of MARSS models with TMB. See the MARSS documentation. All the model syntax and features are the same as for the MARSS package.
-Version: 0.0.12
+Version: 0.0.13
 Authors@R: 
     c(person("Eli", "Holmes", , "eli.holmes@noaa.gov", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-9128-8393")),
@@ -17,7 +17,8 @@ Depends: R (>= 3.5.0), MARSS (>= 3.11.5)
 Imports: 
     TMB (>= 1.9.3),
     stats,
-    utils
+    utils,
+    tictoc
 Suggests: 
     ggplot2,
     dplyr,

@@ -34,35 +34,52 @@ Type marss(objective_function<Type>* obj) {
   x0 = parmat2(fixed(4), free(4), par(pars, numpar, 4), par_dims(4));
   matrix<Type> V0(nX, nX);
   V0 = parmat2(fixed(5), free(5), par(pars, numpar, 5), par_dims(5));
-  matrix<Type> U(nX, timeSteps);
-  U = parvec(fixed(3), free(3), par(pars, numpar, 3), par_dims(3), tfree(3), tfixed(3), timeSteps);
-  matrix<Type> A(nY, timeSteps);
-  A = parvec(fixed(1), free(1), par(pars, numpar, 1), par_dims(1), tfree(1), tfixed(1), timeSteps);
-  matrix<Type> Z(nX*nY, timeSteps);
-  Z = parvec(fixed(0), free(0), par(pars, numpar, 0), par_dims(0), tfree(0), tfixed(0), timeSteps);
-  matrix<Type> B(nX*nX, timeSteps);
-  B = parvec(fixed(2), free(2), par(pars, numpar, 2), par_dims(2), tfree(2), tfixed(2), timeSteps);
+  int TU = std::max(tfree(3), tfixed(3));
+  matrix<Type> U(nX, TU);
+  if(numpar(3) != 0){
+    U = parvec(fixed(3), free(3), par(pars, numpar, 3), par_dims(3), tfree(3), tfixed(3), TU);
+  }else{
+    U = fixed(3);
+  }
+  int TA = std::max(tfree(1), tfixed(1));
+  matrix<Type> A(nY, TA);
+  if(numpar(1) != 0){
+    A = parvec(fixed(1), free(1), par(pars, numpar, 1), par_dims(1), tfree(1), tfixed(1), TA);
+  }else{
+    A = fixed(1);
+  }
+  int TZ = std::max(tfree(0), tfixed(0));
+  matrix<Type> Z(nX*nY, TZ);
+  if(numpar(0) != 0){
+     Z = parvec(fixed(0), free(0), par(pars, numpar, 0), par_dims(0), tfree(0), tfixed(0), TZ);
+  }else{
+    Z = fixed(0);
+  }
+//  matrix<Type> B(nX*nX, timeSteps);
+//  B = parvec(fixed(2), free(2), par(pars, numpar, 2), par_dims(2), tfree(2), tfixed(2), timeSteps);
 
   // Set the non time-varying parameters
-  matrix<Type> QdiagMat(nX, timeSteps);
-  matrix<Type> QoffdiagMat(nX * (nX - 1) / 2, timeSteps);
-  QdiagMat = parvec(fixed(9), free(9), par(pars, numpar, 9), par_dims(9), tfree(9), tfixed(9), timeSteps);
+  int TQ = std::max(tfree(9), tfixed(9));
+  matrix<Type> QdiagMat(nX, TQ);
+  matrix<Type> QoffdiagMat(nX * (nX - 1) / 2, TQ);
+  QdiagMat = parvec(fixed(9), free(9), par(pars, numpar, 9), par_dims(9), tfree(9), tfixed(9), TQ);
   vector<Type> sdQ=QdiagMat.col(0); /* log sd of Q (diag) */
   sdQ = exp(sdQ);
   vector<Type> cholCorrQ(nX * (nX - 1) / 2);
   if(nX>1){
-    QoffdiagMat = parvec(fixed(10), free(10), par(pars, numpar, 10), par_dims(10), tfree(10), tfixed(10), timeSteps);
+    QoffdiagMat = parvec(fixed(10), free(10), par(pars, numpar, 10), par_dims(10), tfree(10), tfixed(10), TQ);
     cholCorrQ = QoffdiagMat.col(0);
   }
   // Set the non time-varying parameters
-  matrix<Type> RdiagMat(nY, timeSteps);
-  matrix<Type> RoffdiagMat(nY * (nY - 1) / 2, timeSteps);
-  RdiagMat = parvec(fixed(11), free(11), par(pars, numpar, 11), par_dims(11), tfree(11), tfixed(11), timeSteps);
+  int TR = std::max(tfree(11), tfixed(11));
+  matrix<Type> RdiagMat(nY, TR);
+  matrix<Type> RoffdiagMat(nY * (nY - 1) / 2, TR);
+  RdiagMat = parvec(fixed(11), free(11), par(pars, numpar, 11), par_dims(11), tfree(11), tfixed(11), TR);
   vector<Type> sdR=RdiagMat.col(0); /* log sd of R (diag) */
   sdR = exp(sdR);
   vector<Type> cholCorrR(nY * (nY - 1) / 2);
   if(nY>1){
-    RoffdiagMat = parvec(fixed(12), free(12), par(pars, numpar, 12), par_dims(12), tfree(12), tfixed(12), timeSteps);
+    RoffdiagMat = parvec(fixed(12), free(12), par(pars, numpar, 12), par_dims(12), tfree(12), tfixed(12), TR);
     cholCorrR = RoffdiagMat.col(0);
   }
 
@@ -72,6 +89,16 @@ Type marss(objective_function<Type>* obj) {
   matrix<Type> FullCorrMatR = corMatGenR.cov(); /* full corr matrix has 1 on diag */
   UNSTRUCTURED_CORR_t<Type> corMatGenQ(cholCorrQ);// This is the lower tri
   matrix<Type> FullCorrMatQ = corMatGenQ.cov(); /* full corr matrix has 1 on diag */
+
+  // Compute the full covariance matrices
+  matrix<Type> FullCovMatR(nY,nY);
+  matrix<Type> dSDR(nY,1);
+  dSDR = sdR;
+  FullCovMatR = dSDR.asDiagonal() * FullCorrMatR * dSDR.asDiagonal();
+  matrix<Type> FullCovMatQ(nX,nX);
+  matrix<Type> dSDQ(nX,1);
+  dSDQ = sdQ;
+  FullCovMatQ = dSDQ.asDiagonal() * FullCorrMatQ * dSDQ.asDiagonal();
   
   // Compute the likelihoods
   matrix<Type> predX(nX,1);  /* m x 1 */
@@ -81,37 +108,54 @@ Type marss(objective_function<Type>* obj) {
     if(tinitx){
       X.col(0) = x0.col(0);
     }else{
-      predX = x0.col(0) + U.col(0);
+      predX.col(0) = x0.col(0) + U.col(0);
       vector<Type> differ0 = X.col(0)-predX.col(0);
       ans += VECSCALE(corMatGenQ,sdQ)(differ0);
     }
   }else{
-    // I think this is wrong if tinitx=0
-    MVNORM_t<Type> initialState(V0);
-    ans += initialState(X.col(0)-x0.col(0)); /* tinitx=1 */
+    if(tinitx){
+      MVNORM_t<Type> initialState(V0);
+      ans += initialState(X.col(0)-x0.col(0)); /* tinitx=1 */
+    }else{
+      // Need to to check against the KF code
+      predX.col(0) = x0.col(0) + U.col(0);
+      vector<Type> differ0 = X.col(0)-predX.col(0);
+      MVNORM_t<Type> initialState(V0+FullCovMatQ);
+      ans += initialState(differ0); /* tinitx=1 */
+    }
   }
-
-  for(int i=1;i<timeSteps;i++){ 
+int ui = 0;
+for(int i=1;i<timeSteps;i++){ 
     // Process likelihood Note marss form so covariates appear in the
     // time-varying U
-    predX = X.col(i-1) + U.col(i);
+    if(TU != 1){
+      ui = i;
+    }
+    predX = X.col(i-1) + U.col(ui);
     vector<Type> differ = X.col(i)-predX.col(0);
     ans += VECSCALE(corMatGenQ,sdQ)(differ);
   }
   
   matrix<Type> predY(nY,1);  
-//  predY.setZero();
-  matrix<Type> I(nY,nY);
-  I.setIdentity();
-  matrix<Type> Xi(1,nX);
-
-//  std::cout << std::scientific;
-//  std::cout << Xi.rows() << std::endl;
-//  std::cout << Xi.cols() << std::endl;
+  predY.setZero();
+  matrix<Type> ZZ(nY*nX, 1);
+  
+  //  std::cout << std::scientific;
+  //  std::cout << Xi.rows() << std::endl;
+  //  std::cout << Xi.cols() << std::endl;
+  ZZ = Z.col(0);
+  ZZ.resize(nY, nX);
+  int ai = 0;
   
   for(int i=0;i<timeSteps;i++){ //move one time step at a time
-    Xi = X.col(i).transpose();
-    predY = tmbutils::kronecker(Xi, I) * Z.col(i) + A.col(i);
+if(TA != 1){ 
+  ai = i;
+}
+if(TZ != 1){
+  ZZ = Z.col(i);
+  ZZ.resize(nY, nX);
+}
+predY = ZZ * X.col(i) + A.col(ai);
 
     int nonNAcount = 0; //start at zero NA values
     vector<int> GoodVals(nY);
@@ -143,16 +187,6 @@ Type marss(objective_function<Type>* obj) {
       ans += VECSCALE(corMatGenR, sdR)(differ);
     }//end of data likelihood for this time step
   }//end of loop over time steps
-  
-  // Compute the full covariance matrices
-  matrix<Type> FullCovMatR(nY,nY);
-  matrix<Type> dSDR(nY,1);
-  dSDR = sdR;
-  FullCovMatR = dSDR.asDiagonal() * FullCorrMatR * dSDR.asDiagonal();
-  matrix<Type> FullCovMatQ(nX,nX);
-  matrix<Type> dSDQ(nX,1);
-  dSDQ = sdQ;
-  FullCovMatQ = dSDQ.asDiagonal() * FullCorrMatQ * dSDQ.asDiagonal();
   
   // Parameters with derivatives
   ADREPORT(X);
