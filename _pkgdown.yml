@@ -8,14 +8,13 @@ home:
 reference:
 - title: Main function
   desc: >
-    Main function is regular MARSS() with method="TMB".
-  contents:
-  - MARSSfit.TMB
-  
+    Main function is regular MARSS() function with method="TMB". Load the MARSS package via library(MARSS) and type ?MARSS for info.
+
 - title: Internal functions
   desc: >
-    These are the functions that the developers are working on. All are exported for now and can be used.
+    Not needed by users. 
   contents:
+  - MARSSfit.TMB
   - estimate_marss
   - estimate_marss2
   - var_to_cholvar

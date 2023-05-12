@@ -4,19 +4,26 @@
 
 ## To use
 
-Call `MARSS()` as usual but add `method="TMB"`. The default uses `nlminb()` for optimization.
-Use `method="BFGS_TMB"` for `optim()` and the BFGS algorithm.
-
-Note R and Q can only be diagonal, unconstrained or fixed. `equalvarcov` is not available nor are zeros allowed on the diagonal as is available with the Kalman filter + EM and BFGS algorithm in `MARSS()`. But TMB is very fast. Also be aware that {marssTMB} is still in early development and you should check your answers against `method="kem"` and `method="BFGS"`.
-
-See the [Quick Start Guide](https://atsa-es.github.io/marssTMB/articles/Quick_Start.html) to get started.
-
-## install
-
+Install MARSS 3.11.6 (development version)
 ```
-# Install marssTMB in R:
+install.packages('MARSS', repos = c('https://atsa-es.r-universe.dev', 'https://cloud.r-project.org'))
+```
+
+Install marssTMB
+```
 install.packages('marssTMB', repos = c('https://atsa-es.r-universe.dev', 'https://cloud.r-project.org'))
 ```
+
+## Fit a MARSS model
+
+See the [Quick Start Guide](https://atsa-es.github.io/marssTMB/articles/Quick_Start.html) to get started. Call `MARSS()` with `method="TMB"`
+```
+library(MARSS)
+y <- t(harborSealWA); dat <- dat[2:4, ]
+MARSS(y, method="TMB")
+```
+
+Note R and Q can only be diagonal, unconstrained or fixed. `equalvarcov` is not available nor are zeros allowed on the diagonal as is available with the Kalman filter + EM and BFGS algorithm in `MARSS()`. But TMB is very fast. Also be aware that {marssTMB} is still in early development and you should check your answers against `method="kem"` and `method="BFGS"`.
 
 ## Developer notes
 

@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">marssTMB</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.12</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.13</span>
       </span>
     </div>
 
@@ -69,6 +69,13 @@
       <small>Source: <a href="https://github.com/atsa-es/marssTMB/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.0.13" id="marsstmb-0013">marssTMB 0.0.13<a class="anchor" aria-label="anchor" href="#marsstmb-0013"></a></h2>
+<ul><li>Add check for data class in dfaTMB.</li>
+<li>Removed the kronecker products from the for loops to speed things up</li>
+<li>Don’t create A x TT matrices when only need A x 1 because parameter is not time-varying</li>
+<li>Bug in <code>MARSS_TMB.R</code> that would not add one the obj when control$trace = 2.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.0.12" id="marsstmb-0012">marssTMB 0.0.12<a class="anchor" aria-label="anchor" href="#marsstmb-0012"></a></h2>
 <ul><li>Big clean. Move out uni.hpp (and R), estimate_marxss.hpp (and R), MARSS_tmb.R</li>

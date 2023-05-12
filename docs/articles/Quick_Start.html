@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">marssTMB</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.12</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.13</span>
       </span>
     </div>
 
@@ -187,17 +187,18 @@ leave off matrix names and the defaults will be used. See
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; MARSS fit is</span></span>
 <span><span class="co">#&gt; Estimation method: TMB </span></span>
-<span><span class="co">#&gt; Estimation converged in 61 iterations. </span></span>
-<span><span class="co">#&gt; Log-likelihood: -30.28457 </span></span>
-<span><span class="co">#&gt; AIC: 72.56914   AICc: 74.39523   </span></span>
+<span><span class="co">#&gt; WARNING: nlminb() ran for 44 iterations and stopped before maxit with a convergence warning.</span></span>
+<span><span class="co">#&gt; Treat the parameter values and logLik with caution. Message: false convergence (8) .</span></span>
+<span><span class="co">#&gt; Log-likelihood: -48.02177 </span></span>
+<span><span class="co">#&gt; AIC: 108.0435   AICc: 109.8696   </span></span>
 <span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt;       Estimate</span></span>
-<span><span class="co">#&gt; A.a1  -8.28014</span></span>
-<span><span class="co">#&gt; R.r11  0.12333</span></span>
-<span><span class="co">#&gt; R.r    0.00199</span></span>
-<span><span class="co">#&gt; Q.q11  0.01374</span></span>
-<span><span class="co">#&gt; Q.q12  0.01765</span></span>
-<span><span class="co">#&gt; Q.q22  0.02679</span></span>
+<span><span class="co">#&gt;        Estimate</span></span>
+<span><span class="co">#&gt; A.a1  -8.25e+00</span></span>
+<span><span class="co">#&gt; R.r11  5.70e-16</span></span>
+<span><span class="co">#&gt; R.r    3.87e-02</span></span>
+<span><span class="co">#&gt; Q.q11  6.69e-03</span></span>
+<span><span class="co">#&gt; Q.q12  1.83e-02</span></span>
+<span><span class="co">#&gt; Q.q22  5.03e-02</span></span>
 <span><span class="co">#&gt; Initial states (x0) defined at t=0</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Standard errors have not been calculated. </span></span>
@@ -214,21 +215,23 @@ examples.</p>
 parameters.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">fit</span>, type<span class="op">=</span><span class="st">"vector"</span><span class="op">)</span></span>
-<span><span class="co">#&gt;         A.a1        R.r11          R.r        Q.q11        Q.q12        Q.q22 </span></span>
-<span><span class="co">#&gt; -8.280137274  0.123328719  0.001993932  0.013736573  0.017652336  0.026788797</span></span></code></pre></div>
+<span><span class="co">#&gt;          A.a1         R.r11           R.r         Q.q11         Q.q12 </span></span>
+<span><span class="co">#&gt; -8.245225e+00  5.697216e-16  3.871945e-02  6.690515e-03  1.834986e-02 </span></span>
+<span><span class="co">#&gt;         Q.q22 </span></span>
+<span><span class="co">#&gt;  5.033270e-02</span></span></code></pre></div>
 <p>You can include <code>type="matrix"</code> to the full parameter
 matrices.</p>
 <p>You can get a pretty version of the estimates with SEs and CIs
 with</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">tidy</span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span>
-<span><span class="co">#&gt;    term     estimate   std.error      conf.low      conf.up</span></span>
-<span><span class="co">#&gt; 1  A.a1 -8.280137274 0.084183738 -8.4451343684 -8.115140180</span></span>
-<span><span class="co">#&gt; 2 R.r11  0.123328719 0.042475925  0.0400774355  0.206580002</span></span>
-<span><span class="co">#&gt; 3   R.r  0.001993932 0.001274835 -0.0005046992  0.004492563</span></span>
-<span><span class="co">#&gt; 4 Q.q11  0.013736573 0.005764363  0.0024386278  0.025034517</span></span>
-<span><span class="co">#&gt; 5 Q.q12  0.017652336 0.007015191  0.0039028138  0.031401858</span></span>
-<span><span class="co">#&gt; 6 Q.q22  0.026788797 0.010338975  0.0065247793  0.047052815</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://generics.r-lib.org/reference/tidy.html" class="external-link">tidy</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span>
+<span><span class="co">#&gt;    term      estimate   std.error     conf.low     conf.up</span></span>
+<span><span class="co">#&gt; 1  A.a1 -8.245225e+00 0.066518475 -8.375598849 -8.11485122</span></span>
+<span><span class="co">#&gt; 2 R.r11  5.697216e-16 0.009033554 -0.017705440  0.01770544</span></span>
+<span><span class="co">#&gt; 3   R.r  3.871945e-02 0.010586408  0.017970475  0.05946843</span></span>
+<span><span class="co">#&gt; 4 Q.q11  6.690515e-03 0.005131866 -0.003367758  0.01674879</span></span>
+<span><span class="co">#&gt; 5 Q.q12  1.834986e-02 0.007851066  0.002962055  0.03373767</span></span>
+<span><span class="co">#&gt; 6 Q.q22  5.033270e-02 0.022126012  0.006966516  0.09369889</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="estimated-states">Estimated states<a class="anchor" aria-label="anchor" href="#estimated-states"></a>
@@ -237,12 +240,12 @@ with</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/tsSmooth.html" class="external-link">tsSmooth</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   .rownames t .estimate        .se</span></span>
-<span><span class="co">#&gt; 1        X1 1  6.648262 0.04119439</span></span>
-<span><span class="co">#&gt; 2        X1 2  6.761252 0.11033570</span></span>
-<span><span class="co">#&gt; 3        X1 3  6.874243 0.13179263</span></span>
-<span><span class="co">#&gt; 4        X1 4  6.987233 0.13146472</span></span>
-<span><span class="co">#&gt; 5        X1 5  7.100223 0.10915580</span></span>
-<span><span class="co">#&gt; 6        X1 6  7.213214 0.03557170</span></span></code></pre></div>
+<span><span class="co">#&gt; 1        X1 1  7.148425 0.03327370</span></span>
+<span><span class="co">#&gt; 2        X1 2  7.188515 0.08036751</span></span>
+<span><span class="co">#&gt; 3        X1 3  7.228605 0.09557549</span></span>
+<span><span class="co">#&gt; 4        X1 4  7.268696 0.09557381</span></span>
+<span><span class="co">#&gt; 5        X1 5  7.308786 0.08036150</span></span>
+<span><span class="co">#&gt; 6        X1 6  7.348877 0.03324949</span></span></code></pre></div>
 <p>If you want a matrix of the states, you can use
 <code>fit$states</code>.</p>
 </div>
@@ -253,12 +256,12 @@ with</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/fitted.values.html" class="external-link">fitted</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   .rownames t        y   .fitted</span></span>
-<span><span class="co">#&gt; 1       SJF 1 6.033086 -8.280137</span></span>
-<span><span class="co">#&gt; 2       SJF 2       NA  5.098680</span></span>
-<span><span class="co">#&gt; 3       SJF 3       NA  5.098680</span></span>
-<span><span class="co">#&gt; 4       SJF 4       NA  5.098680</span></span>
-<span><span class="co">#&gt; 5       SJF 5       NA  5.098680</span></span>
-<span><span class="co">#&gt; 6       SJF 6 6.783325  5.098680</span></span></code></pre></div>
+<span><span class="co">#&gt; 1       SJF 1 6.033086 -8.245225</span></span>
+<span><span class="co">#&gt; 2       SJF 2       NA  6.033086</span></span>
+<span><span class="co">#&gt; 3       SJF 3       NA  6.033086</span></span>
+<span><span class="co">#&gt; 4       SJF 4       NA  6.033086</span></span>
+<span><span class="co">#&gt; 5       SJF 5       NA  6.033086</span></span>
+<span><span class="co">#&gt; 6       SJF 6 6.783325  6.033086</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="diagnostics">Diagnostics<a class="anchor" aria-label="anchor" href="#diagnostics"></a>
@@ -271,13 +274,13 @@ standard diagnostic plots.</p>
 <p>Use [MARSS::residuals()] for the residuals.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/residuals.html" class="external-link">residuals</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   type .rownames  name t    value   .fitted   .resids   .sigma .std.resids</span></span>
-<span><span class="co">#&gt; 1 ytt1       SJF model 1 6.033086 -8.280137 14.313223 1.482956    9.651819</span></span>
-<span><span class="co">#&gt; 2 ytt1       SJF model 2       NA  5.098680        NA       NA          NA</span></span>
-<span><span class="co">#&gt; 3 ytt1       SJF model 3       NA  5.098680        NA       NA          NA</span></span>
-<span><span class="co">#&gt; 4 ytt1       SJF model 4       NA  5.098680        NA       NA          NA</span></span>
-<span><span class="co">#&gt; 5 ytt1       SJF model 5       NA  5.098680        NA       NA          NA</span></span>
-<span><span class="co">#&gt; 6 ytt1       SJF model 6 6.783325  5.098680  1.684645 0.711572    2.367498</span></span></code></pre></div>
+<span><span class="co">#&gt;   type .rownames  name t    value   .fitted   .resids    .sigma .std.resids</span></span>
+<span><span class="co">#&gt; 1 ytt1       SJF model 1 6.033086 -8.245225 14.278311 1.4469703    9.867730</span></span>
+<span><span class="co">#&gt; 2 ytt1       SJF model 2       NA  6.033086        NA        NA          NA</span></span>
+<span><span class="co">#&gt; 3 ytt1       SJF model 3       NA  6.033086        NA        NA          NA</span></span>
+<span><span class="co">#&gt; 4 ytt1       SJF model 4       NA  6.033086        NA        NA          NA</span></span>
+<span><span class="co">#&gt; 5 ytt1       SJF model 5       NA  6.033086        NA        NA          NA</span></span>
+<span><span class="co">#&gt; 6 ytt1       SJF model 6 6.783325  6.033086  0.750239 0.6845544    1.095952</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="predictions-and-forecasts">Predictions and forecasts<a class="anchor" aria-label="anchor" href="#predictions-and-forecasts"></a>
@@ -286,13 +289,20 @@ standard diagnostic plots.</p>
 [MARSS::predict()] or [MARSS::forecast()]</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://generics.r-lib.org/reference/forecast.html" class="external-link">forecast</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span><span class="op">$</span><span class="va">pred</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   .rownames t        y estimate        se    Lo 80    Hi 80    Lo 95    Hi 95</span></span>
-<span><span class="co">#&gt; 1       SJF 1 6.033086 5.115214 0.3565473 4.658280 5.572148 4.416394 5.814034</span></span>
-<span><span class="co">#&gt; 2       SJF 2       NA 5.368349 0.4319517 4.814781 5.921917 4.521739 6.214959</span></span>
-<span><span class="co">#&gt; 3       SJF 3       NA 5.621484 0.4650709 5.025471 6.217496 4.709962 6.533006</span></span>
-<span><span class="co">#&gt; 4       SJF 4       NA 5.874619 0.4650291 5.278660 6.470577 4.963178 6.786059</span></span>
-<span><span class="co">#&gt; 5       SJF 5       NA 6.127753 0.4318167 5.574358 6.681149 5.281408 6.974099</span></span>
-<span><span class="co">#&gt; 6       SJF 6 6.783325 6.380888 0.3562748 5.924304 6.837473 5.682602 7.079174</span></span></code></pre></div>
+<span><span class="co">#&gt;   .rownames t        y estimate           se    Lo 80    Hi 80    Lo 95</span></span>
+<span><span class="co">#&gt; 1       SJF 1 6.033086 6.033086 1.956541e-08 6.033086 6.033086 6.033086</span></span>
+<span><span class="co">#&gt; 2       SJF 2       NA 6.183134 2.738218e-01 5.832217 6.534051 5.646453</span></span>
+<span><span class="co">#&gt; 3       SJF 3       NA 6.333182 3.353618e-01 5.903398 6.762965 5.675885</span></span>
+<span><span class="co">#&gt; 4       SJF 4       NA 6.483230 3.353618e-01 6.053446 6.913013 5.825933</span></span>
+<span><span class="co">#&gt; 5       SJF 5       NA 6.633277 2.738218e-01 6.282361 6.984194 6.096597</span></span>
+<span><span class="co">#&gt; 6       SJF 6 6.783325 6.783325 3.553510e-08 6.783325 6.783325 6.783325</span></span>
+<span><span class="co">#&gt;      Hi 95</span></span>
+<span><span class="co">#&gt; 1 6.033086</span></span>
+<span><span class="co">#&gt; 2 6.719815</span></span>
+<span><span class="co">#&gt; 3 6.990479</span></span>
+<span><span class="co">#&gt; 4 7.140527</span></span>
+<span><span class="co">#&gt; 5 7.169958</span></span>
+<span><span class="co">#&gt; 6 6.783325</span></span></code></pre></div>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
 <span><span class="va">fr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/forecast.html" class="external-link">forecast</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span>

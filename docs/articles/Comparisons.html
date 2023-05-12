@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">marssTMB</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.12</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.13</span>
       </span>
     </div>
 
@@ -218,10 +218,9 @@ then pass in covariates with <code>model$d</code> or
 <div class="section level3">
 <h3 id="compare-time-and-log-likelihoods">Compare time and log likelihoods<a class="anchor" aria-label="anchor" href="#compare-time-and-log-likelihoods"></a>
 </h3>
-<p>The MARSS_tmb code has quite a bit of overhead over dfaTMB since
-MARSS_tmb will fit any MARSS model. tmb-1 uses the splitting approach
-for the diag versus the chol, while tmb-2 is using just the chol.
-Clearly splitting is facter.</p>
+<p>The MARSS_tmb-1 uses the splitting approach for the diag versus the
+chol, while tmb-2 is using just the chol. Clearly splitting is
+faster.</p>
 <table class="table">
 <thead><tr class="header">
 <th align="left">name</th>
@@ -233,49 +232,49 @@ Clearly splitting is facter.</p>
 <tr class="odd">
 <td align="left">MARSS-EM</td>
 <td align="right">1</td>
-<td align="right">6.508</td>
+<td align="right">6.853</td>
 <td align="right">-735.6308</td>
 </tr>
 <tr class="even">
 <td align="left">MARSS_tmb-1</td>
 <td align="right">1</td>
-<td align="right">0.668</td>
+<td align="right">0.588</td>
 <td align="right">-735.6308</td>
 </tr>
 <tr class="odd">
 <td align="left">MARSS_tmb-2</td>
 <td align="right">1</td>
-<td align="right">1.189</td>
+<td align="right">1.006</td>
 <td align="right">-735.6308</td>
 </tr>
 <tr class="even">
 <td align="left">dfaTMB</td>
 <td align="right">1</td>
-<td align="right">0.509</td>
+<td align="right">0.558</td>
 <td align="right">-735.6308</td>
 </tr>
 <tr class="odd">
 <td align="left">MARSS-EM</td>
 <td align="right">2</td>
-<td align="right">7.668</td>
+<td align="right">7.828</td>
 <td align="right">-731.2380</td>
 </tr>
 <tr class="even">
 <td align="left">MARSS_tmb-1</td>
 <td align="right">2</td>
-<td align="right">0.898</td>
+<td align="right">0.760</td>
 <td align="right">-731.2378</td>
 </tr>
 <tr class="odd">
 <td align="left">MARSS_tmb-2</td>
 <td align="right">2</td>
-<td align="right">1.556</td>
+<td align="right">1.223</td>
 <td align="right">-731.2378</td>
 </tr>
 <tr class="even">
 <td align="left">dfaTMB</td>
 <td align="right">2</td>
-<td align="right">0.734</td>
+<td align="right">0.749</td>
 <td align="right">-731.2378</td>
 </tr>
 </tbody>
@@ -288,9 +287,49 @@ Clearly splitting is facter.</p>
 </div>
 </div>
 <div class="section level2">
-<h2 id="run-some-time-comparisons">Run some time comparisons<a class="anchor" aria-label="anchor" href="#run-some-time-comparisons"></a>
+<h2 id="more-marss-models">More MARSS models<a class="anchor" aria-label="anchor" href="#more-marss-models"></a>
 </h2>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"mod &lt;- list(Z = matrix(1, 3, 1), R = 'diagonal and equal')\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; mod &lt;- list(Z = matrix(1, 3, 1), R = 'diagonal and equal')</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>EM<span class="op">=</span><span class="va">fit1</span><span class="op">$</span><span class="va">logLik</span>, BFGS<span class="op">=</span><span class="va">fit2</span><span class="op">$</span><span class="va">logLik</span>, TMB<span class="op">=</span><span class="va">fit2</span><span class="op">$</span><span class="va">logLik</span><span class="op">)</span></span>
+<span><span class="co">#&gt;       EM     BFGS      TMB </span></span>
+<span><span class="co">#&gt; 15.70271 15.70369 15.70369</span></span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"MARSS(dat)\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; MARSS(dat)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>EM<span class="op">=</span><span class="va">fit1</span><span class="op">$</span><span class="va">logLik</span>, BFGS<span class="op">=</span><span class="va">fit2</span><span class="op">$</span><span class="va">logLik</span>, TMB<span class="op">=</span><span class="va">fit2</span><span class="op">$</span><span class="va">logLik</span><span class="op">)</span></span>
+<span><span class="co">#&gt;       EM     BFGS      TMB </span></span>
+<span><span class="co">#&gt; 17.84491 17.85200 17.85200</span></span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"mod &lt;- list(Q = 'unconstrained')\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; mod &lt;- list(Q = 'unconstrained')</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>EM<span class="op">=</span><span class="va">fit1</span><span class="op">$</span><span class="va">logLik</span>, BFGS<span class="op">=</span><span class="va">fit2</span><span class="op">$</span><span class="va">logLik</span>, TMB<span class="op">=</span><span class="va">fit2</span><span class="op">$</span><span class="va">logLik</span><span class="op">)</span></span>
+<span><span class="co">#&gt;       EM     BFGS      TMB </span></span>
+<span><span class="co">#&gt; 30.36813 28.13780 28.13780</span></span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">'list(U = matrix(c("N", "S", "S")))\n'</span><span class="op">)</span></span>
+<span><span class="co">#&gt; list(U = matrix(c("N", "S", "S")))</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>EM<span class="op">=</span><span class="va">fit1</span><span class="op">$</span><span class="va">logLik</span>, BFGS<span class="op">=</span><span class="va">fit2</span><span class="op">$</span><span class="va">logLik</span>, TMB<span class="op">=</span><span class="va">fit2</span><span class="op">$</span><span class="va">logLik</span><span class="op">)</span></span>
+<span><span class="co">#&gt;       EM     BFGS      TMB </span></span>
+<span><span class="co">#&gt; 17.48233 17.48957 17.48957</span></span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">'list(U = matrix(list("N", "N", 0), 3, 1), R = diag(0.01, 3))\n'</span><span class="op">)</span></span>
+<span><span class="co">#&gt; list(U = matrix(list("N", "N", 0), 3, 1), R = diag(0.01, 3))</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>EM<span class="op">=</span><span class="va">fit1</span><span class="op">$</span><span class="va">logLik</span>, BFGS<span class="op">=</span><span class="va">fit2</span><span class="op">$</span><span class="va">logLik</span>, TMB<span class="op">=</span><span class="va">fit2</span><span class="op">$</span><span class="va">logLik</span><span class="op">)</span></span>
+<span><span class="co">#&gt;       EM     BFGS      TMB </span></span>
+<span><span class="co">#&gt; 15.47987 15.48018 15.48018</span></span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">'list(Z = Z, Q = "diagonal and equal", R = "diagonal and unequal", U = "equal")\n'</span><span class="op">)</span></span>
+<span><span class="co">#&gt; list(Z = Z, Q = "diagonal and equal", R = "diagonal and unequal", U = "equal")</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>EM<span class="op">=</span><span class="va">fit1</span><span class="op">$</span><span class="va">logLik</span>, BFGS<span class="op">=</span><span class="va">fit2</span><span class="op">$</span><span class="va">logLik</span>, TMB<span class="op">=</span><span class="va">fit2</span><span class="op">$</span><span class="va">logLik</span><span class="op">)</span></span>
+<span><span class="co">#&gt;       EM     BFGS      TMB </span></span>
+<span><span class="co">#&gt; 24.70020 24.70584 24.70584</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="run-some-time-comparisons">Run some time comparisons<a class="anchor" aria-label="anchor" href="#run-some-time-comparisons"></a>
+</h2>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">df2</span> <span class="op">&lt;-</span> <span class="va">df</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>mod <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">fun</span>, <span class="st">"_"</span>, <span class="va">opt.function</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">mod</span>, <span class="va">time</span>, <span class="va">m</span>, <span class="va">R</span>, <span class="va">ncovar</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu">pivot_wider</span><span class="op">(</span>id_cols<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">m</span>, <span class="va">R</span>, <span class="va">ncovar</span><span class="op">)</span>, names_from <span class="op">=</span> <span class="va">mod</span>, values_from <span class="op">=</span> <span class="va">time</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -301,14 +340,16 @@ Clearly splitting is facter.</p>
 <span>  <span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>ncovar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">ncovar</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">pivot_longer</span><span class="op">(</span>cols <span class="op">=</span> <span class="fl">4</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span></span>
+<span><span class="va">mean.improv</span> <span class="op">&lt;-</span> <span class="va">df2</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">name</span> <span class="op">!=</span> <span class="st">"TMB_nlminb"</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarize</a></span><span class="op">(</span>mean <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">value</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu">ggplot</span><span class="op">(</span><span class="va">df2</span>, <span class="fu">aes</span><span class="op">(</span>alpha<span class="op">=</span><span class="va">ncovar</span>, fill<span class="op">=</span><span class="va">name</span>, y<span class="op">=</span><span class="va">value</span>, x<span class="op">=</span><span class="va">m</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>    <span class="fu">geom_bar</span><span class="op">(</span>stat<span class="op">=</span><span class="st">"identity"</span>, position<span class="op">=</span><span class="st">"dodge"</span>, color<span class="op">=</span><span class="st">"black"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">facet_wrap</span><span class="op">(</span><span class="op">~</span><span class="va">R</span>, scales <span class="op">=</span> <span class="st">"free_y"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">ylab</span><span class="op">(</span><span class="st">"Time relative to TMB"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">scale_y_continuous</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">ggtitle</span><span class="op">(</span><span class="st">"speed relative to TMB. Generally 5-10 fold improvement"</span><span class="op">)</span></span>
+<span>  <span class="fu">ggtitle</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"speed relative to TMB."</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">mean.improv</span>, digits<span class="op">=</span><span class="fl">2</span><span class="op">)</span>, <span class="st">"fold improvement"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Warning: Using alpha for a discrete variable is not advised.</span></span></code></pre></div>
-<p><img src="Comparisons_files/figure-html/unnamed-chunk-15-1.png" width="700"></p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<p><img src="Comparisons_files/figure-html/unnamed-chunk-27-1.png" width="700"></p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">df2</span> <span class="op">&lt;-</span> <span class="va">df</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>mod <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">fun</span>, <span class="st">"-"</span>, <span class="va">opt.function</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">df2</span><span class="op">$</span><span class="va">ncovar</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">df2</span><span class="op">$</span><span class="va">ncovar</span><span class="op">)</span></span>
 <span><span class="fu">ggplot</span><span class="op">(</span><span class="va">df2</span>, <span class="fu">aes</span><span class="op">(</span>col<span class="op">=</span><span class="va">ncovar</span>, y<span class="op">=</span><span class="va">logLik</span>, x<span class="op">=</span><span class="va">m</span>, shape<span class="op">=</span><span class="va">mod</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
@@ -316,7 +357,7 @@ Clearly splitting is facter.</p>
 <span>  <span class="fu">facet_wrap</span><span class="op">(</span><span class="op">~</span><span class="va">R</span>, scales <span class="op">=</span> <span class="st">"free_y"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">scale_y_continuous</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">ggtitle</span><span class="op">(</span><span class="st">"logLik comparison"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Comparisons_files/figure-html/unnamed-chunk-16-1.png" width="700"></p>
+<p><img src="Comparisons_files/figure-html/unnamed-chunk-28-1.png" width="700"></p>
 </div>
   </div>
 

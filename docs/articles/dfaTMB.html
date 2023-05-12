@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">marssTMB</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.12</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.13</span>
       </span>
     </div>
 
@@ -93,7 +93,7 @@
       <h1 data-toc-skip>dfaTMB: Dynamic Factor Analysis</h1>
                         <h4 data-toc-skip class="author">Eli Holmes</h4>
             
-            <h4 data-toc-skip class="date">2023-05-10</h4>
+            <h4 data-toc-skip class="date">2023-05-12</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/atsa-es/marssTMB/blob/HEAD/vignettes/dfaTMB.Rmd" class="external-link"><code>vignettes/dfaTMB.Rmd</code></a></small>
       <div class="hidden name"><code>dfaTMB.Rmd</code></div>
@@ -233,7 +233,7 @@ per se.</p>
 <span><span class="co"># Time</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>em<span class="op">=</span><span class="va">t1.em</span>, kfoptim<span class="op">=</span><span class="va">t1.bfgs</span>, TMBnlminb<span class="op">=</span><span class="va">t1.tmb</span>, TMBoptim<span class="op">=</span><span class="va">t1.tmb2</span><span class="op">)</span></span>
 <span><span class="co">#&gt;        em.user.self   kfoptim.user.self TMBnlminb.user.self  TMBoptim.user.self </span></span>
-<span><span class="co">#&gt;               9.280              24.482               2.172               7.693</span></span></code></pre></div>
+<span><span class="co">#&gt;               9.113              25.244               2.087               7.973</span></span></code></pre></div>
 <p>It might be an odd initial condition issue as if BFGS is started with
 EM, it does not find the lower log-likelihood but ends up at the higher
 value that EM and TMB found. Note, this varies a bit. This is for
@@ -244,9 +244,9 @@ value that EM and TMB found. Note, this varies a bit. This is for
 <span><span class="va">t2.bfgs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="va">m2.bfgs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/MARSS/man/MARSS.html" class="external-link">MARSS</a></span><span class="op">(</span><span class="va">dat2</span>, model<span class="op">=</span><span class="va">mod.list</span>, form<span class="op">=</span><span class="st">'dfa'</span>, z.score<span class="op">=</span><span class="cn">FALSE</span>, silent <span class="op">=</span> <span class="cn">TRUE</span>, method<span class="op">=</span><span class="st">"BFGS"</span>, inits <span class="op">=</span> <span class="va">m1</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">t2.bfgs</span>, <span class="va">m2.bfgs</span><span class="op">$</span><span class="va">logLik</span><span class="op">)</span></span>
 <span><span class="co">#&gt; user.self           </span></span>
-<span><span class="co">#&gt;     5.891 -1096.186</span></span></code></pre></div>
+<span><span class="co">#&gt;     5.917 -1096.186</span></span></code></pre></div>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>t<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">37</span>, bfgs<span class="op">=</span><span class="fu">tidy</span><span class="op">(</span><span class="va">m1.bfgs</span><span class="op">)</span><span class="op">$</span><span class="va">estimate</span>, em<span class="op">=</span><span class="fu">tidy</span><span class="op">(</span><span class="va">m1.em</span><span class="op">)</span><span class="op">$</span><span class="va">estimate</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<code class="sourceCode R"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>t<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">37</span>, bfgs<span class="op">=</span><span class="fu"><a href="https://generics.r-lib.org/reference/tidy.html" class="external-link">tidy</a></span><span class="op">(</span><span class="va">m1.bfgs</span><span class="op">)</span><span class="op">$</span><span class="va">estimate</span>, em<span class="op">=</span><span class="fu"><a href="https://generics.r-lib.org/reference/tidy.html" class="external-link">tidy</a></span><span class="op">(</span><span class="va">m1.em</span><span class="op">)</span><span class="op">$</span><span class="va">estimate</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html" class="external-link">pivot_longer</a></span><span class="op">(</span><span class="fl">2</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">df</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x<span class="op">=</span><span class="va">t</span>, y<span class="op">=</span><span class="va">value</span>, col<span class="op">=</span><span class="va">name</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p><img src="dfaTMB_files/figure-html/unnamed-chunk-13-1.png" width="700"></p>
