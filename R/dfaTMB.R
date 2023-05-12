@@ -39,7 +39,14 @@ dfaTMB <- function(y,
                    method = c("Nelder-Mead", "BFGS", "CG", "L-BFGS-B", "SANN", "Brent"),
                    control = NULL,
                    form = c("dfa", "marxss")){
-  ty <- t(y)
+  if (!(is.vector(y) | is.matrix(y) | inherits(y, "ts"))) stop("Data (y) must be a vector, matrix (time going across columns) or ts/mts object.")
+  if (length(y) == 0) stop("Data (y) is length 0.")
+  if (is.vector(y)) y <- matrix(y, nrow = 1)
+  if (!inherits(y, "ts")) { # Get time down the rows like ts object
+    ty <- t(y)
+  }else{
+    ty <- y
+  }
   m <- model$m
   n <- ncol(ty)
   TT <- nrow(ty)

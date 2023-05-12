@@ -1,3 +1,10 @@
+# marssTMB 0.0.13
+
+* Add check for data class in dfaTMB.
+* Removed the kronecker products from the for loops to speed things up
+* Don't create A x TT matrices when only need A x 1 because parameter is not time-varying
+* Bug in `MARSS_TMB.R` that would not add one the obj when control$trace = 2.
+
 # marssTMB 0.0.12
 
 * Big clean. Move out uni.hpp (and R), estimate_marxss.hpp (and R), MARSS_tmb.R

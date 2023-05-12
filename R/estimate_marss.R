@@ -158,7 +158,7 @@ estimate_marss <- function(MLEobj, method = c("TMB", "nlminb_TMB", "BFGS_TMB"), 
       })
       fixed[[oname]] <- array(chols * !parind, dim = c(no, 1, dim(chols)[2]))
       tmp <- 0 * pars[[oname]]
-      if (dim(free[[elem]])[2] != 0) {
+      if (dim(free[[oname]])[2] != 0) {
         for (t in 1:dim(chols)[2]) tmp <- tmp + t(free[[oname]][, , t]) %*% (chols * parind)[, t]
         pars[[oname]] <- tmp
       }
