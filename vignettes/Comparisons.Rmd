@@ -42,7 +42,8 @@ dat <- as.data.frame(lakeWAplanktonTrans) |>
 ## Fit models without covariates
 
 ```{r}
-mod.list <- list(R='unconstrained', m=1, tinitx=1)
+R <- "unconstrained"
+mod.list <- list(R=R, m=1, tinitx=1)
 ```
 
 Fit with MARSS with EM or optim and BFGS.
@@ -54,7 +55,7 @@ m2 <- MARSS(dat, model=mod.list, form='dfa', z.score=FALSE, silent = TRUE, metho
 Fit with TMB.
 ```{r}
 library(marssTMB)
-m3 <- dfaTMB(dat, model=list(m=1, R='unconstrained'))
+m3 <- dfaTMB(dat, model=list(m=1, R=R))
 m4 <- MARSS(dat, model=mod.list, form='dfa', method="TMB", silent=TRUE)
 m5 <- MARSS(dat, model=mod.list, method="BFGS_TMB", form='dfa', silent=TRUE)
 ```

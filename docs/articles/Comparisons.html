@@ -128,7 +128,8 @@ filter (no gradient functions), TMB and Tim Clines original code.</p>
 <h2 id="fit-models-without-covariates">Fit models without covariates<a class="anchor" aria-label="anchor" href="#fit-models-without-covariates"></a>
 </h2>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">mod.list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>R<span class="op">=</span><span class="st">'unconstrained'</span>, m<span class="op">=</span><span class="fl">1</span>, tinitx<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">R</span> <span class="op">&lt;-</span> <span class="st">"unconstrained"</span></span>
+<span><span class="va">mod.list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>R<span class="op">=</span><span class="va">R</span>, m<span class="op">=</span><span class="fl">1</span>, tinitx<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></code></pre></div>
 <p>Fit with MARSS with EM or optim and BFGS.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">m1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/MARSS/man/MARSS.html" class="external-link">MARSS</a></span><span class="op">(</span><span class="va">dat</span>, model<span class="op">=</span><span class="va">mod.list</span>, form<span class="op">=</span><span class="st">'dfa'</span>, z.score<span class="op">=</span><span class="cn">FALSE</span>, silent <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
@@ -136,7 +137,7 @@ filter (no gradient functions), TMB and Tim Clines original code.</p>
 <p>Fit with TMB.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://atsa-es.github.io/marssTMB">marssTMB</a></span><span class="op">)</span></span>
-<span><span class="va">m3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dfaTMB.html">dfaTMB</a></span><span class="op">(</span><span class="va">dat</span>, model<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>m<span class="op">=</span><span class="fl">1</span>, R<span class="op">=</span><span class="st">'unconstrained'</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">m3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dfaTMB.html">dfaTMB</a></span><span class="op">(</span><span class="va">dat</span>, model<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>m<span class="op">=</span><span class="fl">1</span>, R<span class="op">=</span><span class="va">R</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">m4</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/MARSS/man/MARSS.html" class="external-link">MARSS</a></span><span class="op">(</span><span class="va">dat</span>, model<span class="op">=</span><span class="va">mod.list</span>, form<span class="op">=</span><span class="st">'dfa'</span>, method<span class="op">=</span><span class="st">"TMB"</span>, silent<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="va">m5</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/MARSS/man/MARSS.html" class="external-link">MARSS</a></span><span class="op">(</span><span class="va">dat</span>, model<span class="op">=</span><span class="va">mod.list</span>, method<span class="op">=</span><span class="st">"BFGS_TMB"</span>, form<span class="op">=</span><span class="st">'dfa'</span>, silent<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <div class="section level3">
@@ -232,49 +233,49 @@ faster.</p>
 <tr class="odd">
 <td align="left">MARSS-EM</td>
 <td align="right">1</td>
-<td align="right">6.853</td>
+<td align="right">5.220</td>
 <td align="right">-735.6308</td>
 </tr>
 <tr class="even">
 <td align="left">MARSS_tmb-1</td>
 <td align="right">1</td>
-<td align="right">0.588</td>
+<td align="right">0.432</td>
 <td align="right">-735.6308</td>
 </tr>
 <tr class="odd">
 <td align="left">MARSS_tmb-2</td>
 <td align="right">1</td>
-<td align="right">1.006</td>
+<td align="right">0.748</td>
 <td align="right">-735.6308</td>
 </tr>
 <tr class="even">
 <td align="left">dfaTMB</td>
 <td align="right">1</td>
-<td align="right">0.558</td>
+<td align="right">0.423</td>
 <td align="right">-735.6308</td>
 </tr>
 <tr class="odd">
 <td align="left">MARSS-EM</td>
 <td align="right">2</td>
-<td align="right">7.828</td>
+<td align="right">6.105</td>
 <td align="right">-731.2380</td>
 </tr>
 <tr class="even">
 <td align="left">MARSS_tmb-1</td>
 <td align="right">2</td>
-<td align="right">0.760</td>
+<td align="right">0.564</td>
 <td align="right">-731.2378</td>
 </tr>
 <tr class="odd">
 <td align="left">MARSS_tmb-2</td>
 <td align="right">2</td>
-<td align="right">1.223</td>
+<td align="right">0.953</td>
 <td align="right">-731.2378</td>
 </tr>
 <tr class="even">
 <td align="left">dfaTMB</td>
 <td align="right">2</td>
-<td align="right">0.749</td>
+<td align="right">0.571</td>
 <td align="right">-731.2378</td>
 </tr>
 </tbody>

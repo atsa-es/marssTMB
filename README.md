@@ -2,6 +2,8 @@
 
 # marssTMB
 
+{marssTMB} is in active development and not all code has been tested. Also the following are not allowed currently: R or Q with 0s on the diagonal, R or Q with "equalvarcov", B estimation. Time-varying parameters has been coded but not tested.
+
 ## To use
 
 Install MARSS 3.11.6 (development version)
