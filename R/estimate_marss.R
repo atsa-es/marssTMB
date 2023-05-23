@@ -195,6 +195,7 @@ estimate_marss <- function(MLEobj, method = c("TMB", "nlminb_TMB", "BFGS_TMB"), 
   numpar <- unlist(lapply(pars, nrow))
   # a vector of the parameters
   pars <- unlist(lapply(pars, function(x) {
+    colnames(x) <- NULL
     x[, 1]
   }))
 

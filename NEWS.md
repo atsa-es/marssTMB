@@ -1,3 +1,7 @@
+# marssTMB 0.0.14
+
+* Bug: if x0 had a column name (which it would if the data had column names), then the line to get the parvec would not have `x0.x0` as the name. It would have `x0` and this would cause a fail of the check that the parvec names match what `MARSSvectorizeparams()` expects.
+
 # marssTMB 0.0.13
 
 * Add check for data class in dfaTMB.

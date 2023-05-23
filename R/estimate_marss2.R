@@ -131,7 +131,7 @@ estimate_marss2 <- function(MLEobj, method = c("TMB", "nlminb_TMB", "BFGS_TMB"),
   par_dims <- lapply(par_dims, as.integer)
   numpar <- unlist(lapply(pars, nrow))
   # a vector of the parameters
-  pars <- unlist(lapply(pars, function(x) { x[, 1] }))
+  pars <- unlist(lapply(pars, function(x) { colnames(x) <- NULL; x[, 1] }))
 
   # Creates the input data list
   # For now, we will assume V0 is a fixed (diagonal) matrix
